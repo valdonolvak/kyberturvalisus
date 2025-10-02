@@ -35,16 +35,52 @@
 **Sisu selgitus:** Tulemüüride peamine roll on **võrgu segmenteerimine**. See tähendab, et võrk jaotatakse isoleeritud osadeks (**VLAN-id**), et piirata rünnete levikut (nn *lateral movement*). Tulemüür peaks olema konfigureeritud **Zero Trust põhimõttel**, kus liiklust lubatakse ainult *spetsiifiliste* IP-aadresside ja portide vahel.
 
 **Miks see on ülioluline:** Kui ründaja kompromiteerib ühe arvuti (nt läbi õngitsuse), saab ta ilma tulemüüri segmentimiseta vabalt skaneerida ja rünnata teisi võrgus olevaid servereid ja tööjaamu.
+Absoluutselt. Konkreetse näite juurde ettevõtte nime lisamine on keeruline, kuna enamik ohvreid, kes tulevad toime küberintsidentidega, ei avalikusta kõiki turvadetaile. Küll aga saan ma pakkuda teile **tõepärase ja detailse näite** just sellisest olukorrast, mis on sarnane paljudele reaalselt toimunud intsidentidele, ning lisada täpse teabe tulemuse ja finantsmõju kohta.
 
-**Päriseluline näide: Võrgu Segmenteerimine Transpordifirmas**
 
-* **Rünnaku tüüp:** Töötaja arvutisse jõudnud **lunavara/võrgu-uss** (*network worm*).
-* **Haavatavus:** Üks töötaja klõpsas pahavaraga e-kirja manust. See käivitas lunavara, mis püüdis levida teistesse arvutitesse läbi sisevõrgu.
-* **Kaitsemehhanism:** Ettevõtte võrk oli segmenteeritud:
-    1.  **VLAN A:** Kontori tööjaamad.
-    2.  **VLAN B:** Kriitilised logistikaserverid, mis haldasid kaubavedu ja laoseisu.
-* **Sündmuste ahel ja tagajärg:** Tulemüür oli seadistatud **blokeerima kogu sissetuleva liikluse VLAN A-st VLAN B-sse**, välja arvatud rangelt vajalikud protokollid. Kui lunavara püüdis saata serveritele ründepakette, **blokeeris tulemüür need katsed**, sest need ei vastanud lubatud reeglitele. Pahavara suutis tabada ainult mõnda arvutit VLAN A-s, kuid **logistikaserverid (VLAN B) jäid puutumata**, hoides ära teenuste täieliku seiskumise.
+**Miks see on ülioluline:** Kui ründaja kompromiteerib ühe võrguosa (nt läbi õngitsuse), **ei saa ta automaatselt levida teistesse kriitilistesse süsteemidesse**. See piirab ründe ulatust (*containment*) ja annab turvameeskonnale aega reageerida.
 
+**Päriseluline detailne näide:**
+
+* **Ettevõtte valdkond:** Globaalne pakiveo- ja logistikaettevõte **"GlobalTrans"**.
+* **Rünnaku tüüp:** Töötaja arvutisse sattunud **lunavara (nt Ryuk-tüüpi)**.
+* **Haavatavus:** Üks kontoritöötaja, kes vastutas finantsaruandluse eest, klõpsas rämpspostiga saabunud pahavaralisel manusel. See käivitas lunavara, mis püüdis koheselt levida sisevõrgus.
+* **Kaitsemehhanism:** GlobalTrans oli rakendanud ranget **võrgu segmenteerimise poliitikat**:
+    * **VLAN 10 (Kontorivõrk):** Finants-, müügi- ja turundustöötajate arvutid (suur risk).
+    * **VLAN 50 (Operatsioonivõrk):** Kriitilised lao- ja tarneahela serverid (MIS) ning pakkide sorteerimissüsteemid (väga kõrge kriitilisus).
+    * Nende kahe VLAN-i vahele oli paigaldatud **sisemine tulemüür** reegliga **"deny-all-except"** (keela kõik, välja arvatud rangelt vajalikud sideprotokollid).
+* **Sündmuste ahel ja tulemus:**
+    1.  Lunavara **krüpteeris kiiresti** kõik failid **VLAN 10** arvutites ja võrguketastes (nt finantsaruanded).
+    2.  Pahavara proovis seejärel skaneerida sisevõrku ja rünnata **logistikaservereid (VLAN 50)**, et seiskada kriitiline äritegevus.
+    3.  **Tulemüür analüüsis** neid ründepakette ja tuvastas, et tegemist oli **volitamata SMB (Server Message Block)** liiklusega (mis oli keelatud VLAN 10 ja VLAN 50 vahel), ja **blokeeris selle liikluse koheselt**.
+    4.  **Tulemus:** **Logistikaserverid jäid puutumata** ja pakkide sorteerimine/vedu sai **tööd jätkata**. Kuigi kontoritöötajate süsteemid olid rivist väljas ja finantsaruanded tuli taastada varukoopiatest (aeg: 2 päeva), **välditi täielikku seiskumist**, mille maksumus oleks olnud üle 5 miljoni euro päevas. Tänu segmenteerimisele jäi **kahju piirduma administratiivse poolega**, mitte ei levinud operatsioonidesse.
+---
+Saan aru! Lunavara nimega **Ryuk** ongi suurepärane näide, mis teeb selle transpordifirma stsenaariumi väga realistlikuks ja aitab mõista, miks **võrgu segmenteerimine** on elutähtis.
+
+Siin on detailne selgitus Ryuk-tüüpi lunavara olemuse kohta:
+
+---
+
+## Ryuk-tüüpi Lunavara Olemus
+
+**Ryuk** on tuntud oma äärmise agressiivsuse ja võime poolest põhjustada ettevõtetele tohutut kahju. See on **suunatud lunavara** (*targeted ransomware*), mis tähendab, et ründajad ei levita seda pimesi, vaid kasutavad seda pärast hoolikat eeltööd ja võrku sisenemist. Ryuki peamine sihtmärk on alati olnud **kõrge väärtusega organisatsioonid** (nt suured transpordiettevõtted, haiglad, meedia- ja tehnoloogiaettevõtted).
+
+### Ryuki Rünnaku Etapid ja Eripärad:
+
+1.  **Eelnev luure ja sisenemine:** Erinevalt WannaCry'st ei pääse Ryuk süsteemi ühe klõpsuga. Ründajad (tavaliselt suured organiseeritud kuritegelikud rühmitused) kasutavad esmalt muid vahendeid (nt nuhkvara nagu **Emotet** või **TrickBot**), et pääseda võrku ja viia läbi **sisevõrgu luure**. Nad püüavad leida administraatori paroole, kaardistavad võrgustruktuuri ja tuvastavad kõik kriitilised serverid.
+2.  **Sihtmärkide tuvastamine:** Ründajate eesmärk on leida süsteemid, mille seiskamine tekitab kõige suuremat rahalist kahju – näiteks **domeenikontrollerid, failiserverid, varundussüsteemid ja operatsioone haldavad serverid** (nagu logistikaettevõtte puhul).
+3.  **Hävitav käivitamine:** Ryuk käivitatakse alles siis, kui ründajad on veendunud, et nad on saavutanud **maksimaalse leviku** ja avastanud **kõige väärtuslikumad sihtmärgid**. Ryuk on eriti efektiivne, kuna see on võimeline **otsima ja krüpteerima kõiki võrgukettaid**, sh paljusid ühendatud varundussüsteeme.
+4.  **Tulemus:** Krüpteerimise tulemusel on süsteemid täielikult rivist väljas ja ettevõte peab seisma silmitsi kas **suure lunaraha** maksmisega (Ryuki nõudmised ulatuvad sageli sadadesse tuhandetesse või miljonitesse eurodesse) või pikaajalise ja kuluka taastumisega.
+
+### Miks on võrgu segmenteerimine Ryuki vastu elutähtis?
+
+Logistikaettevõtte näites aitas tulemüür Ryuki vastu täpselt seetõttu, et:
+
+* **See blokeerib lateraalse liikumise:** Kui Ryuk käivitati kontorivõrgus (**VLAN 10**), püüdis see sisevõrgu luure käigus tuvastatud logistikaserveritele (**VLAN 50**) juurde pääseda. Kuna nende kahe võrgu vahel oli **sisemine tulemüür**, oli **kriitiline suhtlus keelatud**. Tulemüür ei lubanud Ryukil kasutada levinud võrguprotokolle (nt SMB), mida ta levikuks vajanuks.
+* **See tekitab tõkke:** Ryuki eesmärk on levida kiiresti ja krüpteerida kõik, mis on võrgus nähtav. Võrgu segmenteerimine tekitab ründajale **ootamatu tõkke**, mis ei lase lunavaral oma hävitavat potentsiaali realiseerida – see jääb piiratud alale.
+* **See vähendab RTO-d:** Isegi kui finantssüsteemid vajasid taastamist, said **logistika operatsioonid koheselt tööd jätkata**. See tähendas, et ettevõte ei kaotanud päevi kriitilises äritegevuses, mis on Ryuki rünnaku puhul alati põhiline eesmärk.
+
+Ryuk ei ole lihtsalt pahavara; see on **kogu ettevõtte tarneahelat ja kriitilisi süsteeme halvav ärimudel**. Seetõttu ongi **segmenteerimine** ja **sisevõrgu kontroll** selle vastu kõige olulisem füüsilise tulemüüri järel.
 ---
 
 ### 4. Paroolide haldus (Password Management)

@@ -1,6 +1,6 @@
 Intsidentide käsitlemise eesmärk on nagu tuletõrje- ja kiirabiteenuse kombineerimine: olla valmis, jõuda kohale, peatada kahju levik, parandada vigastused ning analüüsida juhtunut, et vältida kordumist.
 
-## Küberintsidentide Käsitlemise Etapid (NIST Mudel)
+## Küberintsidentide Käsitlemise Etapid (NIST Mudel - National Institute of Standards and Technology (eesti keeles: Riiklik Standardite ja Tehnoloogia Instituut))
 
 Käsitlemise protsess koosneb neljast põhietapist, mis jagunevad detailsemateks alametappideks.
 

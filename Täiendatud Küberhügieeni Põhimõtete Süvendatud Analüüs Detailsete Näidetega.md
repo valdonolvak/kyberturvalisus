@@ -200,9 +200,41 @@ Ryuk ei ole lihtsalt pahavara; see on **kogu ettevõtte tarneahelat ja kriitilis
 
 **Sisu selgitus:** IRP on **operatiivdokument**, mis peab olema **läbi harjutatud ja ajakohane**. See määratleb sündmuste ahela kriitilised sammud: **Tuvastamine, Ohjeldamine (Containment), Likvideerimine (Eradication), Taastumine (Recovery)** ja **Õppetundide analüüs**. IRP peab sisaldama ka **kommunikatsiooniplaani** meedia, õiguskaitseorganite ja klientide teavitamiseks.
 
-**Miks see on ülioluline:** See vähendab kaost ja teeb kriisist kontrollitud sündmuse. Valmisolek lühendab taastumisaega ja minimeerib nii rahalist kahju kui ka reputatsioonikahju.
+**Miks see on ülioluline:** IRP vähendab **kahju ulatust** ja **taastumisaega (RTO)**. Intsidendi ajal on iga sekund kulla hinnaga. Korrapärane plaan aitab organisatsioonil jääda seadustega (nt **GDPR** kohustus teavitada andmelekkest 72 tunni jooksul) vastavusse.
 
-**Päriseluline näide: IRP Peatab Andmeleke ja Kontrollib Mainekahju**
+---
+
+**Päriseluline detailne näide:**
+
+* **Ettevõtte valdkond:** Populaarne ja kiiresti kasvav Baltikumi e-kaubandusplatvorm **"E-Market"**.
+* **Rünnaku tüüp:** Tuntud haavatavusel põhinev **SQL-i süstimise rünnak** andmebaasilekkes.
+* **Haavatavus:** Ründaja avastas avalikult suunatud veebiserveri juures vanema **PHP-teegi** haavatavuse, mis võimaldas tal sisestada (süstida) andmebaasi päringutesse **SQL-käske** ja alustada kliendiandmete kopeerimist.
+* **Kaitsemehhanism:** E-Marketil oli olemas **Intsidendi Käsitlemise Plaan (IRP)** ja pidev **turvamonitooring (SIEM)**.
+
+**Sündmuste ahel ja detailne tagajärg:**
+
+1.  **Tuvastamine (Detection):**
+    * **Monitooringu häire:** **E-Marketi SIEM-süsteem** (turvateabe ja sündmuste haldussüsteem) andis häire. See tuvastas **anomaalse liikluse mustri:** Andmebaasiserver hakkas saatma väljapoole **tunduvalt suuremaid andmemahte** kui tavaliselt (nt 10 GB asemel 80 GB tunnis). See andis kohe märku andmete **ekstratsioonist**.
+    * **IRP Esimene Käsk:** Turvameeskonna juht sai häire ja käivitas IRP. Plaanis oli kirjas, et *kõigepealt tuleb teavitada Intsidentide Reageerimise Meeskonda (IRT)*, mitte asuda kohe serverit taaskäivitama.
+
+2.  **Ohjeldamine (Containment):**
+    * **Kiire Isolatsioon:** IRP nägi ette, et kahtlane veebiserver tuleb **koheselt võrgust isoleerida**. IT-operaator, teades oma IRP-rolli, **eemaldas 15 minuti jooksul** esimesel korrusel asuvast jaotuspunktist serveri võrgukaabli (või blokeeris selle tulemüüris).
+    * **Tulemus:** IRP-protseduuri järgimine **peatas andmete kopeerimise**, takistades ründajal ligipääsu kogu andmebaasile. Turvameeskond arvutas, et **lekkis umbes 25 000 kliendi andmed** (nimed, e-posti aadressid, krüpteeritud paroolid), kuid **üle 300 000 kliendi tundlikud andmed (nt krediitkaardi numbrid, isikukoodid) jäid puutumata**, sest rünnak peatati nii kiiresti.
+
+3.  **Likvideerimine ja Taastumine (Eradication & Recovery):**
+    * **Haavatavuse Sulgemine:** IRP järgi asus meeskond analüüsima ründe allikat (antud juhul PHP teeki) ja **parandas haavatavuse**.
+    * **Taastumine:** Süsteemid taastati **puhtast, eelmisest päevast pärit varukoopiast**, tagades, et ründaja pahavara ei jäänud võrku.
+
+4.  **Kommunikatsioon ja Juriidiline Vastavus:**
+    * **Ametiasutuste teavitamine:** IRP sisaldas selget ajakava, mis nägi ette **CERT-EE ja Andmekaitse Inspektsiooni (AKI) teavitamise 72 tunni jooksul** andmelekkest. **Õigeaegne teavitus** näitas riiklikele asutustele, et E-Market kontrollib olukorda, vähendades oluliselt potentsiaalsete **GDPR-trahvide** riski.
+    * **Avalik Teavitus:** **IRP meediaprotokoll** nägi ette, et ettevõtte tegevjuht väljastab **rahuliku ja faktipõhise avalduse**. E-Market sai näidata, et nad reageerisid **kiiresti ja professionaalselt**, minimeerides **mainekahju** võrreldes konkurentidega, kes on sarnastes olukordades olnud kaoses ja vaikinud.
+    * **Tulemus:** **Organiseeritud tegevus IRP alusel võimaldas E-Marketil kahju kontrolli all hoida, hoida seadustega vastavust ja näidata klientidele kompetentsust.** See on IRP peamine väärtus: kaose vältimine ja äritegevuse järjepidevuse tagamine.
+
+---
+
+
+
+**Päriseluline näide: IRP Peatab Andmeleke ja Kontrollib Mainekahju - Lühem versioon**
 
 * **Rünnaku tüüp:** **Andmeleke** (nt SQL-i süstimise kaudu).
 * **Haavatavus:** Ründaja pääses ligi veebiserverile ja hakkas sealt andmebaasist infot kopeerima.

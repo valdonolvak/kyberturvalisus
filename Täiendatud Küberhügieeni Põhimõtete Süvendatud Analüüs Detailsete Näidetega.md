@@ -55,11 +55,6 @@ Absoluutselt. Konkreetse näite juurde ettevõtte nime lisamine on keeruline, ku
     3.  **Tulemüür analüüsis** neid ründepakette ja tuvastas, et tegemist oli **volitamata SMB (Server Message Block)** liiklusega (mis oli keelatud VLAN 10 ja VLAN 50 vahel), ja **blokeeris selle liikluse koheselt**.
     4.  **Tulemus:** **Logistikaserverid jäid puutumata** ja pakkide sorteerimine/vedu sai **tööd jätkata**. Kuigi kontoritöötajate süsteemid olid rivist väljas ja finantsaruanded tuli taastada varukoopiatest (aeg: 2 päeva), **välditi täielikku seiskumist**, mille maksumus oleks olnud üle 5 miljoni euro päevas. Tänu segmenteerimisele jäi **kahju piirduma administratiivse poolega**, mitte ei levinud operatsioonidesse.
 ---
-Saan aru! Lunavara nimega **Ryuk** ongi suurepärane näide, mis teeb selle transpordifirma stsenaariumi väga realistlikuks ja aitab mõista, miks **võrgu segmenteerimine** on elutähtis.
-
-Siin on detailne selgitus Ryuk-tüüpi lunavara olemuse kohta:
-
----
 
 ## Ryuk-tüüpi Lunavara Olemus
 

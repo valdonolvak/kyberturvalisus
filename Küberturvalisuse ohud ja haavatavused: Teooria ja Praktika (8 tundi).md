@@ -1,5 +1,3 @@
-Loomulikult! Koostan teile põhjaliku materjali, mis sobib teie auditoorse töö (2 tundi) ja iseseisva töö (6 tundi) jaoks. Materjal sisaldab süvendatud seletusi, elulisi näiteid ja konkreetseid viiteid tuntud küberjuhtumitele.
-
 # Küberturvalisuse ohud ja haavatavused: Teooria ja Praktika (8 tundi)
 
 ---

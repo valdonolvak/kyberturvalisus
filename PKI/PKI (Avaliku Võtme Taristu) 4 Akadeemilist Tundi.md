@@ -30,6 +30,45 @@ Avaliku võtme taristu (Public Key Infrastructure, PKI) on raamistik, mis võima
 
 PKI peamine eesmärk on lahendada **võtme autentsuse probleem**. Kuidas ma tean, et avalik võti, mille ma sain, kuulub tõepoolest isikule/serverile, keda ta väidab end olevat? PKI standardiseerib protsessi, luues kolme osapoole vahelise **usalduse ahela**: **Saaja** usaldab **CA-d**, et **CA** on kontrollinud **Avaliku Võtme Omaniku** identiteeti.
 
+#### Põhikomponendid (Core components)
+
+1. **Sertifikaadi väljastaja (Certificate Authority, CA)**
+
+   * CA on usaldusväärne osapool, kes väljastab, uuendab ja tühistab digitaalseid sertifikaate.
+   * Root CA (juur-CA) on kõige usaldusväärsem otsus: tema avalikku võtit (public key) kasutatakse usalduse alustalaks (trust anchor).
+   * Vahe-CA (intermediate CA) vähendab juur-CA ekspositsiooni, sest juur-CA hoitakse tavaliselt väga ohutult (offline, HSM).
+
+2. **Registreerimisamet (Registration Authority, RA)**
+
+   * RA kontrollib taotleja (subject) identiteeti enne sertifikaadi väljastamist; RA ja CA võivad mõnikord olla samas organisatsioonis, aga rollid eristatakse.
+
+3. **Sertifikaat (Certificate, X.509 certificate)**
+
+   * Tavaliselt X.509 formaat: sisaldab sertifikaadi omaniku (subject) identiteeti, avalikku võtit, väljastaja (issuer) identiteeti, kehtivusaegu (validity), sertifikaadi laiendusi (extensions) ja sertifikaadi väljastaja digitaalallkirja (signature).
+
+4. **Võtmepar (Key pair)**
+
+   * Privaatvõti (private key): hoitakse saladuses; seda kasutatakse allkirjastamiseks (signing) ja dekodeerimiseks (decryption, kui kasutatakse RSA).
+   * Avalik võti (public key): jagatakse teistega; seda kasutatakse allkirja kontrollimiseks (verification) ja krüpteeritud sõnumi saatmiseks.
+
+5. **Tühistusinfo (Revocation information)**
+
+   * CRL (Certificate Revocation List) — perioodiliselt avaldatav tühistusnimekiri.
+   * OCSP (Online Certificate Status Protocol) — reaalajas päringute teenus sertifikaadi staatuse kontrollimiseks.
+
+6. **Sertifikaadi kasutusreeglid, poliitikad ja CPS (Certificate Policy, CP; Certification Practice Statement, CPS)**
+
+   * CP kirjeldab, milleks sertifikaat loodud on ning millised nõuded kehtivad.
+   * CPS on dokument, mis kirjeldab CA käitumist ja protseduure (kuidas CA kontrollib identiteeti, hoiab võtmeid, tühistab sertifikaate jms).
+
+7. **Usaldusankur (Trust anchor)**
+
+   * Tavaliselt root CA sertifikaat, mis on eelinstalleeritud brauseritesse, operatsioonisüsteemidesse või organisatsiooni kergetuspunktidesse.
+
+8. **Turvahaldus (Key management / HSM)**
+
+   * Privaatvõtmete turvaline ladustamine HSM-ides (Hardware Security Module) ning võtmete elutsükli haldus — genereerimine, varundamine, taastamine, arhiveerimine ja hävitamine.
+
 <img alight=center width="384" height="256" alt="Illustration of Publ" src="https://github.com/user-attachments/assets/a9be954b-6d84-4cab-8b9f-637b7d915695" />
 
   * **Identiteet:** Keda sertifikaat esindab (inimene, domeen, seade).

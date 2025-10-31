@@ -29,6 +29,8 @@ Suurepärane\! Koostan nüüd põhjalikult laiendatud õppematerjali, mis kesken
 
 PKI peamine eesmärk on lahendada **võtme autentsuse probleem**. Kuidas ma tean, et avalik võti, mille ma sain, kuulub tõepoolest isikule/serverile, keda ta väidab end olevat? PKI standardiseerib protsessi, luues kolme osapoole vahelise **usalduse ahela**: **Saaja** usaldab **CA-d**, et **CA** on kontrollinud **Avaliku Võtme Omaniku** identiteeti.
 
+<img alight=center width="1536" height="1024" alt="Illustration of Publ" src="https://github.com/user-attachments/assets/a9be954b-6d84-4cab-8b9f-637b7d915695" />
+
   * **Identiteet:** Keda sertifikaat esindab (inimene, domeen, seade).
   * **CA (Sertifitseerimisasutus):** PKI ökosüsteemi **notar**. CA kontrollib taotleja identiteeti ja **allkirjastab** taotleja avaliku võtme, luues **sertifikaadi**. CA-d usaldavad kõik brauserid ja operatsioonisüsteemid vaikimisi.
   * **RA (Registreerimisasutus):** CA-d abistav üksus, mis viib läbi **esialgse identiteedikontrolli** (nt. juriidiliste dokumentide kontroll) ja saadab seejärel taotluse CA-le allkirjastamiseks.

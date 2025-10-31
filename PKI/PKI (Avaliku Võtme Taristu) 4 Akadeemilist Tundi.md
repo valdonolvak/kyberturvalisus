@@ -14,6 +14,9 @@
 
 ### 1\. PKI (Avaliku Võtme Taristu) Alused
 
+#### Ülevaade (Overview)
+Avaliku võtme taristu (Public Key Infrastructure, PKI) on raamistik, mis võimaldab turvalist autentimist (authentication), andmete terviklikkuse (integrity) ja konfidentsiaalsuse (confidentiality) tagamist läbi avaliku/privaatvõtme (public/private key) krüptograafia ning digitaalsertifikaatide (digital certificates) halduse. PKI võimaldab usaldusvõrgustikku, kus osapooled (subscribers), usaldusosapooled (relying parties) ja sertifikaadiasutused (Certificate Authorities, CA) suhtlevad ja usaldavad üksteise väljastatud sertifikaate.
+
 #### Asümmeetriline Krüptograafia: Põhiolemus
 
 **Asümmeetriline krüptograafia** (tuntud ka kui **avaliku võtme krüptograafia**) lahendab kaks peamist probleemi: **võtmete jagamine** ja **digitaalallkirjastamine**.

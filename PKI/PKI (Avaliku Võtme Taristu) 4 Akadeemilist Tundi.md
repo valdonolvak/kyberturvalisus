@@ -14,8 +14,6 @@
 
 ### 1\. PKI (Avaliku Võtme Taristu) Alused
 
-#### Ülevaade (Overview)
-Avaliku võtme taristu (Public Key Infrastructure, PKI) on raamistik, mis võimaldab turvalist autentimist (authentication), andmete terviklikkuse (integrity) ja konfidentsiaalsuse (confidentiality) tagamist läbi avaliku/privaatvõtme (public/private key) krüptograafia ning digitaalsertifikaatide (digital certificates) halduse. PKI võimaldab usaldusvõrgustikku, kus osapooled (subscribers), usaldusosapooled (relying parties) ja sertifikaadiasutused (Certificate Authorities, CA) suhtlevad ja usaldavad üksteise väljastatud sertifikaate.
 
 #### Asümmeetriline Krüptograafia: Põhiolemus
 
@@ -27,6 +25,8 @@ Avaliku võtme taristu (Public Key Infrastructure, PKI) on raamistik, mis võima
 2.  **Põhiomadus:** See, mis on krüpteeritud avaliku võtmega, saab dekrüpteerida *ainult* vastava privaatvõtmega – ja vastupidi. See suhe on **matemaatiliselt pöördumatu**.
 
 #### PKI: Põhiolemus
+
+Avaliku võtme taristu (Public Key Infrastructure, PKI) on raamistik, mis võimaldab turvalist autentimist (authentication), andmete terviklikkuse (integrity) ja konfidentsiaalsuse (confidentiality) tagamist läbi avaliku/privaatvõtme (public/private key) krüptograafia ning digitaalsertifikaatide (digital certificates) halduse. PKI võimaldab usaldusvõrgustikku, kus osapooled (subscribers), usaldusosapooled (relying parties) ja sertifikaadiasutused (Certificate Authorities, CA) suhtlevad ja usaldavad üksteise väljastatud sertifikaate.
 
 PKI peamine eesmärk on lahendada **võtme autentsuse probleem**. Kuidas ma tean, et avalik võti, mille ma sain, kuulub tõepoolest isikule/serverile, keda ta väidab end olevat? PKI standardiseerib protsessi, luues kolme osapoole vahelise **usalduse ahela**: **Saaja** usaldab **CA-d**, et **CA** on kontrollinud **Avaliku Võtme Omaniku** identiteeti.
 

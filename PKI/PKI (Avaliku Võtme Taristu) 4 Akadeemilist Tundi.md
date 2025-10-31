@@ -1,5 +1,3 @@
-Suurepärane\! Koostan nüüd põhjalikult laiendatud õppematerjali, mis keskendub iga PKI-ga seotud **termini põhiolemuse lahtiseletamisele**, et õpilastel oleks lihtsam teemasse süveneda. Jätan alles kaks päriselu näidet iga alateema juurde ja lisan lõppu ka praktilise ülesande.
-
 -----
 
 # 📚 PKI (Avaliku Võtme Taristu) – Põhjalik Õppematerjal Terminoloogia Selgitustega

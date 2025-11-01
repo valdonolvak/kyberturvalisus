@@ -98,7 +98,7 @@ Need sertifikaadid on sisuliselt **digitaalsed passi või isikutunnistused**, mi
 
 ---
 
-## 🔑 Põhielemendid ja tööpõhimõte
+#### 🔑 Põhielemendid ja tööpõhimõte
 
 X.509 sertifikaat seob digitaalallkirja abil **avaliku võtme** kindla **identiteediga**.
 

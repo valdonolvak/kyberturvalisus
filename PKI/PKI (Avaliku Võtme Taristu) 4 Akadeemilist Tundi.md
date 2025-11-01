@@ -85,9 +85,57 @@ PKI peamine eesmärk on lahendada **võtme autentsuse probleem**. Kuidas ma tean
 ### 2\. Sertifikaadid (X.509 standard)
 
 #### X.509 Sertifikaat: Põhiolemus
+Digitaalsertifikaatide X.509 standard on Rahvusvahelise Telekommunikatsiooni Liidu (ITU) laialdaselt tunnustatud standard, mis määratleb avaliku võtme infrastruktuuri (PKI) sertifikaatide formaadi.
+
+Need sertifikaadid on sisuliselt digitaalsed passi või isikutunnistused, mida kasutatakse veebis tegutsevate üksuste (nagu veebisaidid, kasutajad, seadmed või organisatsioonid) autentsuse ja identiteedi kinnitamiseks.
 
 **X.509** on **digitaalne dokument** või **standardiseeritud formaat** (sarnane füüsilisele passile), mis **seob avaliku võtme identiteediga**. See standard on kriitiline, sest see võimaldab igal brauseril, operatsioonisüsteemil ja rakendusel sertifikaati **ühtemoodi töödelda ja valideerida**.
 
+
+Digitaalsertifikaatide **X.509 standard** on **Rahvusvahelise Telekommunikatsiooni Liidu (ITU)** laialdaselt tunnustatud standard, mis määratleb **avaliku võtme infrastruktuuri (PKI)** sertifikaatide formaadi.
+
+Need sertifikaadid on sisuliselt **digitaalsed passi või isikutunnistused**, mida kasutatakse veebis tegutsevate üksuste (nagu veebisaidid, kasutajad, seadmed või organisatsioonid) **autentsuse ja identiteedi kinnitamiseks**.
+
+---
+
+## 🔑 Põhielemendid ja tööpõhimõte
+
+X.509 sertifikaat seob digitaalallkirja abil **avaliku võtme** kindla **identiteediga**.
+
+* **Sertifikaadi Sisu:** Sertifikaat sisaldab olulist teavet:
+    * **Subjekti info:** Identiteedi andmed (nt domeeninimi, organisatsioon, isikunimi).
+    * **Avalik võti:** Krüptograafiline võti, mida kasutatakse krüpteerimiseks ja digitaalallkirjade kontrollimiseks.
+    * **Väljaandja info:** Sertifikaadi välja andnud **sertifitseerimisasutuse (CA)** nimi.
+    * **Kehtivusaeg:** Sertifikaadi algus- ja lõppkuupäevad.
+    * **Digitaalallkiri:** CA allkiri, mis kinnitab sertifikaadi andmete ehtsust.
+
+* **Tööpõhimõte:**
+    1.  **Väljaandmine:** Sertifitseerimisasutus (CA) kontrollib identiteeti ja annab välja digitaalselt allkirjastatud X.509 sertifikaadi.
+    2.  **Kontrollimine:** Kui brauser (klient) saab sertifikaadi, kontrollib ta CA digitaalallkirja, et veenduda sertifikaadi usaldusväärsuses ja andmete muutmatuses. See luuakse tavaliselt usaldusahela kaudu.
+    3.  **Turvaline side:** Pärast edukat kontrolli saab sertifikaadis sisalduvat avalikku võtit kasutada **turvalise (krüpteeritud) side** loomiseks (nt TLS/SSL puhul).
+
+---
+
+## 🌐 X.509 Kasutusvaldkonnad
+
+X.509 sertifikaadid on **PKI nurgakivi** ja neid kasutatakse laialdaselt:
+
+* **Turvalised veebisaidid (HTTPS):** **SSL/TLS sertifikaadid** (mis on X.509 tüüpi) krüpteerivad andmeedastuse veebibrauserite ja serverite vahel.
+* **Meiliturve (S/MIME):** Digitaalne allkirjastamine ja krüpteerimine meilisuhtluses.
+* **Koodi allkirjastamine:** Tarkvara autentsuse ja terviklikkuse kinnitamine, tagades, et koodi ei ole pärast väljaandmist muudetud.
+* **Kliendi autentimine:** Kasutajate identiteedi kontrollimine (nt e-panganduses).
+* **Asjade internet (IoT):** Seadmete autentimine.
+
+---
+
+## 📜 Sertifikaadi Versioonid
+
+Standard on aja jooksul arenenud, lisades uusi funktsioone:
+
+* **Versioon 1 (v1):** Algne standard (1988).
+* **Versioon 3 (v3):** Praegu kehtiv versioon, mis lisas **sertifikaadi laiendused** (**Extensions**), võimaldades paindlikumat kasutusotstarvete ja piirangute määratlemist (nt *Extended Key Usage*).
+
+---
   * **CSR (Certificate Signing Request):** See on sisuliselt **taotlus kirjutada alla oma avalikule võtmele**. Taotleja loob oma privaatvõtme ja sellest tuletatud avaliku võtme. Ta saadab avaliku võtme koos identiteediandmetega (nt. domeeninimi, organisatsioon) CA-le, kuid hoiab privaatvõtme endale.
   * **Kehtivusaeg:** Määratleb ajaakna, mille jooksul sertifikaati peetakse kehtivaks. Pärast aegumiskuupäeva (või enne kehtivuse algust) sertifikaati ei usaldata.
   * **CA Allkiri:** CA krüpteerib sertifikaadi andmete räsi oma **privaatvõtmega**. Brauser kasutab CA **avalikku võtit** (mis on brauseris eelnevalt salvestatud) allkirja kontrollimiseks. Kui see kontroll ebaõnnestub, tähendab see, et kas sertifikaati on muudetud või see ei pärine usaldusväärsest CA-st.

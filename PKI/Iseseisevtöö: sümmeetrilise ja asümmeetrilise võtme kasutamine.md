@@ -42,7 +42,7 @@ Selles ülesandes kasutatakse **sümmeetrilist krüptograafiat (AES)** tundliku 
 
     ```bash
     # Käsk dekrüpteerimiseks (sisestage sama parool)
-    openssl enc -d -aes-256-cbc -in krüpteeritud.aes -out dekrüpteeritud.txt
+    openssl enc -d -aes-256-cbc -pbkdf2 -in krüpteeritud.aes -out dekrüpteeritud.txt
     ```
 
 6.  **Kontrolli dekrüpteeritud faili:**

@@ -63,11 +63,10 @@ Nüüd saate oma Windowsi klientmasinast testida veebiserverit nime kaudu.
     Avage veebibrauser ja sisestage aadressiribale:
 
     ```
-    http://minudomeen.local
+    http://minudomeen.local või https://minudomeen.local
     ```
 
     See peaks kuvama teie Ubuntu serveris töötava veebilehe (eeldusel, et veebiserver on konfigureeritud seda domeeninime teenindama).
 
 -----
 
-Kas soovite, et aitaksin teil kontrollida ka seda, kas teie Ubuntu serveri tulemüür (UFW) on konfigureeritud lubama veebiliiklust (nt port 80 ja/või 443)?

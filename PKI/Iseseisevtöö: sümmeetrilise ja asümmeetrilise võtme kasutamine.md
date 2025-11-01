@@ -1,162 +1,137 @@
 Juhised on koostatud eeldades, et õpilased kasutavad **Linuxi/macOS-i keskkonda** ja **OpenSSL** tööriista, mis on krüptograafiliste funktsioonide jaoks standardne.
 
 -----
+## 🛠️ 3 Praktilist ülesannet OpenSSL-iga (Uuendatud Juhised)
 
-## 🛠️ Praktilised Krüptograafia Ülesanded OpenSSL-iga
+### Ülesanne 1: Sümmeetriline Krüptograafia (AES)
 
-### 1\. Sümmeetriline Krüptograafia (AES): Faili turvaline šifreerimine
-
-Selles ülesandes kasutatakse **sümmeetrilist krüptograafiat (AES)** tundliku faili krüpteerimiseks. Õpilane loob šifreerimisel kasutatava võtme.
+**Eesmärk:** Krüpteerida fail turvaliselt, kasutades AES-i ja tugevdatud võtme tuletamise funktsiooni.
 
 #### Samm-sammuline juhend:
 
 1.  **Loo salajane sisendfail:**
-    Loo lihtne tekstifail, mis sisaldab tundlikku teavet.
-
     ```bash
-    echo "See on väga salajane teave, krüpteeri see!" > salajane.txt
+    echo "See fail sisaldab krüpteerimist vajavat salajast infot." > salajane.txt
     ```
-
-2.  **Loo Sümmeetriline Võti (Parool):**
-    OpenSSL kasutab sümmeetriliseks krüpteerimiseks parooli, mis toimib võtmena (läbi võtme tuletamise funktsiooni, nt PBKDF2). Krüpteerimiseks vali **tugev parool** (nt *MySuPerS41aN3k3y\!*) või genereeri juhuslik võti. Meie kasutame parooli.
-
-3.  **Krüpteeri fail AES-256 CBC režiimis:**
-    Kasuta faili `salajane.txt` krüpteerimiseks AES-256 algoritmi ja CBC režiimi. OpenSSL küsib parooli (võtme).
-
+2.  **Krüpteeri fail AES-256-ga (Kasutades -pbkdf2):**
+    Kasuta turvalisemat PBKDF2 võtme tuletamise funktsiooni. OpenSSL küsib parooli.
     ```bash
-    # Käsk krüpteerimiseks (sisestage parool)
     openssl enc -aes-256-cbc -salt -pbkdf2 -in salajane.txt -out krüpteeritud.aes
     ```
-
-    > **Märkus:** `-salt` tagab krüpteerimise turvalisuse, lisades unikaalse juhusliku väärtuse (*salt*).
-
-4.  **Kontrolli krüpteeritud faili:**
-    Proovi faili sisu vaadata – see peaks olema loetamatu.
-
+3.  **Kontrolli krüpteeritud sisu:**
     ```bash
     cat krüpteeritud.aes
     ```
-
-5.  **Dekrüpteeri fail:**
-    Dekrüpteeri fail tagasi, kasutades täpselt **sama parooli** (võtit).
-
+4.  **Dekrüpteeri fail:**
+    Kasuta dekrüpteerimiseks täpselt sama parooli ja `-pbkdf2` parameetrit.
     ```bash
-    # Käsk dekrüpteerimiseks (sisestage sama parool)
-    openssl enc -d -aes-256-cbc -pbkdf2 -in krüpteeritud.aes -out dekrüpteeritud.txt
+    openssl enc -d -aes-256-cbc -in krüpteeritud.aes -pbkdf2 -out dekrüpteeritud.txt
     ```
-
-6.  **Kontrolli dekrüpteeritud faili:**
-    Veendu, et sisu on identne algse failiga.
-
+5.  **Kontrolli dekrüpteeritud sisu:**
     ```bash
     cat dekrüpteeritud.txt
     ```
 
 -----
 
-### 2\. Asümmeetriline Krüptograafia (RSA): Turvaline teade ja Võtmepaarid
+### Ülesanne 2: Asümmeetriline Krüptograafia (RSA)
 
-Selles ülesandes luuakse **avaliku/privaatse võtme paar (RSA)** ja kasutatakse neid teate krüpteerimiseks, mille saab dekrüpteerida vaid salajase võtme omanik.
+**Eesmärk:** Loo avaliku/privaatse võtme paar ja kasuta neid sõnumi krüpteerimiseks ja dekrüpteerimiseks (simuleerides turvalist saatmist).
 
 #### Samm-sammuline juhend:
 
 1.  **Loo Privaatvõti:**
-    Genereeri turvaline 2048-bitine RSA privaatvõti ja salvesta see faili `minu_privaatne.pem`.
-
     ```bash
-    # Loo privaatvõti (sisestage parool selle kaitsmiseks)
     openssl genrsa -out minu_privaatne.pem 2048
     ```
-
 2.  **Loo Avalik Võti:**
-    Tuleta privaatvõtmest vastav avalik võti. See on võti, mille peaksid saatma sõbrale.
-
     ```bash
-    # Tuleta privaatvõtmest avalik võti
     openssl rsa -pubout -in minu_privaatne.pem -out minu_avalik.pem
     ```
-
 3.  **Loo Sõnum Krüpteerimiseks:**
-    See on sõnum, mille keegi teine (kasutades sinu avalikku võtit) sulle saadab.
-
     ```bash
-    echo "Tere, see on sinu jaoks krüpteeritud sõnum!" > saatja_sõnum.txt
+    echo "Tere, see on konfidentsiaalne teade!" > saatja_sõnum.txt
     ```
-
-4.  **Krüpteeri sõnum (Saatja pool):**
-    Krüpteeri sõnum, kasutades **vastuvõtja avalikku võtit** (`minu_avalik.pem`).
-
+4.  **Krüpteeri sõnum (Saatja pool) – Kasutades pkeyutl:**
+    Krüpteeri **avaliku võtmega**.
     ```bash
-    # Krüpteeri sõnum avaliku võtmega
     openssl pkeyutl -encrypt -pubin -inkey minu_avalik.pem -in saatja_sõnum.txt -out krüpteeritud_teade.dat
     ```
-
-5.  **Dekrüpteeri sõnum (Vastuvõtja pool):**
-    Dekrüpteeri teade, kasutades **enda salajast võtit** (`minu_privaatne.pem`).
-
+5.  **Dekrüpteeri sõnum (Vastuvõtja pool) – Kasutades pkeyutl:**
+    Dekrüpteeri **salajase (privaatse) võtmega**.
     ```bash
-    # Dekrüpteeri sõnum privaatvõtmega (sisesta parool, kui on)
     openssl pkeyutl -decrypt -inkey minu_privaatne.pem -in krüpteeritud_teade.dat -out dekrüpteeritud_teade.txt
     ```
-
-6.  **Kontrolli dekrüpteeritud sõnumit:**
-
+6.  **Kontrolli tulemust:**
     ```bash
     cat dekrüpteeritud_teade.txt
     ```
 
 -----
 
-### 3\. Asümmeetriline Krüptograafia (RSA): Digitaalallkiri
+### Ülesanne 3: Digitaalallkiri ja Terviklikkuse Kontroll
 
-Selles ülesandes kasutatakse **asümmeetrilist krüptograafiat** dokumendi **ehtsuse** ja **terviklikkuse** tõendamiseks digitaalallkirja abil.
+**Eesmärk:** Kasuta asümmeetrilist krüptograafiat digitaalallkirja loomiseks ja veendumiseks, et faili pole muudetud.
 
-#### Samm-sammuline juhend:
+#### Samm-sammuline juhend (Allkirjastamine):
 
 1.  **Loo allkirjastatav dokument:**
-
     ```bash
     echo "Lepingu tekst: Kinnitan, et need andmed on õiged." > leping.txt
     ```
-
-2.  **Loo Privaatvõti** (Kui pole seda Ülesandest 2 juba olemas, tee uuesti):
-
+2.  **Loo Privaatvõti** (Kui pole veel loodud):
     ```bash
     openssl genrsa -out allkirjastaja_privaatne.pem 2048
     ```
-
-3.  **Loo Dokumendi Räsi (Hash):**
-    Loo dokumendist unikaalne "sõrmejälg" (räsi) SHA256 abil.
-
+3.  **Loo Räsi (Hash):**
     ```bash
-    # Loo räsi
     openssl dgst -sha256 -binary leping.txt > leping.räsi
     ```
-
-4.  **Loo Digitaalallkiri:**
-    Krüpteeri räsi, kasutades **allkirjastaja privaatvõtit**. See krüpteeritud räsi ongi **digitaalallkiri**.
-
+4.  **Loo Digitaalallkiri (Kasutades pkeyutl):**
+    Krüpteeri räsi **privaatvõtmega**.
     ```bash
-    # Allkirjasta räsi privaatvõtmega
     openssl pkeyutl -sign -in leping.räsi -inkey allkirjastaja_privaatne.pem -out leping.allkiri
     ```
-
-5.  **Kontrolli Digitaalallkirja (Vastuvõtja pool):**
-    Vastuvõtja (sina) peab:
-    a) Tuletama privaatvõtmest vastava avaliku võtme (kui seda pole veel antud).
-
+5.  **Loo Avalik Võti** (Vajalik kontrollimiseks):
     ```bash
     openssl rsa -pubout -in allkirjastaja_privaatne.pem -out allkirjastaja_avalik.pem
     ```
 
-    b) Dekrüpteerima (kontrollima) allkirja, kasutades **allkirjastaja avalikku võtit**.
+#### Terviklikkuse Kontroll (Testi juhend):
+
+6.  **Kontrolli algset, kehtivat allkirja:**
+    Veendu, et allkiri on kehtiv enne muudatuste tegemist. Kasuta avalikku võtit ja algset räsi.
 
     ```bash
-    # Dekrüpteeri (kontrolli) allkiri avaliku võtmega
     openssl pkeyutl -verify -in leping.räsi -sigfile leping.allkiri -pubin -inkey allkirjastaja_avalik.pem
     ```
 
-      * Kui väljund on `Verification successful`, tähendab see, et allkiri on kehtiv ja dokumenti pole pärast allkirjastamist muudetud.
-      * **Proovi testi:** Muuda faili `leping.txt` sisu (nt lisa tühik) ja proovi allkirja uuesti kontrollida. Kontroll peaks nurjuma.
+      * **Oodatav:** `Verification successful`
 
-**Kas sooviksid nüüd lahendusi nendele ülesannetele kontrollida või keskenduda mõnele muule krüptograafia teemale?**
+7.  **Muuda dokumenti (Riku terviklikkust):**
+    Tee faili sisse tahtlik muudatus – see simuleerib ründaja tegevust.
+
+    ```bash
+    # Lisa faili lõppu tühik
+    echo " " >> leping.txt 
+    ```
+
+8.  **Loo UUS räsi muudetud dokumendist:**
+
+    ```bash
+    openssl dgst -sha256 -binary leping.txt > muudetud.räsi
+    ```
+
+9.  **Kontrolli VANA allkirja UUE räsi vastu:**
+    Proovi kasutada algset allkirja (`leping.allkiri`) muudetud sisu räsiga (`muudetud.räsi`).
+
+    ```bash
+    openssl pkeyutl -verify -in muudetud.räsi -sigfile leping.allkiri -pubin -inkey allkirjastaja_avalik.pem
+    ```
+
+      * **Oodatav Tulemus (Tõestus):** `Verification failure`
+      * **Järeldus:** See tõestab, et faili **terviklikkus** on rikutud. Digitaalallkiri täitis oma ülesannet.
+
+-----
+
+**Kas sooviksid nüüd põhjalikku selgitust selle kohta, kuidas täpselt digitaalallkiri (räsi + asümmeetriline krüptimine) töötab?**

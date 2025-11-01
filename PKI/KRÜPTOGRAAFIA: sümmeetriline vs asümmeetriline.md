@@ -1,5 +1,3 @@
----
-
 # 🛡️ KRÜPTOGRAAFIA: sümmeetriline vs asümmeetriline
 
 *(Õppematerjal IT õpilastele)*
@@ -245,6 +243,3 @@ BRAUSER ---- AES ---------> SERVER (andmevahetus)
 * Sümmeetriline → **üks võti, kiire**, probleem on võti.
 * Asümmeetriline → **avalik + salajane võti**, võimaldab **digiallkirju**.
 * HTTPS kasutab *mõlemat*.
-
----
-

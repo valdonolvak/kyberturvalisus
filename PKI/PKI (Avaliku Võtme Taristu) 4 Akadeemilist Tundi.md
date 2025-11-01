@@ -116,7 +116,7 @@ X.509 sertifikaat seob digitaalallkirja abil **avaliku võtme** kindla **identit
 
 ---
 
-## 🌐 X.509 Kasutusvaldkonnad
+#### 🌐 X.509 Kasutusvaldkonnad
 
 X.509 sertifikaadid on **PKI nurgakivi** ja neid kasutatakse laialdaselt:
 

@@ -1,92 +1,91 @@
-Ubuntu Server kasutab võrguseadistuste haldamiseks tavaliselt **Netplan'i**, mis kasutab YAML-faile. Proxmoxi **VMBR number** asendab siin võrguliidese nime (nt `eth0`, `ens18` vms). Eeldame, et teie võrguliidese nimi on **`enpXs0`** (kus **`X`** on teie **VMBR number**), kuna Proxmoxis on tihti kasutusel ennustatavad võrguliidese nimed. Kontrollige seda siiski esmalt käsuga `ip a`.
+Kui **VMBR number on alates 10-st** ja võrguliidese nimi on **`ens18`**, on meil olemas kõik vajalik Netplan'i faili loomiseks.
 
-Järgnev juhend kirjeldab **staatilise IP-aadressi** ja **nimeserveri** seadistamist Netplan'iga.
+Juhendis kasutame muutuja **`X`** väärtust vastavalt teie VMBR numbrile (nt kui VMBR on **10**, siis **`X=10`**). Samuti eeldame, et soovite serverile staatilise IP-aadressi, näiteks **`.100`** selle võrgu sees, ja värav (gateway) on tavaliselt **`.1`** samas võrgus (nt `10.0.10.1`).
 
 -----
 
-## 💻 Ubuntu Serveri võrguseadistus (Netplan)
+## 🛠️ Ubuntu serveri võrguseadistuse juhend (Netplan)
 
-### 1\. 🔍 Leidke Netplan'i konfiguratsioonifail
+Ubuntu Server kasutab võrgu konfigureerimiseks utiliiti **Netplan**, mille seaded on kirjas **YAML**-formaadis failides.
 
-Netplan'i konfiguratsioonifailid asuvad kataloogis `/etc/netplan/`. Tavaliselt on seal üks fail, näiteks `00-installer-config.yaml` või `50-cloud-init.yaml`.
+### 1\. 🔍 Konfiguratsioonifaili leidmine ja avamine
 
-  * **Loetlege failid:**
+Netplan'i konfiguratsioonifailid asuvad kataloogis `/etc/netplan/`. Kasutage olemasolevat faili (nt `00-installer-config.yaml`) või looge uus.
+
+1.  **Leidke olemasolev fail:**
     ```bash
     ls /etc/netplan/
     ```
-  * **Tehke varukoopia** enne muutmist (asendage `<failinimi>` oma tegeliku failinimega):
+2.  **Tehke varukoopia** (asendage `<failinimi>` oma tegeliku failinimega):
     ```bash
     sudo cp /etc/netplan/<failinimi>.yaml /etc/netplan/<failinimi>.yaml.bak
     ```
-
-### 2\. ✏️ Muutke Netplan'i konfiguratsioonifaili
-
-Kasutage tekstiredaktorit (nt `nano`) faili muutmiseks.
-
-  * **Avage fail:**
+3.  **Avage fail redigeerimiseks** (kasutades tekstiredaktorit `nano`):
     ```bash
     sudo nano /etc/netplan/<failinimi>.yaml
     ```
-  * **Asendage või muutke sisu** järgmiseks. **Asendage** kindlasti:
-      * **`<X>`** Proxmoxi **VMBR numbri** ja vastava IP-aadressi numbriga (nt kui VMBR on 0, võiks IP olla `10.0.0.100`).
-      * **`<Proxmoxi_IP_värav>`** oma Proxmoxi hosti IP-aadressiga (tavaliselt see, mida kasutate väravana). Kui teie võrk on 10.0.X.0/24, on see tõenäoliselt **`10.0.X.1`**.
-      * **`<enpXs0>`** oma tegeliku võrguliidese nimega (nt `enp0s1`, `ens18` vms).
 
-<!-- end list -->
+### 2\. 📝 Netplan'i konfiguratsiooni sisu
+
+Asendage faili sisu (või muutke vastavaid osi) järgmiseks.
+
+#### Asendamist vajavad väärtused:
+
+| Parameeter | Väärtus | Näide (kui VMBR=10) |
+| :--- | :--- | :--- |
+| **Liidese nimi** | `ens18` | `ens18` |
+| **IP-aadress** | `10.0.X.100/24` | `10.0.10.100/24` |
+| **Võrguvärav** | `10.0.X.1` | `10.0.10.1` |
+| **Nimeserver** | `1.1.1.1` (ja soovi korral tagavara) | `1.1.1.1, 8.8.8.8` |
+
+#### YAML-faili näidis:
 
 ```yaml
 network:
   version: 2
-  renderer: networkd # Võib olla ka NetworkManager, sõltub paigaldusest
+  renderer: networkd # See võib olla ka NetworkManager, ärge muutke, kui te pole kindel
   ethernets:
-    <enpXs0>: # ASENDA see oma võrguliidese nimega!
-      dhcp4: no
-      addresses: [10.0.X.100/24] # ASENDA X oma VMBR numbriga ja IP lõpuosa sobivaga!
+    ens18: # Proxmoxi võrguliides
+      dhcp4: no # Lülitame DHCP välja
+      addresses: [10.0.X.100/24] # Staatiline IP koos alamvõrgumaskiga
       routes:
         - to: default
-          via: 10.0.X.1 # ASENDA see oma värava IP-ga! (nt 10.0.0.1)
+          via: 10.0.X.1 # Võrguvärav (Proxmoxi VMBR IP)
       nameservers:
-        addresses: [1.1.1.1, 8.8.8.8] # Nimeserverid: 1.1.1.1 (Cloudflare) ja tagavaraks 8.8.8.8 (Google)
+        addresses: [1.1.1.1, 8.8.8.8] # Esimene nimeserver 1.1.1.1 ja tagavaraks Google DNS
 ```
 
-> **Märkus:** YAML on **taandetest (indents)** sõltuv\! Kasutage ainult **tühikuid**, mitte tabulaatoreid, ja järgige ülalt näidatud struktuuri.
+> ⚠️ **Märkus YAML-i kohta:** Pöörake suurt tähelepanu **taandetele (indents)**. Iga tase peab olema taandatud **kahe tühikuga** (mitte tabulaatoriga).
 
-### 3\. ✅ Rakendage ja kontrollige seadistust
+### 3\. ✅ Seadistuse rakendamine
 
-Pärast faili salvestamist (nano puhul Ctrl+O, Enter, Ctrl+X) peate uued seaded rakendama:
+Pärast faili salvestamist (nano puhul Ctrl+O, Enter, Ctrl+X) rakendage uued seaded.
 
-  * **Kontrollige konfiguratsiooni (soovitatav):**
+1.  **Testige konfiguratsiooni (soovitatav):**
     ```bash
     sudo netplan try
     ```
-    See proovib seadistust ja taastab vanad seaded automaatselt, kui 120 sekundi jooksul ühendus katkeb.
-  * **Rakendage konfiguratsioon:**
+    Kui konfiguratsioonis on vigu või ühendus katkeb, taastatakse vanad seaded automaatselt 120 sekundi pärast.
+2.  **Rakendage konfiguratsioon:**
     ```bash
     sudo netplan apply
     ```
 
-### 4\. 🌐 Kontrollige ühenduvust
+### 4\. 🌐 Ühenduvuse kontrollimine
 
-  * **Kontrollige uut IP-aadressi:**
+Kontrollige, kas uus staatiline IP-aadress ja nimeserver töötavad.
+
+  * **Kontrollige IP-d:**
     ```bash
-    ip a
+    ip a show ens18
     ```
-    Veenduge, et teie liidesel `<enpXs0>` oleks õige staatiline IP.
-  * **Kontrollige värava ühenduvust:**
+  * **Kontrollige võrguväravani jõudmist:**
     ```bash
-    ping -c 3 10.0.X.1 # ASENDA X uuesti õige numbriga
+    ping -c 3 10.0.X.1
     ```
-  * **Kontrollige nimeserveri (DNS) tööd:**
+  * **Kontrollige DNS-i tööd (peaks kasutama 1.1.1.1):**
     ```bash
     ping -c 3 google.com
     ```
-    Kui see õnnestub, töötab nii teie võrk kui ka nimeserver 1.1.1.1.
 
------
-
-Kui teil on ebaselge, mis on teie võrguliidese nimi või kui te ei leia õiget Netplan'i faili, saame seda edasi vaadata.
-
-See video annab üldise ülevaate staatilise IP-aadressi seadistamisest Ubuntu Netplan'i abil, mis on sarnane teie vajadustega. [Using Netplan to set up a Static IP Configuration (Ubuntu Ungoliant)](https://www.youtube.com/watch?v=dUvgGXY9k6E)
-
-Mida sooviksite järgmisena teha? Võin aidata näiteks tulemüüri (nt UFW) seadistamisega.
-http://googleusercontent.com/youtube_content/0
+Kui kõik õnnestus, on võrk soovitud parameetritega seadistatud\!

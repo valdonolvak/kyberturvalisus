@@ -165,4 +165,62 @@ VEBISERVER paigaldab oma privaatvõtme, äsja saadud sertifikaadi ja CA sertifik
 
 **See ülesanne demonstreerib võtmete ja sertifikaatide elutsüklit kahes eraldi turvatsoonis, mis on PKI arhitektuuris standardne praktika.**
 
-Kas on veel mõni aspekt (nt sertifikaatide tühistamine), mida sooviksid sellesse õppeülesandesse lisada?
+
+Kuidas Linuxi käsurealt **OpenSSL-i abil sertifikaati kontrollida** – see on igapäevane oskus IT-administraatoritele.
+
+-----
+
+## 🔍 V. Sertifikaadi Kontroll Linuxi Käsurealt
+
+Sertifikaadi kontrollimine on vajalik selleks, et veenduda, et see on allkirjastatud õige CA poolt ja sisaldab vajalikke andmeid.
+
+### 5.1 CA ja Allkirja Kontroll (Server 2)
+
+Kasutame OpenSSL-i, et vaadata, kes sertifikaadi allkirjastas (Issuer) ja milline on selle sisu.
+
+| Kontrollitav fail | Asukoht | Märkus |
+| :--- | :--- | :--- |
+| **`server.crt`** | VEBISERVER | Lõplik serveri sertifikaat. |
+| **`ca.crt`** | VEBISERVER | CA juursertifikaat. |
+
+#### Samm-sammuline juhend:
+
+1.  **Vaata serveri sertifikaadi sisu ja väljastajat (Issuer):**
+    Selle käsu abil saad näha sertifikaadi omanikku (Subject), selle kehtivusaega ja kõige olulisemat – **väljastajat (Issuer)**, mis peab olema sinu loodud CA nimi.
+
+    ```bash
+    # VEBISERVERIS
+    openssl x509 -in server.crt -text -noout
+    ```
+
+      * **Oodatav väljund:** Otsi rida **`Issuer:`** ja veendu, et see vastab sinu CA nimele, nt:
+        `Issuer: C = EE, ST = Harjumaa, O = My Company, CN = My Test Root CA`
+      * **Märkus:** Rida **`Subject:`** peaks vastama sinu domeeninimele (`minudomeen.local`).
+
+2.  **Vaata CA juursertifikaadi sisu (CA allkiri):**
+    Vaata nüüd CA juursertifikaadi sisu. Kuna see on ise allkirjastatud sertifikaat, peaks selle väljastaja (`Issuer`) olema sama mis sertifikaadi omanik (`Subject`). See on *self-signed* allkirja tunnus.
+
+    ```bash
+    # VEBISERVERIS
+    openssl x509 -in ca.crt -text -noout
+    ```
+
+      * **Oodatav väljund:** Veendu, et **`Issuer:`** on sama mis **`Subject:`**, nt:
+        `Issuer: C = EE, ST = Harjumaa, O = My Company, CN = My Test Root CA`
+        `Subject: C = EE, ST = Harjumaa, O = My Company, CN = My Test Root CA`
+
+3.  **Kontrolli Sertifikaadiahelat (Kas allkiri on usaldusväärne):**
+    See käsk proovib krüptograafiliselt kontrollida, kas `server.crt` on allkirjastatud `ca.crt` poolt. See on **CA allkirja tegelik kontroll**.
+
+    ```bash
+    # VEBISERVERIS
+    openssl verify -CAfile ca.crt server.crt
+    ```
+
+      * **Oodatav väljund:** Kui allkirjad sobivad, annab see tulemuse: **`server.crt: OK`**.
+      * **Veateade näiteks:** Kui sa prooviksid seda käsku ilma `-CAfile ca.crt` parameetrita, ütleks OpenSSL, et ta ei usalda seda sertifikaati (kuna tal pole juur-CA-d, mida ta usaldaks).
+
+### Kokkuvõte 🧐
+
+  * **`openssl x509 -in ... -text -noout`** – Annab **tekstikujulise tõlgenduse** sertifikaadist, näidates, **kes on väljastaja (CA)**.
+  * **`openssl verify -CAfile ...`** – **Krüptograafiliselt kontrollib** sertifikaadi (sh selle allkirja) kehtivust antud CA vastu.

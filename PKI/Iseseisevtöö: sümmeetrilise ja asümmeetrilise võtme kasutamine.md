@@ -25,7 +25,7 @@ Selles ülesandes kasutatakse **sümmeetrilist krüptograafiat (AES)** tundliku 
 
     ```bash
     # Käsk krüpteerimiseks (sisestage parool)
-    openssl enc -aes-256-cbc -salt -in salajane.txt -out krüpteeritud.aes
+    openssl enc -aes-256-cbc -salt -pbkdf2 -in salajane.txt -out krüpteeritud.aes
     ```
 
     > **Märkus:** `-salt` tagab krüpteerimise turvalisuse, lisades unikaalse juhusliku väärtuse (*salt*).

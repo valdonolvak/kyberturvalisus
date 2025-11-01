@@ -88,7 +88,7 @@ Selles ülesandes luuakse **avaliku/privaatse võtme paar (RSA)** ja kasutatakse
 
     ```bash
     # Krüpteeri sõnum avaliku võtmega
-    openssl rsautl -encrypt -pubin -inkey minu_avalik.pem -in saatja_sõnum.txt -out krüpteeritud_teade.dat
+    openssl pkeyutl -encrypt -pubin -inkey minu_avalik.pem -in saatja_sõnum.txt -out krüpteeritud_teade.dat
     ```
 
 5.  **Dekrüpteeri sõnum (Vastuvõtja pool):**
@@ -96,7 +96,7 @@ Selles ülesandes luuakse **avaliku/privaatse võtme paar (RSA)** ja kasutatakse
 
     ```bash
     # Dekrüpteeri sõnum privaatvõtmega (sisesta parool, kui on)
-    openssl rsautl -decrypt -inkey minu_privaatne.pem -in krüpteeritud_teade.dat -out dekrüpteeritud_teade.txt
+    openssl pkeyutl -decrypt -inkey minu_privaatne.pem -in krüpteeritud_teade.dat -out dekrüpteeritud_teade.txt
     ```
 
 6.  **Kontrolli dekrüpteeritud sõnumit:**

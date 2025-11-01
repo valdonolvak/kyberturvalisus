@@ -128,7 +128,7 @@ X.509 sertifikaadid on **PKI nurgakivi** ja neid kasutatakse laialdaselt:
 
 ---
 
-## 📜 Sertifikaadi Versioonid
+#### 📜 Sertifikaadi Versioonid
 
 Standard on aja jooksul arenenud, lisades uusi funktsioone:
 

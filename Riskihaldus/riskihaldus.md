@@ -1,6 +1,5 @@
 Praktiline ülevaade IT-eriala teemadel: **Riskid**, **riskiregister (risk register) ja riskianalüüsi (risk analysis) koostamine**, **riskide realiseerumise tõenäosus (likelihood) ja mõju (impact)**, **leevenduskava (mitigation plan)** ja **muudatuste haldus (change management)**.
 
-Kirjutan eestikeelselt ja kasutan sinu eelistatud terminoloogiat — iga Eesti termin järel on ingliskeelne vaste sulgudes (nagu sa soovisid). Materjal sisaldab: põhjalikku teooriat, iga alamteema kohta 3 illustratiivset näidet koos analüüsi ja selgitusega, 6 praktilist õpiülesannet ning üks täielik näidis riskiregistri ja leevenduskava kohta, mida õpilased saavad kohe kasutada või modifitseerida.
 
 # 1. Sissejuhatus riskide mõistesse
 

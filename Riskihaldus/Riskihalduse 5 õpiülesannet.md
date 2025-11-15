@@ -109,3 +109,7 @@ Näidisülesanne on leitav aadresstil:
 https://github.com/valdonolvak/kyberturvalisus-privaatne/blob/main/P%C3%B5hjalik%20samm-sammuline%20N%C3%84IDIS%C3%9CLESANNE%20-%20riskihaldus.md 
 
 ---
+
+ # ✅ **IT-turberiskide hindamise raamistik**
+ Raamistik on leitav aadressil:
+ https://github.com/valdonolvak/kyberturvalisus/blob/main/Riskihaldus/2.%20IT-turberiskide%20hindamise%20raamistik%20-%20kategooriad%20koos%20seletustega.md

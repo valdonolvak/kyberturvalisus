@@ -1,4 +1,4 @@
-Suurepärane — annan nüüd **väga, väga põhjaliku**, õpetamisstiilis ja praktilise ülevaate IT-eriala õpilastele teemadel: **Riskid**, **riskiregister (risk register) ja riskianalüüsi (risk analysis) koostamine**, **riskide realiseerumise tõenäosus (likelihood) ja mõju (impact)**, **leevenduskava (mitigation plan)** ja **muudatuste haldus (change management)**.
+Praktiline ülevaade IT-eriala teemadel: **Riskid**, **riskiregister (risk register) ja riskianalüüsi (risk analysis) koostamine**, **riskide realiseerumise tõenäosus (likelihood) ja mõju (impact)**, **leevenduskava (mitigation plan)** ja **muudatuste haldus (change management)**.
 
 Kirjutan eestikeelselt ja kasutan sinu eelistatud terminoloogiat — iga Eesti termin järel on ingliskeelne vaste sulgudes (nagu sa soovisid). Materjal sisaldab: põhjalikku teooriat, iga alamteema kohta 3 illustratiivset näidet koos analüüsi ja selgitusega, 6 praktilist õpiülesannet ning üks täielik näidis riskiregistri ja leevenduskava kohta, mida õpilased saavad kohe kasutada või modifitseerida.
 
@@ -317,24 +317,3 @@ Allpool on praktiline tabel ning üks risk välja toodud ja detailselt läbi tö
 **Mõõdikute jälgimine:** iganädalased security dashboardid, kvartaalne riskiaruanne.
 
 ---
-
-# 9. Korduma kippuvad nõuanded õpetajale ja praktikaks
-
-* Alustage lihtsast riskiskoori mudelist ja koos õpilastega keerukamate kvantitatiivsete mudelite juurde.
-* Kasutage reaalseid juhtumeid (avalikest allikatest) aruteluks ja post-mortem-analüüsiks.
-* Julgustage dokumenteerimist — riskiregister ei tohiks olla ainult loetelu, vaid tõeline tööriist, mida kasutatakse koos muudatuste haldusega.
-* Integreerige muudatuste haldus kooli projektidesse: iga suurem koodimuudatus peaks läbima CR-protsessi.
-* Praktika: laske õpilastel teha “mock incident” ja hinnata, kuidas nende leevendused töötavad.
-
----
-
-# 10. Soovitused edasiseks (kui tahad, ma teen edasi)
-
-Kui soovid, võin järgmist teha koheselt (vali üks või mitu):
-
-* teisendada selle dokumendi **PDF-iks** (printeriks valmis, inglise/eesti terminitega),
-* teha **PowerPoint**-esitluse õpetaja märkustega (slaidid + näpunäited),
-* kokku panna **täieliku riskiregistri .csv** failina, mida õpilased saavad importida,
-* luua **hindamiskriteeriumid** ja lahendused õpiülesannetele.
-
-Räägi, kumba neist tahad edasi (võin kohe koostada ja saata).

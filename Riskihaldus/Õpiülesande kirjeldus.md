@@ -1,0 +1,145 @@
+
+# **RISKIANALÜÜSI ÕPIÜLESANNE**
+
+**Õppematerjalid:**
+
+* Samm-sammuline näidisülesanne: *(GitHubis)*
+* IT-turberiskide hindamise raamistik: *(GitHubis)*
+
+## **Ülesande eesmärk**
+
+Õppija valib allolevate viie ülesande seast **kaks** ning koostab nende põhjal **täieliku riskihalduse analüüsi**, kasutades tunnis õpitud metoodikat ja lisamaterjale.
+
+Töö peab sisaldama:
+
+* riskide tuvastamist,
+* riskide mõju ja tõenäosuse hindamist,
+* riskide tuvastamise meetodeid,
+* leevendusmeetmeid,
+* leevenduse testimise viise (kui nõutud),
+* vajadusel taastamisplaane.
+
+---
+
+# **ÜLESANDED (vali 2/5)**
+
+---
+
+## **Ülesanne 1 – Virtualiseerimiskeskkonna (Proxmox) riskide hindamine**
+
+Analüüsi Proxmoxi ja virtuaalmasinate keskkonna riske järgmiste näidete põhjal:
+
+* ressursipuudus (RAM/CPU/disk),
+* RAID1 ketta riknemine,
+* snapshotide vale kasutus,
+* VLAN-i ja võrguliikluse riskid,
+* hypervisori tarkvaravead.
+
+**Iga riski kohta esita:**
+
+1. Milliseid teenuseid see risk mõjutab.
+2. Kuidas seda riski tuvastada (logid, monitor, SIEM, Proxmoxi alertid).
+3. Milline on toimiv leevendusmeede või lahendus.
+
+---
+
+## **Ülesanne 2 – Veebiserverite (veeb1, veeb2, koormusjaotur) riskianalüüs**
+
+Tuvasta vähemalt **12 riski**, mis on seotud:
+
+* koormusjaoturi (HAProxy) valekonfiguratsiooniga,
+* WordPressi ja PHP haavatavustega,
+* andmebaasiga suhtlemisega,
+* SSH võtmete haldusega,
+* pluginatega,
+* varunduse puudumisega.
+
+**Iga riski kohta esita:**
+
+1. Tõenäosus.
+2. Mõju.
+3. Leevendus.
+4. Kuidas testida leevenduse toimivust.
+
+---
+
+## **Ülesanne 3 – Võrgu ja VLAN-ide riskiregister**
+
+Koosta riskiregister, mis hõlmab:
+
+* Fortigate konfiguratsiooni riske,
+* Cisco switching riske,
+* Ubiquiti WiFi riske,
+* DHCP snooping rikete riske,
+* võõra kliendi (rogue client) ilmumist VLAN200 võrku.
+
+Lisa vähemalt **3 ründestsenaariumi**, näiteks:
+
+* VLAN hopping rünnak,
+* rogue DHCP server,
+* Wi-Fi deauth rünnak.
+
+**Kõigi riskide ja stsenaariumite kohta esita:**
+
+1. Mõju teenustele.
+2. Parandused / leevendusmeetmed.
+3. Tuvastamise meetodid (logid, IDS, SIEM, monitoring).
+
+---
+
+## **Ülesanne 4 – Varunduse ja paroolihalduse riskianalüüs**
+
+Analüüsi riske, mis on seotud:
+
+* Docker-keskkonna rikkega,
+* paroolihaldurite (Vaultwarden, Bitwarden, Passbolt jne) haavatavustega,
+* KeePassi offline koopiate lekkega,
+* varukoopiate korruptsiooniga,
+* backupite testimise puudumisega.
+
+Loo **täielik leevenduskava**, mis sisaldab:
+
+1. backup rotation policy,
+2. paroolipoliitikad,
+3. õiguste mudel,
+4. auditilogid ja nende kontrollimine,
+5. taastamisprotseduurid.
+
+---
+
+## **Ülesanne 5 – Muudatuste halduse riskid (Change Management)**
+
+Koosta muudatuste halduse riskianalüüs järgmiste olukordade jaoks:
+
+* GPO muudatus, mis katkestab klientide töö,
+* vale konfigureeritud firewalli reegel Fortigate’is,
+* vale DNS kirje,
+* vale Ansible playbook, mis uuendab kõik serverid korraga,
+* vale VLAN rakendamine Cisco kommutaatoris,
+* Proxmoxi kernel uuendus, mis rikub bootimise.
+
+**Iga juhtumi puhul selgita:**
+
+1. Kuidas risk realiseerub.
+2. Kuidas seda ennetada.
+3. Kuidas aru saada, et muutus läks valesti.
+4. Kuidas taastada süsteem.
+
+---
+
+# **Töö esitamise vorm**
+
+Esita töö **Google Docs vormingus**, mis sisaldab:
+
+* pealkirja,
+* valitud ülesannete numbreid,
+* riskitabeleid,
+* järeldusi ja kokkuvõtteid,
+* kasutatud allikaid (sh raamistik).
+
+---
+
+
+---
+
+Kui soovid, võin koostada ka **hindamismudeli / rubriigi**, **tühjad riskitabelid**, **täidetud näidisriskid**, **Moodle’i ülesande teksti**, **PDF-malli**, või **automaatse kontroll-lehe õppijale**.

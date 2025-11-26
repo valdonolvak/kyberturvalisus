@@ -1,4 +1,4 @@
-## Küberhügieeni Põhimõtete Süvendatud Analüüs Näidetega
+## Küberhügieeni põhimõtete süvendatud analüüs näidetega
 
 ### 1. Tarkvara uuendamine (Patch Management)
 

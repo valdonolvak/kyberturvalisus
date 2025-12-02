@@ -6,7 +6,7 @@ export default function App() {
     {
       id: 1,
       prompt:
-        "Tase 1 — Mis termin tähistab kolme peamist infoturbe eesmärki: konfidentsiaalsus, terviklikkus ja kättesaadavus? (3-täheline lühend)",
+        "Tase 1 — Mis termin tähistab kolme peamist infoturbe eesmärki: konfidentsiaalsus, terviklikkus ja kättesaadavus? (3-täheline lühend inglise keeles sõnade lühend)",
       answer: "cia",
       hint: "Algustähed sõnadest Confidentiality, Integrity, Availability.",
       solution: "Vastus on CIA (Confidentiality, Integrity, Availability).",

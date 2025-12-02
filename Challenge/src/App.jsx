@@ -220,9 +220,14 @@ export default function App() {
   ];
 
   const maxHints = 3;
-  const HINT_PENALTY = 15; // MUUTUS: Lisatud konstant punktide kaotamiseks vihje kasutamisel
+  const HINT_PENALTY = 15; 
 
-  // --- State Hooks (Jäetud muutmata) ---
+  // --- State Hooks ---
+  const [gameState, setGameState] = useState(() => {
+    // Kontrolli localStorage'i, et teada, kas mäng on pooleli
+    const savedLevel = localStorage.getItem("cyber_level");
+    return savedLevel ? 'quiz' : 'intro'; // Alustame 'intro' lehelt, kui progress puudub
+  });
   const [level, setLevel] = useState(() => {
     const saved = localStorage.getItem("cyber_level");
     return saved ? Number(saved) : 1;
@@ -246,9 +251,11 @@ export default function App() {
 
   const timerRef = useRef(null);
 
-  // --- useEffects (Jäetud muutmata) ---
+  // --- Loogika (Muutmata) ---
 
   useEffect(() => {
+    if (gameState !== 'quiz' && gameState !== 'intro') return;
+
     const q = QUESTIONS.find((q) => q.id === level) || QUESTIONS[0];
     setTimeLeft(q.timeLimitSeconds);
     setInput("");
@@ -257,7 +264,7 @@ export default function App() {
     setShowHintText(false);
     setShowSolutionText(false);
     localStorage.setItem("cyber_level", level);
-  }, [level]);
+  }, [level, gameState]);
 
   useEffect(() => {
     localStorage.setItem("cyber_score", score);
@@ -268,7 +275,7 @@ export default function App() {
   }, [usedHints]);
 
   useEffect(() => {
-    if (quizFinished) return;
+    if (quizFinished || gameState !== 'quiz') return;
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setTimeLeft((t) => {
@@ -281,9 +288,9 @@ export default function App() {
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [level, quizFinished]);
+  }, [level, quizFinished, gameState]);
 
-  // --- Funktsioonid ---
+  // --- Funktsioonid (Jäetud muutmata, v.a. handleUseHint) ---
 
   const normalize = (s) => s.trim().toLowerCase();
 
@@ -332,7 +339,6 @@ export default function App() {
   }
 
   function handleUseHint() {
-    // MUUTUS: Vihje kasutamine vähendab skoori, aga ei kulu õlekõrt.
     if (showHintText) {
       setMessage("Vihje on juba nähtaval.");
       return;
@@ -340,20 +346,25 @@ export default function App() {
     
     setScore((s) => {
       const newScore = s - HINT_PENALTY;
-      return Math.max(0, newScore); // Et skoor ei läheks negatiivseks
+      return Math.max(0, newScore);
     });
     setMessage(`Kasutad vihjet, skoorist lahutati ${HINT_PENALTY} punkti.`);
     setShowHintText(true);
   }
 
   function handleRevealSolution() {
-    // Lahenduse näitamine kulutab endiselt õlekõrva ja nõuab nende olemasolu
     if (usedHints >= maxHints) {
       setMessage("Õlekõrsed otsas — ei saa lahendust näidata.");
       return;
     }
     setShowSolutionText(true);
     setUsedHints((h) => h + 1);
+  }
+  
+  function handleStartQuiz() {
+    // Alusta uue seansi algusest
+    resetProgress(); 
+    setGameState('quiz');
   }
 
   function resetProgress() {
@@ -368,6 +379,9 @@ export default function App() {
     setMessage("Edusammud lähtestatud.");
     setQuizFinished(false);
     setStartTime(Date.now());
+    if (gameState !== 'intro') { // Kui lähtestatakse mängu sees
+      setGameState('quiz');
+    }
   }
 
   const q = QUESTIONS.find((q) => q.id === level) || QUESTIONS[0];
@@ -376,8 +390,9 @@ export default function App() {
   const minutes = Math.floor(totalTimeSec / 60);
   const seconds = totalTimeSec % 60;
 
-  // --- Lõpuvaade (Jäetud muutmata) ---
+  // --- ERILINE OLEK: Mäng on lõppenud ---
   if (quizFinished) {
+    // (Lõpuvaade on jäetud muutmata)
     return (
       <div className="min-h-screen bg-slate-900 text-slate-100 p-6 flex flex-col items-center justify-center">
         <div className="max-w-2xl bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-2xl p-6 text-center">
@@ -392,7 +407,10 @@ export default function App() {
 
           <div className="flex flex-col gap-3">
             <button
-              onClick={resetProgress}
+              onClick={() => {
+                resetProgress();
+                setGameState('intro'); // Tagasi algusesse
+              }}
               className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold"
             >
               Alusta uuesti
@@ -407,11 +425,43 @@ export default function App() {
           </div>
         </div>
       </div>
-  );
+    );
   }
 
-  // --- Kujundus (Säilitatud minimalistlik paigutus) ---
+  // --- ESIMENE OLEK: Sissejuhatus / Reeglid ---
+  if (gameState === 'intro') {
+    return (
+      <div className="min-h-screen bg-[#111827] text-slate-100 flex items-center justify-center p-8">
+        <div className="bg-[#1F2937] p-10 rounded-xl shadow-2xl max-w-3xl w-full">
+          <h1 className="text-4xl font-extrabold text-blue-400 mb-6 border-b border-slate-700 pb-3">
+            Küberväljakutse Mängureeglid 🛡️
+          </h1>
+          <p className="text-slate-300 mb-6">
+            Tegu on 20-tasemelise küsimustikuga, mis paneb proovile sinu teadmised küberjulgeolekust ja krüptograafiast. Iga tase lukustub järgmise õigesti lahendamisel.
+          </p>
 
+          <h2 className="text-2xl font-bold mb-3">Reeglid:</h2>
+          <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4 mb-8">
+            <li>Iga küsimuse lahendamiseks on piiratud aeg (näidatud külgribal).</li>
+            <li>Õige vastuse eest saad punkte, mis sõltuvad ajast ja kasutamata õlekõrtest.</li>
+            <li>**Vihje Kasutamine:** Vihje näitamisel lahutatakse sinu skoorist **{HINT_PENALTY} punkti**, kuid õlekõrs ei kulu. Vihjet saab kasutada piiramatult.</li>
+            <li>**Lahenduse Näitamine:** Lahenduse näitamiseks pead kulutama **ühe õlekõrre**. Kokku on sul {maxHints} õlekõrt.</li>
+            <li>**Kinnitamine:** Pärast õiget vastust pead 15 sekundi jooksul vajutama "**Kinnita**".</li>
+          </ul>
+
+          <button
+            onClick={handleStartQuiz}
+            className="w-full px-8 py-4 bg-green-600 hover:bg-green-700 rounded-lg text-white text-xl font-bold transition duration-150 shadow-lg"
+          >
+            Alusta seiklust 🚀
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+  // --- PÕHIOLEK: Mängu käigus ---
   return (
     <div className="min-h-screen bg-[#111827] text-slate-100 flex">
       
@@ -420,13 +470,16 @@ export default function App() {
         <h2 className="text-2xl font-bold mb-4 text-white">Külgriba</h2>
         <div className="space-y-4 text-lg">
           <p>Skoor: <span className="font-mono text-green-400">{score}</span></p>
-          <p>Vihjed: <span className="font-mono text-orange-400">{usedHints}/{maxHints}</span></p>
+          <p>Õlekõrsi jäänud: <span className="font-mono text-orange-400">{maxHints - usedHints}</span></p>
           <p>Aega jäänud: <span className="font-mono">{timeLeft}s</span></p>
         </div>
         
         <div className="mt-auto pt-6 border-t border-slate-700">
           <button
-            onClick={resetProgress}
+            onClick={() => {
+              resetProgress();
+              setGameState('intro');
+            }}
             className="w-full px-4 py-3 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold transition duration-150"
           >
             Lähtesta mäng
@@ -476,11 +529,10 @@ export default function App() {
             </button>
           )}
           
-          {/* MUUTUS: Vihje nupp on taastatud ja seotud handleUseHint punktikaotusega */}
           <button
             onClick={handleUseHint}
             className="px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition duration-150"
-            disabled={showHintText} // Keela nupp, kui vihje on juba nähtaval
+            disabled={showHintText}
           >
             Näita vihjet
           </button>
@@ -490,7 +542,7 @@ export default function App() {
             className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition duration-150"
             disabled={usedHints >= maxHints || showSolutionText}
           >
-            Näita lahendust
+            Näita lahendust ({maxHints - usedHints} jäänud)
           </button>
         </div>
 

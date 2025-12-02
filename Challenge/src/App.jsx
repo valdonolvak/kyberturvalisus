@@ -224,10 +224,11 @@ export default function App() {
 
   // --- State Hooks ---
   const [gameState, setGameState] = useState(() => {
-    // Kontrolli localStorage'i, et teada, kas mäng on pooleli
+    // KONTROLL: Kui level on salvestatud, alustame 'quiz' olekust, vastasel juhul 'intro'
     const savedLevel = localStorage.getItem("cyber_level");
-    return savedLevel ? 'quiz' : 'intro'; // Alustame 'intro' lehelt, kui progress puudub
+    return savedLevel ? 'quiz' : 'intro';
   });
+  
   const [level, setLevel] = useState(() => {
     const saved = localStorage.getItem("cyber_level");
     return saved ? Number(saved) : 1;
@@ -251,10 +252,10 @@ export default function App() {
 
   const timerRef = useRef(null);
 
-  // --- Loogika (Muutmata) ---
+  // --- Loogika ---
 
   useEffect(() => {
-    if (gameState !== 'quiz' && gameState !== 'intro') return;
+    if (gameState !== 'quiz') return;
 
     const q = QUESTIONS.find((q) => q.id === level) || QUESTIONS[0];
     setTimeLeft(q.timeLimitSeconds);
@@ -290,7 +291,7 @@ export default function App() {
     return () => clearInterval(timerRef.current);
   }, [level, quizFinished, gameState]);
 
-  // --- Funktsioonid (Jäetud muutmata, v.a. handleUseHint) ---
+  // --- Funktsioonid ---
 
   const normalize = (s) => s.trim().toLowerCase();
 
@@ -361,14 +362,21 @@ export default function App() {
     setUsedHints((h) => h + 1);
   }
   
+  // UUS FUNKTSIOON: Alusta Seiklust
   function handleStartQuiz() {
-    // Alusta uue seansi algusest
-    resetProgress(); 
+    // Kontrolli progressi ja lähtesta, et tagada puhas algus, kui just ei jätkata
+    if (level > 1 || score > 0 || usedHints > 0) {
+      resetProgress(); 
+    } else {
+      // Lihtsalt muudame oleku, kui progressi pole
+      setLevel(1);
+    }
     setGameState('quiz');
   }
 
   function resetProgress() {
-    if (!confirm("Pärast kinnitamist sinu edusammud kustutatakse — oled kindel?")) return;
+    if (gameState !== 'intro' && !confirm("Pärast kinnitamist sinu edusammud kustutatakse — oled kindel?")) return;
+    
     localStorage.removeItem("cyber_level");
     localStorage.removeItem("cyber_score");
     localStorage.removeItem("cyber_hints");
@@ -379,9 +387,6 @@ export default function App() {
     setMessage("Edusammud lähtestatud.");
     setQuizFinished(false);
     setStartTime(Date.now());
-    if (gameState !== 'intro') { // Kui lähtestatakse mängu sees
-      setGameState('quiz');
-    }
   }
 
   const q = QUESTIONS.find((q) => q.id === level) || QUESTIONS[0];
@@ -392,7 +397,7 @@ export default function App() {
 
   // --- ERILINE OLEK: Mäng on lõppenud ---
   if (quizFinished) {
-    // (Lõpuvaade on jäetud muutmata)
+    // ... Lõpuvaade ...
     return (
       <div className="min-h-screen bg-slate-900 text-slate-100 p-6 flex flex-col items-center justify-center">
         <div className="max-w-2xl bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-2xl p-6 text-center">
@@ -409,7 +414,7 @@ export default function App() {
             <button
               onClick={() => {
                 resetProgress();
-                setGameState('intro'); // Tagasi algusesse
+                setGameState('intro'); 
               }}
               className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold"
             >
@@ -448,7 +453,8 @@ export default function App() {
             <li>**Lahenduse Näitamine:** Lahenduse näitamiseks pead kulutama **ühe õlekõrre**. Kokku on sul {maxHints} õlekõrt.</li>
             <li>**Kinnitamine:** Pärast õiget vastust pead 15 sekundi jooksul vajutama "**Kinnita**".</li>
           </ul>
-
+          
+          {/* Alusta nupp, mis käivitab mängu */}
           <button
             onClick={handleStartQuiz}
             className="w-full px-8 py-4 bg-green-600 hover:bg-green-700 rounded-lg text-white text-xl font-bold transition duration-150 shadow-lg"
@@ -477,6 +483,7 @@ export default function App() {
         <div className="mt-auto pt-6 border-t border-slate-700">
           <button
             onClick={() => {
+              // Lähtesta progress ja suuna intro lehele
               resetProgress();
               setGameState('intro');
             }}
@@ -534,7 +541,7 @@ export default function App() {
             className="px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition duration-150"
             disabled={showHintText}
           >
-            Näita vihjet
+            Näita vihjet (-{HINT_PENALTY} punkti)
           </button>
 
           <button
@@ -542,7 +549,7 @@ export default function App() {
             className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition duration-150"
             disabled={usedHints >= maxHints || showSolutionText}
           >
-            Näita lahendust ({maxHints - usedHints} jäänud)
+            Näita lahendust ({maxHints - usedHints} õlekõrt jäänud)
           </button>
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 export default function App() {
-  // --- QUESTIONS Massiiv (Jäetud muutmata, kuid sisaldab kõiki 20 taset) ---
+  // --- QUESTIONS Massiiv (Jäetud muutmata, sisaldab kõiki 20 taset) ---
   const QUESTIONS = [
     {
       id: 1,
@@ -220,8 +220,9 @@ export default function App() {
   ];
 
   const maxHints = 3;
+  const HINT_PENALTY = 15; // MUUTUS: Lisatud konstant punktide kaotamiseks vihje kasutamisel
 
-  // --- State Hooks ---
+  // --- State Hooks (Jäetud muutmata) ---
   const [level, setLevel] = useState(() => {
     const saved = localStorage.getItem("cyber_level");
     return saved ? Number(saved) : 1;
@@ -245,7 +246,7 @@ export default function App() {
 
   const timerRef = useRef(null);
 
-  // --- useEffects (Loogika on jäänud samaks) ---
+  // --- useEffects (Jäetud muutmata) ---
 
   useEffect(() => {
     const q = QUESTIONS.find((q) => q.id === level) || QUESTIONS[0];
@@ -282,7 +283,7 @@ export default function App() {
     return () => clearInterval(timerRef.current);
   }, [level, quizFinished]);
 
-  // --- Funktsioonid (Loogika on jäänud samaks) ---
+  // --- Funktsioonid ---
 
   const normalize = (s) => s.trim().toLowerCase();
 
@@ -331,14 +332,22 @@ export default function App() {
   }
 
   function handleUseHint() {
-    if (usedHints >= maxHints) {
-      setMessage("Sul õlekõrsi enam ei jagu.");
+    // MUUTUS: Vihje kasutamine vähendab skoori, aga ei kulu õlekõrt.
+    if (showHintText) {
+      setMessage("Vihje on juba nähtaval.");
       return;
     }
+    
+    setScore((s) => {
+      const newScore = s - HINT_PENALTY;
+      return Math.max(0, newScore); // Et skoor ei läheks negatiivseks
+    });
+    setMessage(`Kasutad vihjet, skoorist lahutati ${HINT_PENALTY} punkti.`);
     setShowHintText(true);
   }
 
   function handleRevealSolution() {
+    // Lahenduse näitamine kulutab endiselt õlekõrva ja nõuab nende olemasolu
     if (usedHints >= maxHints) {
       setMessage("Õlekõrsed otsas — ei saa lahendust näidata.");
       return;
@@ -401,10 +410,9 @@ export default function App() {
   );
   }
 
-  // --- Minimalistlik Paigutus (Vastavalt pildile) ---
+  // --- Kujundus (Säilitatud minimalistlik paigutus) ---
 
   return (
-    // Paigutus: flex row, mis täidab kogu ekraani kõrguse
     <div className="min-h-screen bg-[#111827] text-slate-100 flex">
       
       {/* Külgriba (vasak pool) */}
@@ -468,10 +476,11 @@ export default function App() {
             </button>
           )}
           
+          {/* MUUTUS: Vihje nupp on taastatud ja seotud handleUseHint punktikaotusega */}
           <button
             onClick={handleUseHint}
             className="px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition duration-150"
-            disabled={usedHints >= maxHints}
+            disabled={showHintText} // Keela nupp, kui vihje on juba nähtaval
           >
             Näita vihjet
           </button>

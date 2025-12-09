@@ -1,7 +1,3 @@
-**Õppematerjaliks kokku pandud terviklik, loogiliselt struktureeritud ja õpetlik tekst**
-
----
-
 # **Software Supply Chain Attack – Päris eluline näide: SolarWinds Orion rünne (2020)**
 
 **Õppematerjal IT-õpilastele**

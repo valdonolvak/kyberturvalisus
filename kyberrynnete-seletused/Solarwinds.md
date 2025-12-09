@@ -1,6 +1,4 @@
-Allpool on **ühiseks õppematerjaliks kokku pandud terviklik, loogiliselt struktureeritud ja õpetlik tekst**, mis ühendab mõlemad eelnevad selgitused üheks ühtseks materjaliks.
-
-Saad kasutada seda loengus, töötoas või õppematerjalina.
+**Õppematerjaliks kokku pandud terviklik, loogiliselt struktureeritud ja õpetlik tekst**
 
 ---
 

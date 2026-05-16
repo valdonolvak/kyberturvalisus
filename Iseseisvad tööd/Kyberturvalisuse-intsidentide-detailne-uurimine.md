@@ -13,7 +13,8 @@ https://github.com/valdonolvak/kyberturvalisus/blob/main/Iseseisvad%20t%C3%B6%C3
 
 * **Samm 2: Lisamaterjaliga tutvumine**
 Et valitud teemast paremini aru saada, lugege läbi järgmine materjal, kus ründeliike on põhjalikumalt lahti seletatud:
-[https://github.com/valdonolvak/kyberturvalisus/blob/467e51984662346b2019f3b92afcf33f1e4f0b88/Iseseisvad%20t%C3%B6%C3%B6d/Phishing'u%2C-varad.2unad]()
+https://github.com/valdonolvak/kyberturvalisus/blob/main/Iseseisvad%20t%C3%B6%C3%B6d/Phishing'u%2C%20DDoS-i%20ja%20Lunavara.md
+
 * **Samm 3: Töö vormistamine näidise põhjal**
 Võtke oma analüüsi koostamisel aluseks eeskujulik näidislahendus (õppematerjal ründeliikide Phishing, DDoS ja Lunavara kohta). See fail näitab täpselt ära, kuidas teemat käsitleda ja millist struktuuri grupitöös kasutada:
 [https://github.com/valdonolvak/kyberturvalisus/blob/467e51984662346b2019f3b92afcf33f1e4f0b88/Iseseisvad%20t%C3%B6%C3%B6d/Phishing%2C%20DDoS%20ja%20Lunavara%20(R%C3%BCndeliitide%20detailne%20uurimine).md]()

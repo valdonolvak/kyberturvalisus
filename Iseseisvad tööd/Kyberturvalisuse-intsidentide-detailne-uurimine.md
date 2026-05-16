@@ -9,7 +9,8 @@ Teie ülesandeks on valida etteantud juhtumite hulgast üks reaalne küberturval
 
 * **Samm 1: Teema valimine**
 Valige dokumendist "10 reaalset küberturvalisuse intsidenti" üks juhtum, mida hakkate lähemalt uurima. Juhtumite nimekirja ja iseseisvate tööde üldkausta leiate siit:
-[https://github.com/valdonolvak/kyberturvalisus/tree/467e51984662346b2019f3b92afcf33f1e4f0b88/Iseseisvad%20t%C3%B6%C3%B6d]()
+https://github.com/valdonolvak/kyberturvalisus/blob/main/Iseseisvad%20t%C3%B6%C3%B6d/10%20reaalset%20k%C3%BCberturvalisuse%20intsidenti%20-%20uurimiseks.md
+
 * **Samm 2: Lisamaterjaliga tutvumine**
 Et valitud teemast paremini aru saada, lugege läbi järgmine materjal, kus ründeliike on põhjalikumalt lahti seletatud:
 [https://github.com/valdonolvak/kyberturvalisus/blob/467e51984662346b2019f3b92afcf33f1e4f0b88/Iseseisvad%20t%C3%B6%C3%B6d/Phishing'u%2C-varad.2unad]()

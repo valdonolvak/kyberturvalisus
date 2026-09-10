@@ -309,10 +309,3 @@ Ilma selleta poleks meil:
 
 ---
 
-### ✅ Kui soovid, saan järgmisena luua:
-
-* PowerPoint slaidid selle põhjal
-* PDF konspekti joonistega
-* praktilised harjutused (Python AES, RSA)
-
-❓ Kas soovid **slaide** või **praktiilisi ülesandeid (koodinäidetega)**?

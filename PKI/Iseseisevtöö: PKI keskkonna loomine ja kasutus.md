@@ -5,6 +5,29 @@ Järgnevas juhendis eeldame, et sul on kaks eraldi Linuxi/macOS-i masinat (VM-i)
 1.  **CA Server** (IP näiteks: `192.168.1.10`)
 2.  **VEBISERVER** (IP näiteks: `192.168.1.20`)
 
+1. Keskkond ja ligipääs
+Aadress (sisevõrgus): https://193.40.178.155:8006/
+Aadress (väljast): https://193.40.178.155:8006/
+Realm: hkhk.edu.ee | Kasutaja: eesnime esitäht + perekonnanimi
+Info: Töö ajal on lubatud kasutada internetis leiduvaid materjale ja juhendeid.
+2. Virtuaalmasinad ja võrguseadistus (VMBR)
+Võrguaadress moodustub valemiga 10.0.XXX.0/24, kus XXX on sinu virtuaalmasina võrguseadme vnet number.
+
+Näide: Kui vnet = 50, siis võrguaadress on 10.0.50.0/24.
+
+Masina nimi Proxmoxis	Masina nimi süsteemis	IP-aadress	Roll
+kyberturve-its25-[kasutajanimi]-winserver
+kyberturve-its25-[kasutajanimi]-win11enterprise
+kyberturve-its25-[kasutajanimi]-debian-1
+kyberturve-its25-[kasutajanimi]-debian-2
+
+Märkus: NIMI tähistab Proxmoxi masinate nimedes õpilase kasutajanime.
+
+Debian serveri kasutajanimi: kasutaja ja parool:Passw0rd
+Administraatori parool: Passw0rd
+Domeeni loodavate kasutajate parooliks tuleb panna: Par00LA!
+
+
 Kasutame domeeninime **`minudomeen.local`**.
 
 -----

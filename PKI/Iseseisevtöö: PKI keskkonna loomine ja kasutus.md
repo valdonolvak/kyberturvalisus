@@ -5,13 +5,13 @@ Järgnevas juhendis eeldame, et sul on kaks eraldi Linuxi/macOS-i masinat (VM-i)
 1.  **CA Server** (IP näiteks: `192.168.1.10`)
 2.  **VEBISERVER** (IP näiteks: `192.168.1.20`)
 
-** Keskkond ja ligipääs**
+**Keskkond ja ligipääs**
 Aadress (sisevõrgus): https://193.40.178.155:8006/
 Aadress (väljast): https://193.40.178.155:8006/
 Realm: hkhk.edu.ee | Kasutaja: eesnime esitäht + perekonnanimi
 Info: Töö ajal on lubatud kasutada internetis leiduvaid materjale ja juhendeid.
 
-** Virtuaalmasinad ja võrguseadistus (VMBR)**
+**Virtuaalmasinad ja võrguseadistus (VMBR)**
 Võrguaadress moodustub valemiga 10.0.XXX.0/24, kus XXX on sinu virtuaalmasina võrguseadme vnet number.
 
 Näide: Kui vnet = 50, siis võrguaadress on 10.0.50.0/24.

@@ -6,6 +6,10 @@ Aadress (väljast): https://193.40.178.155:8006/
 Realm: hkhk.edu.ee | Kasutaja: eesnime esitäht + perekonnanimi
 Info: Töö ajal on lubatud kasutada internetis leiduvaid materjale ja juhendeid.
 
+Virtuaalmasinad ja võrguseadistus (VMBR) Võrguaadress moodustub valemiga 10.0.XXX.0/24, kus XXX on sinu virtuaalmasina võrguseadme vnet number.
+
+Näide: Kui vnet = 50, siis võrguaadress on 10.0.50.0/24.
+
 | Masina nimi Proxmoxis                    | Masina nimi süsteemis | IP-aadress | Roll                           |
 | ---------------------------------------- | --------------------- | ---------- | ------------------------------ |
 | `kyberturve-its25-juhan-winserver`       | WinServer             | DHCP       | Windows Server                 |

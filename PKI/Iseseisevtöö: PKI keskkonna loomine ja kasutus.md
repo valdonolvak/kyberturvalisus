@@ -15,17 +15,17 @@ Võrguaadress moodustub valemiga 10.0.XXX.0/24, kus XXX on sinu virtuaalmasina v
 
 Näide: Kui vnet = 50, siis võrguaadress on 10.0.50.0/24.
 
-Masina nimi Proxmoxis	Masina nimi süsteemis	IP-aadress	Roll
-kyberturve-its25-[kasutajanimi]-winserver
-kyberturve-its25-[kasutajanimi]-win11enterprise
-kyberturve-its25-[kasutajanimi]-debian-1
-kyberturve-its25-[kasutajanimi]-debian-2
+Masina nimi Proxmoxis:
+ - kyberturve-its25-[kasutajanimi]-winserver
+ - kyberturve-its25-[kasutajanimi]-win11enterprise
+ - kyberturve-its25-[kasutajanimi]-debian-1
+ - kyberturve-its25-[kasutajanimi]-debian-2
 
 Märkus: NIMI tähistab Proxmoxi masinate nimedes õpilase kasutajanime.
 
 Debian serveri kasutajanimi: kasutaja ja parool:Passw0rd
-Administraatori parool: Passw0rd
-Domeeni loodavate kasutajate parooliks tuleb panna: Par00LA!
+Windows serveri Administraatori parool: Passw0rd
+Windows Klientmasina parool: Passw0rd
 
 
 Kasutame domeeninime **`minudomeen.local`**.

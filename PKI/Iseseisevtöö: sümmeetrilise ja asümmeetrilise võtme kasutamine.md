@@ -6,18 +6,15 @@ Aadress (väljast): https://193.40.178.155:8006/
 Realm: hkhk.edu.ee | Kasutaja: eesnime esitäht + perekonnanimi
 Info: Töö ajal on lubatud kasutada internetis leiduvaid materjale ja juhendeid.
 
-**Virtuaalmasinad ja võrguseadistus (VMBR)**
-Võrguaadress moodustub valemiga 10.0.XXX.0/24, kus XXX on sinu virtuaalmasina võrguseadme vnet number.
+| Masina nimi Proxmoxis                    | Masina nimi süsteemis | IP-aadress | Roll                           |
+| ---------------------------------------- | --------------------- | ---------- | ------------------------------ |
+| `kyberturve-its25-juhan-winserver`       | WinServer             | DHCP       | Windows Server                 |
+| `kyberturve-its25-juhan-win11enterprise` | Win11Enterprise       | DHCP       | Klient (Windows 11 Enterprise) |
+| `kyberturve-its25-juhan-debian-1`        | Debian1               | DHCP       | Linuxi server 1                |
+| `kyberturve-its25-juhan-debian-2`        | Debian2               | DHCP       | Linuxi server 2                |
 
-Näide: Kui vnet = 50, siis võrguaadress on 10.0.50.0/24.
 
-Masina nimi Proxmoxis:
- - kyberturve-its25-[kasutajanimi]-winserver
- - kyberturve-its25-[kasutajanimi]-win11enterprise
- - kyberturve-its25-[kasutajanimi]-debian-1
- - kyberturve-its25-[kasutajanimi]-debian-2
-
-Märkus: NIMI tähistab Proxmoxi masinate nimedes õpilase kasutajanime.
+**Märkus: NIMI tähistab Proxmoxi masinate nimedes õpilase kasutajanime.**
 
 Debian serveri kasutajanimi: kasutaja ja parool:Passw0rd
 Windows serveri Administraatori parool: Passw0rd

@@ -1,4 +1,4 @@
-Jätkan täpselt samas vormis. Allpool on **peatükid 6–10 täismahus**; ma ei tee peatükkide lõpuosas lühikokkuvõtteid ega vähenda näidete hulka. Mõne Apple'i või Androidi CVE puhul võib sama haavatavus tehniliselt sobituda mitmesse kategooriasse — see on tegelikus haavatavuste klassifitseerimises normaalne.
+ Allpool on **peatükid 6–10 **;
 
 # 6. Buffer Overflow ehk puhvri ületäide
 

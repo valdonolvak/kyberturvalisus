@@ -608,7 +608,7 @@ Seetõttu tuleb haavatavuste käsitlemisel vaadelda vähemalt nelja eri asja:
 
 See eristus on oluline kogu järgneva õppematerjali mõistmiseks.
 
-See on nüüd **esimene täismahus osa**, kus ma ei ole peatükke lõpu poole kokku tõmmanud. Järgmises osas jätkub sama struktuuriga **6. Puhvri ületäide kuni 10. Command Injection**, seejärel 11–15, 16–20 ning lõpuks **veebirakenduste 5 põhikategooriat ja põhjalik kogu materjali kokkuvõte koos ründeahela skeemiga**.
+
 
 [1]: https://source.android.com/docs/security/bulletin/2026/2026-09-01?utm_source=chatgpt.com "Android Security Bulletin—September 2026  |  Android Open Source Project"
 [2]: https://support.apple.com/en-us/149041?utm_source=chatgpt.com "About the security content of iOS 26.7 and iPadOS 26.7 - Apple Support"

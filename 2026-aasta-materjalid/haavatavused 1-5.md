@@ -1,5 +1,5 @@
 
-**Haavatavused**
+# Haavatavused
 
 ## Sissejuhatus
 

@@ -1,6 +1,8 @@
 
 # Haavatavused
 
+# Peatükid 1-5
+
 ## Sissejuhatus
 
 Arvuti, serveri, telefoni või muu digitaalse seadme turvalisus ei sõltu ainult sellest, kas seadmesse on paigaldatud viirusetõrje või tulemüür. Turvalisuse oluline osa on ka kasutatav tarkvara ise ning see, kuidas tarkvara töötleb kasutaja, võrgu, failide ja teiste programmide antud sisendit. Tarkvaras võivad olla programmeerimis- ja arhitektuurivead, mis võimaldavad teha midagi sellist, mida tarkvara autor ei ole ette näinud. Sellist turvanõrkust nimetatakse **haavatavuseks (vulnerability)**.

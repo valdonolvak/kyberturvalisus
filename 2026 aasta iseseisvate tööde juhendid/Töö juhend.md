@@ -1,10 +1,4 @@
-Jah. Teen need nüüd **kahe täiesti eraldi Markdown-dokumendina**. Esimeses ei ole valmis vastuseid — see on õpilase **tööjuhend**. Teises on sama loogika põhjal läbi tehtud **näidistöö**, mille järgi saab õpilane aru, millise sügavuse ja ülesehitusega tema enda töö võiks olla.
-
-Näidise CVE-2026-21385 põhiandmed kontrollisin üle: Androidi 2026. aasta märtsi turvabülletään viitab selle piiratud ja sihitud ärakasutamisele, CISA lisas haavatavuse KEV-kataloogi 3. märtsil 2026 ning CVSS 3.1 baasväärtus on 7,8. ([Android Open Source Project][1])
-
----
-
-## Dokument 1 — tööjuhend
+## Tööjuhend. 
 
 # Küberturvalisuse uurimistöö
 

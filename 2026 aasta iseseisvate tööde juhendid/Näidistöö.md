@@ -2,7 +2,7 @@
 
 # Küberturvalisuse uurimistöö – näidislahendus
 
-## CVE-2026-21385 – Qualcommi komponentide mälukorruptsiooni haavatavus. Näidise CVE-2026-21385 Androidi 2026. aasta märtsi turvabülletään viitab selle piiratud ja sihitud ärakasutamisele, CISA lisas haavatavuse KEV-kataloogi 3. märtsil 2026 ning CVSS 3.1 baasväärtus on 7,8. ([Android Open Source Project][1])
+### CVE-2026-21385 – Qualcommi komponentide mälukorruptsiooni haavatavus. Näidise CVE-2026-21385 Androidi 2026. aasta märtsi turvabülletään viitab selle piiratud ja sihitud ärakasutamisele, CISA lisas haavatavuse KEV-kataloogi 3. märtsil 2026 ning CVSS 3.1 baasväärtus on 7,8. ([Android Open Source Project][1])
 
 
 > **Näidistöö eesmärk:** näidata, kuidas tööjuhendi küsimustele vastata ja kuidas ühe CVE uurimisest kujundada terviklik uurimistöö.

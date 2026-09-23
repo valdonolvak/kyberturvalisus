@@ -1,4 +1,4 @@
-Jätkan. Seekord peatükid **11–15**. Hoian sama põhjalikku ülesehitust: mõiste selgitus, tehniline tekkemehhanism, ründeahel, mõju, Windows/Linux/macOS/Android/iOS näited ning riskide vähendamine.
+Peatükid **11–15**. 
 
 # 11. Code Injection ehk koodi süstimine
 

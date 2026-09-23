@@ -1,6 +1,4 @@
-Jah. Teen selle nüüd **päris õppematerjalina**, mitte enam kontuurina ega lühendatud konspektina.
 
-Üks oluline praktiline otsus: materjal tuleb nii mahukas, et esitan selle **järjestikuste osadena**, kuid **ükski järgnev osa ei muutu lühemaks ega pealiskaudsemaks**. Igas 20 peatükis säilib sama põhjalikkus ja iga peatükk sisaldab Windowsi, Linuxi, macOS-i, Androidi ja iOS-i näiteid. Veebirakenduste osa tuleb eraldi pärast seda. Praeguseks on kontrollitud ka 2026. aasta Androidi ja iOS-i ametlikud turvabülletäänid ning OWASP Top 10:2025. Näiteks Androidi 2026. aasta septembri bülletäänis on kirjeldatud nii kohaliku kui ka kaugõiguste suurendamise ning koodi kaugkäivitamise juhtumeid; Apple'i iOS 26.7 bülletäänis on muu hulgas use-after-free, out-of-bounds write ja autoriseerimisprobleeme. ([Android Open Source Project][1])
 
 # Operatsioonisüsteemide ja rakenduste haavatavused
 

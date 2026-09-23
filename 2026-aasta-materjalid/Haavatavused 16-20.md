@@ -1,4 +1,5 @@
-Peatükid **16–20** 
+# Peatükid **16–20** 
+
 # 16. Network Service / Protocol Vulnerabilities ehk võrguteenuste ja -protokollide haavatavused
 
 Operatsioonisüsteem ei tööta tavaliselt isoleeritult, vaid suhtleb teiste arvutite, serverite, ruuterite, printerite, pilveteenuste ja kasutajaseadmetega. Selleks kasutatakse võrguteenuseid (network services) ja võrguprotokolle (network protocols). Võrguteenus on operatsioonisüsteemis töötav programm või protsess, mis ootab võrgust ühendusi ja pakub mõnda funktsiooni. Näiteks Windowsi SMB võimaldab failide ja printerite jagamist, SSH võimaldab Linuxi serveri kaugjuhtimist ning veebiteenused kasutavad HTTP/HTTPS-protokolli. Kui selline teenus sisaldab programmeerimisviga, võib ründaja saada võimaluse saata sellele spetsiaalselt koostatud andmeid. Probleem võib seisneda näiteks vigases pakettide töötlemises, ebapiisavas autentimises või vigases olekuhalduse loogikas. Eriti ohtlikud on haavatavused teenustes, mis on Internetist otse kättesaadavad. Sellisel juhul ei pruugi ründaja esmalt vajada kasutajakontot ega füüsilist juurdepääsu arvutile. Mõnel juhul võib võrgu kaudu saadetud päring põhjustada teenuse krahhi, teisel juhul aga koodi käivitamise. Võrguteenuse haavatavus võib seetõttu olla ründeahela esimene lüli. Pärast esmast kompromiteerimist võib ründaja liikuda edasi õiguste suurendamise, tunnuste varastamise või teiste süsteemide kompromiteerimise juurde.
@@ -733,7 +734,7 @@ Androidi turvabülletäänid kasutavad infolekete tähistamiseks lühendit **ID 
 
 Kõigepealt tuleb piirata seda, millistel kasutajatel ja protsessidel on ligipääs tundlikele andmetele. Rakendused peaksid järgima vähimate õiguste põhimõtet (least privilege). Logidesse ei tohiks kirjutada paroole, autentimismärke, krüptograafilisi võtmeid ega muud tundlikku infot. Veateated peaksid olema kasutajale piisavad, kuid mitte avaldama sisemist süsteemiinfot. Operatsioonisüsteemi ja rakendusi tuleb regulaarselt uuendada. Mobiilseadmetes vähendavad sandbox ja õiguste süsteemid ühe rakenduse ligipääsu teiste rakenduste andmetele. Serverites tuleks kontrollida ka varukoopiaid, logisid ja ajutisi faile, sest tundlik info võib lekkida ka nendest. Infolekke avastamisel tuleb hinnata, millised andmed tegelikult avalikustusid ja kas lekkinud tunnuseid, paroole või võtmeid tuleb kehtetuks muuta.
 
-Need peatükid 16–20 lõpetavad 20-osalise osa. Eriti **19. peatükis** on oluline mõista, et tarneahela CVE ei ole tingimata operatsioonisüsteemi enda viga — haavatav komponent võib olla OS-is või selle peal töötavas tarkvaras, kuid risk jõuab ikkagi operatsioonisüsteemi keskkonda. See eristus tasub õpikus alles jätta.
+Need peatükid 16–20 lõpetavad 20-osalise osa. Eriti **19. peatükis** on oluline mõista, et tarneahela CVE ei ole tingimata operatsioonisüsteemi enda viga — haavatav komponent võib olla OS-is või selle peal töötavas tarkvaras, kuid risk jõuab ikkagi operatsioonisüsteemi keskkonda.
 
 [1]: https://msrc.microsoft.com/update-guide/en-us/?utm_source=chatgpt.com "Security Update Guide - Microsoft"
 [2]: https://ubuntu.com/security/notices?utm_source=chatgpt.com "Security notices | Ubuntu"

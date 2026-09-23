@@ -1,10 +1,5 @@
 
-
-# Operatsioonisüsteemide ja rakenduste haavatavused
-
-## Põhjalik õppematerjal küberturvalisuse õppimiseks
-
-# Operatsioonisüsteemide ja rakenduste haavatavused
+**Haavatavused**
 
 ## Sissejuhatus
 

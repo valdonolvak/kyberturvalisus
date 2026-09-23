@@ -1,4 +1,4 @@
- Allpool on **peatükid 6–10 **;
+# Peatükid 6–10 
 
 # 6. Buffer Overflow ehk puhvri ületäide
 

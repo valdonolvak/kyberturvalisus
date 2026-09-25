@@ -28,6 +28,20 @@ Kuna ründajal on nüüd kõrgeimad õigused, lülitab ta välja viirusetõrje (
 5. **Külgliikumine (Lateral Movement):**
 LPE abil täielikult kompromiteeritud masin muutub sillapeaks teiste masinate ründamisel. Administraatori õigustega saab mälust välja lugeda teiste masinasse sisseloginud IT-spetsialistide paroole (näiteks tööriistaga Mimikatz). Nende paroolidega liigutakse edasi ettevõtte Active Directory domeenikontrolleritesse, kriitilistesse andmebaasidesse või virtuaalmasinate (nt Proxmox) haldusliidestesse.
 
+```mermaid
+graph TD
+    A[1. Algne ligipääs<br/>Andmepüük või turvanõrkus] --> B[2. Madalate õigustega koodi käivitamine]
+    B --> C[3. Lokaalne luure<br/>Haavatavuste otsimine]
+    
+    C --> D{4. LPE: Privilege Escalation<br/>Win32k, Dirty Pipe}
+    style D fill:#f66,stroke:#333,stroke-width:2px,color:#fff
+    
+    D --> E[5. Turvameetmete ja logimise väljalülitamine]
+    D --> F[6. Külgliikumine<br/>AD ja teised serverid]
+    
+    E --> G[7. Lõplik eesmärk<br/>Andmete vargus või lunavara]
+    F --> G
+
 
 ---
 

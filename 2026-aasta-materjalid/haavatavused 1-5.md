@@ -23,7 +23,7 @@ Selles õppematerjalis vaadeldakse haavatavusi tehnilisest vaatenurgast. Eesmär
 
 # 1. Unpatched and Outdated Software ehk paigamata ja vananenud tarkvara
 
-Paigamata tarkvara tähendab olukorda, kus kasutusel olevast programmist või operatsioonisüsteemist on olemas turvaparandus, kuid seda parandust ei ole süsteemi paigaldatud. Vananenud tarkvara tähendab omakorda, et kasutatakse versiooni, mille tootja võib olla juba välja vahetanud või mille turvatoe periood on lõppenud. Mõlemad olukorrad suurendavad võimalust, et süsteemis olevat teadaolevat haavatavust saab ära kasutada.
+Paikamata tarkvara tähendab olukorda, kus kasutusel olevast programmist või operatsioonisüsteemist on olemas turvaparandus, kuid seda parandust ei ole süsteemi paigaldatud. Vananenud tarkvara tähendab omakorda, et kasutatakse versiooni, mille tootja võib olla juba välja vahetanud või mille turvatoe periood on lõppenud. Mõlemad olukorrad suurendavad võimalust, et süsteemis olevat teadaolevat haavatavust saab ära kasutada.
 
 Turvapaik ehk **security patch** on tarkvarauuendus, millega tootja parandab näiteks konkreetse programmeerimisvea või turvanõrkuse. Paik ei tähenda tingimata kogu programmi uut versiooni. Mõnikord parandatakse ainult üks konkreetne funktsioon või komponent.
 

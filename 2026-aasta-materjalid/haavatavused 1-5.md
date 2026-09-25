@@ -13,6 +13,40 @@ Haavatavus võib võimaldada näiteks kasutajaõigustest möödumist, tundlike a
 
 Oluline on mõista ka mõistet **CVE (Common Vulnerabilities and Exposures)**. CVE on standardiseeritud identifikaator, millega tähistatakse konkreetset avalikult kirjeldatud haavatavust. Näiteks **CVE-2022-0847** tähistab Linuxi kernelis avastatud Dirty Pipe'i nime all tuntud haavatavust. CVE-number ise ei ole ohu- ega raskusaste. Haavatavuse tehnilist raskust saab kirjeldada näiteks CVSS-skooriga, kuid CVE ja CVSS on kaks erinevat asja.
 
+<details>
+  <summary>**Dirty Pipe **(ametlikult tähistatud kui CVE-2022-0847) on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis)</summary>
+
+Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847) on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis). Tegemist on kohaliku õiguste eskaleerimise (Local Privilege Escalation – LPE) haavatavusega, mis võimaldas tavakasutajal, kellel puuduvad administraatori õigused, kirjutada andmeid suvalistesse failidesse – isegi nendesse, mis on süsteemis märgitud kui kirjutuskaitstud (read-only).
+
+Seda viga võrreldakse sageli ajaloolise "Dirty COW" (CVE-2016-5195) haavatavusega, kuid Dirty Pipe oli koodi tasemel lihtsamini ja stabiilsemalt ära kasutatav, muutes selle ohtlikumaks.
+
+Kuidas haavatavus tehniliselt töötas?
+Süsteemi tuum haldab failide lugemist ja kirjutamist mälulehtede (page cache) abil, et vältida pidevat kettapoole pöördumist. Viga tekkis sellest, kuidas kernel käsitles andmete liigutamist mälulehtede ja Linuxi torude (pipes) vahel.
+
+Torude loomine ja seadistamine: Ründaja loob süsteemis toru (sarnane käsureal kasutatavale | operaatorile). Torusse andmeid kirjutades ja sealt lugedes saab ründaja manipuleerida toru mälupuhvri lippudega.
+
+Lipu viga: Kerneli koodis oli loogikaviga. Kui toru teatud viisil tühjaks loeti, jäi mälu struktuuri aktiivseks lipp nimega PIPE_BUF_FLAG_CAN_MERGE. See lipp ütleb kernelile, et uute andmete saabumisel tohib need otse eelmiste andmete külge "liita", selle asemel et uut mälulehte eraldada.
+
+Faili mälulehe ühendamine (Splice): Kasutades süsteemikutsungit splice(), ühendas ründaja soovitud kirjutuskaitstud faili (näiteks süsteemi paroolifaili) otse sellesse torusse.
+
+Ülekirjutamine: Kuna torus oli eelmisest sammust jäänud aktiivseks CAN_MERGE lipp, siis nüüd torusse uusi andmeid kirjutades eeldas kernel, et tegemist on liidetava puhvriga, ja kirjutas ründaja uued andmed otse kirjutuskaitstud faili mälulehele (page cache). Tulemusena sünkroniseeriti ründaja sisestatud muudatused ka füüsilisele kettale.
+
+Reaalsete kasutusjuhtude ja rünnakute näited
+Haavatavuse ilmsikstulekul loodi kiiresti mitmeid töötavaid (Exploit/PoC) skripte, mida kasutati nii pahatahtlikes kampaaniates kui ka turvatestijate (Red Teaming) ja hobikasutajate poolt.
+
+Administraatori (root) konto ülevõtmine failide muutmise teel:
+Kõige levinum näide ründest oli /etc/passwd faili muutmine. Ründaja asendas failis algse root-kasutaja rea uuega, millel puudus paroolinõue (kustutades "x" tähise). See võimaldas ründajal sisestada käsu su root ja saada koheselt administraatori õigused ilma parooli teadmata. See on klassikaline stsenaarium, mida käsitletakse ka küberturvalisuse õppematerjalides ja CTF (Capture The Flag) võistlustel.
+
+Androidi seadmete "ruutimine" (Rooting):
+Kuna Androidi operatsioonisüsteem baseerub Linuxi kernelil, olid paljud uuemad nutitelefonid Dirty Pipe'i suhtes haavatavad. Tehnoloogiaentusiastid ja turvauurijad kasutasid seda viga ära näiteks Google Pixel 6 ja Samsung Galaxy S22 telefonides root-õiguste saamiseks. Haavatavuse kaudu kirjutati üle süsteemi alglaadimise või taustaprotsesside faile, et käivitada seadmes piiramatute õigustega kasutajakeskkond ja minna mööda tootja paigaldatud lukustustest.
+
+SUID-programmide ja SSH-võtmete ülekirjutamine:
+Teine ründemeetod oli kirjutada pahatahtlikku koodi (shellcode) süsteemsetesse SUID-õigustega programmidesse (nagu /usr/bin/su või /usr/bin/sudo). Kui ründaja kirjutas programmi sisse oma koodi, siis järgmine kord, kui administraator või süsteem ise seda programmi käivitas, avati ründajale taustal "tagauks" (reverse shell) kõrgeimate õigustega. Samuti kasutati tehnikat, kus ründaja kirjutas üle lokaalselt loetavaid SSH avalikke võtmeid (näiteks kellegi teise authorized_keys faili), et endale ligipääs tagada.
+
+Viga oli olemas Linuxi kerneli versioonides alates 5.8 ja see parandati veebruaris 2022 kerneli versioonides 5.16.11, 5.15.25 ja 5.10.102.
+
+</details>
+
 Operatsioonisüsteemi puhul võib haavatavus paikneda väga erineval tasemel. Viga võib olla näiteks **kernelis (kernel)**, mis on operatsioonisüsteemi keskne osa ja vahendab riistvara ning programmide vahelist suhtlust. Viga võib olla **draiveris (driver)**, mis võimaldab operatsioonisüsteemil kasutada konkreetset riistvara. Samuti võib probleem paikneda võrguteenuses, failide töötlemise komponendis, brauseris, autentimisteenuses või mõnes süsteemiga kaasas olevas teegis.
 
 Haavatavused tekivad sageli seetõttu, et tarkvara peab töötlema väga palju erinevat sisendit. Sisend võib tulla kasutajalt, veebilehelt, failist, USB-seadmest, võrgupaketist või teisest programmist. Kui programm eeldab ekslikult, et sisend on alati korrektne, võib spetsiaalselt koostatud sisend põhjustada ootamatu olukorra.

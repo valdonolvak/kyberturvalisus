@@ -14,7 +14,7 @@ Haavatavus võib võimaldada näiteks kasutajaõigustest möödumist, tundlike a
 Oluline on mõista ka mõistet **CVE (Common Vulnerabilities and Exposures)**. CVE on standardiseeritud identifikaator, millega tähistatakse konkreetset avalikult kirjeldatud haavatavust. Näiteks **CVE-2022-0847** tähistab Linuxi kernelis avastatud Dirty Pipe'i nime all tuntud haavatavust. CVE-number ise ei ole ohu- ega raskusaste. Haavatavuse tehnilist raskust saab kirjeldada näiteks CVSS-skooriga, kuid CVE ja CVSS on kaks erinevat asja.
 
 <details>
-  <summary> <b>Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847)</b> on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis)</summary>
+  <summary> <kbd><b>Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847)</b> on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis)</kbd></summary>
 
 Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847) on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis). Tegemist on kohaliku õiguste eskaleerimise (Local Privilege Escalation – LPE) haavatavusega, mis võimaldas tavakasutajal, kellel puuduvad administraatori õigused, kirjutada andmeid suvalistesse failidesse – isegi nendesse, mis on süsteemis märgitud kui kirjutuskaitstud (read-only).
 

@@ -15,7 +15,7 @@ Oluline on mõista ka mõistet **CVE (Common Vulnerabilities and Exposures)**. C
 
 <details>
   <summary> <kbd><b>Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847)</b> on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis)</kbd></summary>
-> [!NOTE]
+<i>
 Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847) on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis). Tegemist on kohaliku õiguste eskaleerimise (Local Privilege Escalation – LPE) haavatavusega, mis võimaldas tavakasutajal, kellel puuduvad administraatori õigused, kirjutada andmeid suvalistesse failidesse – isegi nendesse, mis on süsteemis märgitud kui kirjutuskaitstud (read-only).
 
 Seda viga võrreldakse sageli ajaloolise "Dirty COW" (CVE-2016-5195) haavatavusega, kuid Dirty Pipe oli koodi tasemel lihtsamini ja stabiilsemalt ära kasutatav, muutes selle ohtlikumaks.
@@ -44,9 +44,9 @@ SUID-programmide ja SSH-võtmete ülekirjutamine:
 Teine ründemeetod oli kirjutada pahatahtlikku koodi (shellcode) süsteemsetesse SUID-õigustega programmidesse (nagu /usr/bin/su või /usr/bin/sudo). Kui ründaja kirjutas programmi sisse oma koodi, siis järgmine kord, kui administraator või süsteem ise seda programmi käivitas, avati ründajale taustal "tagauks" (reverse shell) kõrgeimate õigustega. Samuti kasutati tehnikat, kus ründaja kirjutas üle lokaalselt loetavaid SSH avalikke võtmeid (näiteks kellegi teise authorized_keys faili), et endale ligipääs tagada.
 
 Viga oli olemas Linuxi kerneli versioonides alates 5.8 ja see parandati veebruaris 2022 kerneli versioonides 5.16.11, 5.15.25 ja 5.10.102.
-
+</i>
 </details>
-<hd>
+
 
 Operatsioonisüsteemi puhul võib haavatavus paikneda väga erineval tasemel. Viga võib olla näiteks **kernelis (kernel)**, mis on operatsioonisüsteemi keskne osa ja vahendab riistvara ning programmide vahelist suhtlust. Viga võib olla **draiveris (driver)**, mis võimaldab operatsioonisüsteemil kasutada konkreetset riistvara. Samuti võib probleem paikneda võrguteenuses, failide töötlemise komponendis, brauseris, autentimisteenuses või mõnes süsteemiga kaasas olevas teegis.
 

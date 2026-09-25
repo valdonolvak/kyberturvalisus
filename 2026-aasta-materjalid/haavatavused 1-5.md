@@ -15,7 +15,7 @@ Oluline on mõista ka mõistet **CVE (Common Vulnerabilities and Exposures)**. C
 
 <details>
   <summary> <kbd><b>Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847)</b> on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis)</kbd></summary>
-
+> [!NOTE]
 Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847) on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis). Tegemist on kohaliku õiguste eskaleerimise (Local Privilege Escalation – LPE) haavatavusega, mis võimaldas tavakasutajal, kellel puuduvad administraatori õigused, kirjutada andmeid suvalistesse failidesse – isegi nendesse, mis on süsteemis märgitud kui kirjutuskaitstud (read-only).
 
 Seda viga võrreldakse sageli ajaloolise "Dirty COW" (CVE-2016-5195) haavatavusega, kuid Dirty Pipe oli koodi tasemel lihtsamini ja stabiilsemalt ära kasutatav, muutes selle ohtlikumaks.

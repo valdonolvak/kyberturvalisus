@@ -31,7 +31,7 @@ Probleem seisneb selles, et pärast haavatavuse avalikustamist ei ole ründajal 
 
 Eriti ohtlik on olukord, kus haavatavus mõjutab internetist kättesaadavat teenust. Kui teenus kuulab näiteks TCP-porti ja võtab vastu väliseid ühendusi, võib ründaja proovida haavatavust kasutada ilma füüsilise ligipääsuta.
 
-Paigamata süsteemi risk suureneb veelgi siis, kui haavatavus on juba avalikult dokumenteeritud ja selle ärakasutamine on reaalselt toimunud. Sellisel juhul ei ole tegemist ainult teoreetilise probleemiga.
+Paikamata süsteemi risk suureneb veelgi siis, kui haavatavus on juba avalikult dokumenteeritud ja selle ärakasutamine on reaalselt toimunud. Sellisel juhul ei ole tegemist ainult teoreetilise probleemiga.
 
 ### Kuidas paigamata tarkvara haavatavus tehniliselt tekib?
 

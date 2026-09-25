@@ -297,8 +297,9 @@ Rakendus
 Probleem võib tekkida näiteks nõrga parooli, puuduliku mitmefaktorilise autentimise, liiga pika seansi, ennustatava seansitunnuse või vale väljalogimise tõttu.
 
 <details>
-  <summary><b>Tokeni (sessioonivõtme) natuke pikem seletus</b></summary>
-<i>
+  <summary><kbd><b>Tokeni (sessioonivõtme) natuke pikem seletus</b></kbd></summary>
+<kbd>
+  <i>
   See lõik kirjeldab, mis juhtub **pärast** seda, kui ründaja on tokeni kätte saanud. Süsteemi vaates on kehtival tokenil ja päris kasutajal võrdusmärk – süsteem ei oska enam vahet teha, kas nupu vajutas õige inimene või tokeni varastanud häkker.
 
 Siin on detailsem lahtiseletus selle kohta, mida ründaja igas kirjeldatud olukorras teha saab:
@@ -319,8 +320,9 @@ Isegi täiesti piiratud õigustega konto (näiteks tavaline foorumi külastaja v
 * **Vertikaalne õiguste suurendamine:** Ründaja otsib süsteemi koodist programmeerimisvigu. Näiteks proovib ta saata serverile ootamatuid käske, mis sunniksid süsteemi talle administraatori õigusi andma, ehk ta liigub "alt üles".
 * **Horisontaalne õiguste suurendamine:** Ründaja üritab ligi pääseda *teiste samaväärsete* kasutajate andmetele. Näiteks proovib ta muuta veebilehe aadressiribal kasutaja ID numbrit (nt `user_id=123` muudab `user_id=124`) lootuses, et süsteem unustab kontrollida, kas tal on õigus seda teist kontot näha.
 * **Külgsuunaline liikumine (*Lateral Movement*):** Olles sisevõrgus autentitud kasutaja, saab ründaja hakata kaardistama teisi servereid ja teenuseid, kuhu otse internetist ligi ei pääse, lootes leida nõrkusi sisesüsteemides.
-</i>
+</i></kbd>
 </details>
+
 ### Mida ründaja teha võib?
 
 Kui ründaja saab kasutaja autentimisandmed, võib ta sisse logida kasutaja kontoga.

@@ -15,7 +15,7 @@ Oluline on mõista ka mõistet **CVE (Common Vulnerabilities and Exposures)**. C
 
 <details>
   <summary> <kbd><b>Dirty Pipe (ametlikult tähistatud kui CVE-2022-0847)</b> on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis)</kbd></summary>
-<i>
+<kbd>
 **Dirty Pipe** (ametlikult tähistatud kui **CVE-2022-0847**) on 2022. aasta alguses avastatud kriitiline turvaviga Linuxi tuumas (kernelis). Tegemist on kohaliku õiguste eskaleerimise (Local Privilege Escalation – LPE) haavatavusega, mis võimaldas tavakasutajal, kellel puuduvad administraatori õigused, kirjutada andmeid suvalistesse failidesse – isegi nendesse, mis on süsteemis märgitud kui kirjutuskaitstud (read-only).
 
 Seda viga võrreldakse sageli ajaloolise "Dirty COW" (CVE-2016-5195) haavatavusega, kuid Dirty Pipe oli koodi tasemel lihtsamini ja stabiilsemalt ära kasutatav, muutes selle ohtlikumaks.
@@ -41,7 +41,7 @@ Kuna Androidi operatsioonisüsteem baseerub Linuxi kernelil, olid paljud uuemad 
 Teine ründemeetod oli kirjutada pahatahtlikku koodi (shellcode) süsteemsetesse SUID-õigustega programmidesse (nagu `/usr/bin/su` või `/usr/bin/sudo`). Kui ründaja kirjutas programmi sisse oma koodi, siis järgmine kord, kui administraator või süsteem ise seda programmi käivitas, avati ründajale taustal "tagauks" (reverse shell) kõrgeimate õigustega. Samuti kasutati tehnikat, kus ründaja kirjutas üle lokaalselt loetavaid SSH avalikke võtmeid (näiteks kellegi teise `authorized_keys` faili), et endale ligipääs tagada.
 
 Viga oli olemas Linuxi kerneli versioonides alates 5.8 ja see parandati veebruaris 2022 kerneli versioonides 5.16.11, 5.15.25 ja 5.10.102.
-</i>
+</kbd>
 </details>
 
 
@@ -299,7 +299,7 @@ Probleem võib tekkida näiteks nõrga parooli, puuduliku mitmefaktorilise auten
 <details>
   <summary><kbd><b>Tokeni (sessioonivõtme) natuke pikem seletus</b></kbd></summary>
 <kbd>
-  <i>
+
   See lõik kirjeldab, mis juhtub **pärast** seda, kui ründaja on tokeni kätte saanud. Süsteemi vaates on kehtival tokenil ja päris kasutajal võrdusmärk – süsteem ei oska enam vahet teha, kas nupu vajutas õige inimene või tokeni varastanud häkker.
 
 Siin on detailsem lahtiseletus selle kohta, mida ründaja igas kirjeldatud olukorras teha saab:
@@ -320,7 +320,7 @@ Isegi täiesti piiratud õigustega konto (näiteks tavaline foorumi külastaja v
 * **Vertikaalne õiguste suurendamine:** Ründaja otsib süsteemi koodist programmeerimisvigu. Näiteks proovib ta saata serverile ootamatuid käske, mis sunniksid süsteemi talle administraatori õigusi andma, ehk ta liigub "alt üles".
 * **Horisontaalne õiguste suurendamine:** Ründaja üritab ligi pääseda *teiste samaväärsete* kasutajate andmetele. Näiteks proovib ta muuta veebilehe aadressiribal kasutaja ID numbrit (nt `user_id=123` muudab `user_id=124`) lootuses, et süsteem unustab kontrollida, kas tal on õigus seda teist kontot näha.
 * **Külgsuunaline liikumine (*Lateral Movement*):** Olles sisevõrgus autentitud kasutaja, saab ründaja hakata kaardistama teisi servereid ja teenuseid, kuhu otse internetist ligi ei pääse, lootes leida nõrkusi sisesüsteemides.
-</i></kbd>
+</kbd>
 </details>
 
 ### Mida ründaja teha võib?

@@ -296,6 +296,31 @@ Rakendus
 
 Probleem võib tekkida näiteks nõrga parooli, puuduliku mitmefaktorilise autentimise, liiga pika seansi, ennustatava seansitunnuse või vale väljalogimise tõttu.
 
+<details>
+  <summary><b>Tokeni (sessioonivõtme) natuke pikem seletus</b></summary>
+<i>
+  See lõik kirjeldab, mis juhtub **pärast** seda, kui ründaja on tokeni kätte saanud. Süsteemi vaates on kehtival tokenil ja päris kasutajal võrdusmärk – süsteem ei oska enam vahet teha, kas nupu vajutas õige inimene või tokeni varastanud häkker.
+
+Siin on detailsem lahtiseletus selle kohta, mida ründaja igas kirjeldatud olukorras teha saab:
+
+**1. Kasutaja kontoga sisselogimine (Konto ülevõtmine ja identiteedivargus)**
+
+* **Paroolidest ja MFA-st möödaminek:** Kui ründaja varastab aktiivse tokeni (näiteks seansitunnuse ehk *session cookie*), ei pea ta üldse teadma ohvri parooli. Ta ei vaja isegi nutitelefoni, kuhu saadetakse mitmefaktorilise autentimise (MFA) kood. Token on juba tõestus, et "see kasutaja on edukalt sisse loginud", ning ründaja pääseb otse kontole.
+* **Tegevused ohvri nimel:** Ründaja saab lugeda ohvri e-kirju, sooritada tema raha eest oste, varastada isiklikke andmeid või saata ohvri nimel kolleegidele õngitsuskirju, mis tunduvad usaldusväärsed.
+
+**2. Administraatorikonto kompromiteerimine (Süsteemi täielik ülevõtmine)**
+
+* **Maksimaalne häving:** Administraatoril on ligipääs kogu süsteemile. See tähendab, et ründaja võib varastada kogu ettevõtte kliendiandmebaasi, kustutada elutähtsaid faile või paigaldada lunavara (*ransomware*).
+* **Tagaukse (*backdoor*) loomine:** Et ligipääsu säilitada ka siis, kui varastatud token aegub või algne turvaauk parandatakse, loob ründaja süsteemi uusi, varjatud administraatorikontosid, mille kaudu ta saab edaspidi igal ajal tagasi tulla.
+
+**3. Tavalise kasutaja konto ja õiguste suurendamine (*Privilege Escalation*)**
+Isegi täiesti piiratud õigustega konto (näiteks tavaline foorumi külastaja või ettevõtte madalaima astme töötaja) on ründajale väga väärtuslik. See on "jalg ukse vahel", mis annab ligipääsu süsteemi sisevaatele.
+
+* **Vertikaalne õiguste suurendamine:** Ründaja otsib süsteemi koodist programmeerimisvigu. Näiteks proovib ta saata serverile ootamatuid käske, mis sunniksid süsteemi talle administraatori õigusi andma, ehk ta liigub "alt üles".
+* **Horisontaalne õiguste suurendamine:** Ründaja üritab ligi pääseda *teiste samaväärsete* kasutajate andmetele. Näiteks proovib ta muuta veebilehe aadressiribal kasutaja ID numbrit (nt `user_id=123` muudab `user_id=124`) lootuses, et süsteem unustab kontrollida, kas tal on õigus seda teist kontot näha.
+* **Külgsuunaline liikumine (*Lateral Movement*):** Olles sisevõrgus autentitud kasutaja, saab ründaja hakata kaardistama teisi servereid ja teenuseid, kuhu otse internetist ligi ei pääse, lootes leida nõrkusi sisesüsteemides.
+</i>
+</details>
 ### Mida ründaja teha võib?
 
 Kui ründaja saab kasutaja autentimisandmed, võib ta sisse logida kasutaja kontoga.

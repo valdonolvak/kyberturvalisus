@@ -41,7 +41,7 @@ graph TD
     
     E --> G[7. Lõplik eesmärk<br/>Andmete vargus või lunavara]
     F --> G
-
+```
 
 ---
 

@@ -21,7 +21,7 @@ Selles õppematerjalis vaadeldakse haavatavusi tehnilisest vaatenurgast. Eesmär
 
 ---
 
-# 1. Unpatched and Outdated Software ehk paigamata ja vananenud tarkvara
+# 1. Unpatched and Outdated Software ehk paikamata ja vananenud tarkvara
 
 Paikamata tarkvara tähendab olukorda, kus kasutusel olevast programmist või operatsioonisüsteemist on olemas turvaparandus, kuid seda parandust ei ole süsteemi paigaldatud. Vananenud tarkvara tähendab omakorda, et kasutatakse versiooni, mille tootja võib olla juba välja vahetanud või mille turvatoe periood on lõppenud. Mõlemad olukorrad suurendavad võimalust, et süsteemis olevat teadaolevat haavatavust saab ära kasutada.
 
@@ -33,7 +33,7 @@ Eriti ohtlik on olukord, kus haavatavus mõjutab internetist kättesaadavat teen
 
 Paikamata süsteemi risk suureneb veelgi siis, kui haavatavus on juba avalikult dokumenteeritud ja selle ärakasutamine on reaalselt toimunud. Sellisel juhul ei ole tegemist ainult teoreetilise probleemiga.
 
-### Kuidas paigamata tarkvara haavatavus tehniliselt tekib?
+### Kuidas paikamata tarkvara haavatavus tehniliselt tekib?
 
 Tüüpiline protsess on järgmine:
 
@@ -63,7 +63,7 @@ Oluline on mõista, et paigaldamata turvaparandus ei loo uut haavatavust. Haavat
 
 Näiteks võib operatsioonisüsteemi võrguteenuses olla viga, mille kaudu saab spetsiaalselt koostatud võrgupakett põhjustada mälu rikkumise. Tootja parandab vea. Kui serveri administraator parandust ei paigalda, töötab server endiselt vana koodiga.
 
-### Mida ründaja pärast paigamata haavatavuse kasutamist teha võib?
+### Mida ründaja pärast paikamata haavatavuse kasutamist teha võib?
 
 Mõju sõltub konkreetsest haavatavusest. Mõni viga võimaldab ainult teenuse katkestamist. Teine võib võimaldada **RCE-d (Remote Code Execution)** ehk koodi kaugkäivitamist.
 
@@ -72,7 +72,7 @@ Kui koodi saab käivitada serveri protsessi õigustes, sõltub järgmine mõju s
 Ründaja võib kasutada üht haavatavust ka esimese sammuna pikemas ründeahelas:
 
 ```text
-Paigamata teenus
+Paikamata teenus
        │
        ▼
 Esialgne kompromiteerimine
@@ -518,7 +518,7 @@ Samuti tuleb kaitsta administraatorikontosid, piirata sudo- ja GPO-õigusi, kont
 Nende viie haavatavuse puhul on oluline märgata, et need ei ole alati üksteisest eraldatud.
 
 ```text
-Paigamata tarkvara
+Paikamata tarkvara
        │
        ▼
 Teadaolev haavatavus

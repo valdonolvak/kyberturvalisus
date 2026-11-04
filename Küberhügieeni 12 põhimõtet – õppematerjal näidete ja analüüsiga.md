@@ -1,6 +1,6 @@
 # Küberhügieeni 12 põhimõtet – õppematerjal näidete ja analüüsiga
 
-Nov 4, 2026 · @Valdo
+4. november 2026 · Valdo
 
 ## Sissejuhatus
 
@@ -150,7 +150,7 @@ Allpool on mõisted, mis tulevad näidetes ette ja võivad esimesel lugemisel se
 
 > **Lihtsalt öeldes:** paik on nagu lukusepa parandus. Kui tootja teatab, et su ukse lukk on vigane, ja saadab uue, kuid sa seda ei paigalda, siis teavad nüüd ka vargad, millist ust katsuda.
 
-&#91;embedded content: WannaCry ajajoon · paigast rünnakuni kaks kuud\]
+![WannaCry ajajoon · paigast rünnakuni kaks kuud](pildid/01-wannacry-ajajoon.png)
 
 Paik ja ründekood olid mõlemad olemas enne rünnakut. Otsustav oli, kas organisatsioon jõudis paiga paigaldada.
 
@@ -185,7 +185,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Lunavara kasutas Windowsi failijagamise protokolli SMBv1 haavatavust EternalBlue, mille parandus (MS17-010) oli välja antud juba märtsis – kaks kuud enne rünnakut. Paljudes organisatsioonides oli paik paigaldamata ja kasutusel oli ka toetuse lõppenud Windows XP. WannaCry oli **uss**: see levis ise masinast masinasse ilma kasutaja tegevuseta. Lisaks oli SMB port 445 paljudes kohtades internetist kättesaadav.
 
-&#91;embedded content: Võrgujoonis · kuidas WannaCry sisse pääses ja levis\]
+![Võrgujoonis · kuidas WannaCry sisse pääses ja levis](pildid/01-wannacry-vork.png)
 
 WannaCry otsis internetist masinaid, mille port 445 oli lahti. Kui see leidis paikamata Windowsi, levis see sisevõrgus ise edasi kõigisse teistesse paikamata arvutitesse.
 
@@ -201,7 +201,7 @@ WannaCry otsis internetist masinaid, mille port 445 oli lahti. Kui see leidis pa
 
 **Miks see juhtus.** Veebiraamistiku Apache Struts (Java-põhine tööriist veebirakenduste ehitamiseks) haavatavusele (CVE-2017-5638) avaldati parandus 7. märtsil 2017. Equifaxi sisemine teavitus jõudis küll IT-ni, kuid vastutus ei olnud selge ja üks vaidlusportaal jäi paikamata. Haavatavuse skaneerimine ei leidnud seda, sest skaneerimine oli valesti seadistatud. Lisaks oli liikluse inspekteerimise seadmel 19 kuud aegunud sertifikaat, mistõttu andmete väljaviimist ei nähtud.
 
-&#91;embedded content: Võrgujoonis · Equifax\]
+![Võrgujoonis · Equifax](pildid/01-equifax.png)
 
 **Mis oleks aidanud.** Täielik ülevaade sellest, millistes rakendustes Struts kasutusel on; nimeline vastutaja iga süsteemi paikamise eest; skaneerimise tulemuste kontroll; sertifikaatide aegumise jälgimine.
 
@@ -215,7 +215,7 @@ WannaCry otsis internetist masinaid, mille port 445 oli lahti. Kui see leidis pa
 
 **Miks see juhtus.** Haavatavus lekitas seadme mälust **sessioonitokeneid**. Sessioonitoken on nagu peo käepael: kui oled korra sisse lastud, ei küsita sinult enam piletit. Ründaja sai nendega üle võtta juba sisseloginud kasutaja sessiooni, ka MFA-ga kaitstud. Paljud organisatsioonid paigaldasid paiga, aga ei katkestanud olemasolevaid sessioone, mistõttu varastatud tokenid jäid kehtima ka pärast paikamist.
 
-&#91;embedded content: Võrgujoonis · Citrix Bleed\]
+![Võrgujoonis · Citrix Bleed](pildid/01-citrix-bleed.png)
 
 **Mis oleks aidanud.** Kiire paikamine (internetis avatud seade!); pärast paikamist kõikide aktiivsete sessioonide lõpetamine, nagu tootja soovitas; logide ülevaatus kompromiteerimise tunnuste leidmiseks.
 
@@ -231,7 +231,7 @@ WannaCry otsis internetist masinaid, mille port 445 oli lahti. Kui see leidis pa
 
 > **Lihtsalt öeldes:** traditsiooniline viirusetõrje on nagu valvur, kes võrdleb külastajaid tagaotsitavate fotodega. EDR on valvur, kes jälgib ka seda, mida inimesed majas teevad – ka siis, kui nende nägu ei ole kellelegi tuttav.
 
-&#91;embedded content: signatuur vs käitumispõhine tuvastus · sama fail, erinev tulemus\]
+![signatuur vs käitumispõhine tuvastus · sama fail, erinev tulemus](pildid/02-signatuur-vs-kaitumine.png)
 
 Signatuur tunneb ära ainult juba teadaoleva pahavara. EDR ei vaata, mis fail see on, vaid mida see teeb – seetõttu tabab see ka täiesti uue pahavara.
 
@@ -267,7 +267,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Emotet muutis oma kuju pidevalt, nii et signatuuripõhine viirusetõrje jäi maha. Kirjad nägid usaldusväärsed välja, sest tulid päris kontaktidelt. Paljudes organisatsioonides said kasutajad makrosid vabalt lubada.
 
-&#91;embedded content: Võrgujoonis · Emotet\]
+![Võrgujoonis · Emotet](pildid/02-emotet.png)
 
 **Mis oleks aidanud.** Makrode blokeerimine internetist tulnud failides (Microsoft muutis selle 2022. aastal vaikimisi seadeks); käitumispõhine EDR, mis tuvastab, kui Word käivitab PowerShelli; e-posti manuste liivakast.
 
@@ -307,7 +307,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** tulemüür on nagu hoone valvelaud. See otsustab, kes millise ukse kaudu sisse ja välja pääseb. Kõik uksed, mida ei kasutata, on lukus.
 
-&#91;embedded content: vaikimisi keelamine · kolm päringut, üks lubatud\]
+![vaikimisi keelamine · kolm päringut, üks lubatud](pildid/03-tulemuur.png)
 
 Igal teenusel on oma port nagu majal oma uks. Tulemüür avab ainult ukse 443 (veebileht). Kaugtöölaud ja andmebaas jäävad internetist kinni. MongoDB juhtumis oli just andmebaasi port 27017 avatud.
 
@@ -340,7 +340,7 @@ Igal teenusel on oma port nagu majal oma uks. Tulemüür avab ainult ukse 443 (v
 
 **Miks see juhtus.** Veebirakenduse tulemüür (WAF) oli **valesti seadistatud**. Ründaja kasutas SSRF-rünnet (*Server-Side Request Forgery*): ta pani WAF-i esitama päringu AWS-i sisemisele metaandmeteenusele (teenus, mis annab pilveserverile infot tema enda seadistuse ja õiguste kohta). Sealt sai ta ajutised ligipääsuvõtmed rollile, millel olid liiga laiad õigused S3-andmehoidlatele (Amazoni pilve failihoidlad).
 
-&#91;embedded content: Võrgujoonis · Capital One\]
+![Võrgujoonis · Capital One](pildid/03-capital-one.png)
 
 **Mis oleks aidanud.** WAF-i korrektne seadistus ja testimine; metaandmeteenuse kaitstud versioon (IMDSv2, mis ei vasta ilma eraldi tokenita); WAF-i rolli õiguste piiramine vähima privileegi järgi; anomaalse andmeliikluse jälgimine.
 
@@ -354,7 +354,7 @@ Igal teenusel on oma port nagu majal oma uks. Tulemüür avab ainult ukse 443 (v
 
 **Miks see juhtus.** Toonased MongoDB vaikeseaded ei nõudnud autentimist ja andmebaas võis kuulata kõiki võrguliideseid. Arendajad paigaldasid andmebaasi pilveserverisse ja unustasid tulemüüri reegli. Port 27017 oli otse internetist kättesaadav – ründajal piisas skriptist.
 
-&#91;embedded content: Võrgujoonis · MongoDB\]
+![Võrgujoonis · MongoDB](pildid/03-mongodb.png)
 
 **Mis oleks aidanud.** Andmebaasi port suletud hosti- ja võrgutulemüüriga; autentimine sisse lülitatud; andmebaas seotud ainult sisevõrgu aadressiga; välise ründepinna regulaarne skaneerimine.
 
@@ -382,7 +382,7 @@ Igal teenusel on oma port nagu majal oma uks. Tulemüür avab ainult ukse 443 (v
 
 > **Lihtsalt öeldes:** parool on võti. Kui sama võti avab su kodu, auto ja kontori, siis ühe võtme kaotamine avab kõik kolm.
 
-&#91;embedded content: credential stuffing · üks leke, kolm teenust\]
+![credential stuffing · üks leke, kolm teenust](pildid/04-credential-stuffing.png)
 
 Ründaja ei pea ühtegi parooli ära arvama: lekkinud paari proovib automaatne programm sadades teenustes. Kinni jääb ainult konto, kus parool on unikaalne või kus nõutakse MFA-d.
 
@@ -417,7 +417,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Töötaja kasutas Dropboxi tööülesannetes sama parooli, mis tal oli LinkedInis. LinkedIn oli 2012. aastal ise lekkinud ja paroolid olid seal salvestatud nõrga räsiga (soolamata SHA-1 ehk ilma juhusliku lisandita räsi, mistõttu sama parool annab alati sama räsi ja seda saab otsida valmis tabelitest), mistõttu need murti kiiresti lahti.
 
-&#91;embedded content: Võrgujoonis · Dropbox\]
+![Võrgujoonis · Dropbox](pildid/04-dropbox.png)
 
 **Mis oleks aidanud.** Unikaalne parool igas teenuses; MFA töökontodel; lekkinud paroolide automaatne blokeerimine.
 
@@ -443,7 +443,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründaja kompromiteeris ühe DevOps-inseneri **koduarvuti**, kasutades sellel olnud haavatavat meediatarkvara, ja paigaldas klahvilogija. Sealt sai ta inseneri ülemparooli ja ligipääsu pilvesalvestusele. Hoidlad olid krüpteeritud, aga nõrga ülemparooliga hoidla sai ründaja ise lahti murda. Vanematel kontodel oli ka madal PBKDF2 iteratsioonide arv (mitu korda räsimist korratakse – mida vähem kordi, seda kiiremini saab parooli ära arvata).
 
-&#91;embedded content: Võrgujoonis · LastPass\]
+![Võrgujoonis · LastPass](pildid/04-lastpass.png)
 
 **Mis oleks aidanud.** Kõrgete õigustega töö ainult hallatud tööseadmest; pikk ja unikaalne ülemparool; MFA; tootja poolt iteratsioonide arvu automaatne tõstmine vanadel kontodel.
 
@@ -459,11 +459,11 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** MFA tähendab, et lisaks võtmele on vaja ka kaarti või sõrmejälge. Varastatud võtmest üksi ei piisa.
 
-&#91;embedded content: AiTM-andmepüük · ühekordne kood vs FIDO2 võti\]
+![AiTM-andmepüük · ühekordne kood vs FIDO2 võti](pildid/05-kood-vs-fido2.png)
 
 Koodi saab inimene võltslehele sisestada ja võltsleht saadab selle kohe edasi. FIDO2 võti kontrollib ise, millisel aadressil ta on, ega anna võltslehele midagi – seda ei saa inimene kogemata „ära anda“.
 
-&#91;embedded content: Võrgujoonis · vahendusrünne (AiTM)\]
+![Võrgujoonis · vahendusrünne (AiTM)](pildid/05-aitm-vork.png)
 
 Sama rünnak võrgujoonisena: ründaja server on töötaja ja päris teenuse vahel ning edastab kõik, mida töötaja sisestab. Lõpuks saab ründaja endale **sessiooniküpsise** – „pileti“, mis hoiab teda sisselogituna.
 
@@ -504,7 +504,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründajad (DarkSide) logisid sisse VPN-i kaudu, kasutades **vana VPN-kontot**, mis ei olnud enam kasutusel, kuid oli endiselt aktiivne. Ettevõtte IT-osakond ei teadnudki, et see VPN-profiil on alles – see ei ilmunud ühessegi skaneeringusse. Tegevjuhi sõnul oli parool keeruline, kuid ilmselt lekkinud. VPN-il ei olnud MFA-d.
 
-&#91;embedded content: Võrgujoonis · Colonial Pipeline\]
+![Võrgujoonis · Colonial Pipeline](pildid/05-colonial-pipeline.png)
 
 **Mis oleks aidanud.** MFA VPN-il; kasutamata kontode regulaarne deaktiveerimine; lekkinud paroolide jälgimine. Ükskõik milline neist oleks rünnaku tõenäoliselt peatanud.
 
@@ -518,7 +518,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründaja ostis välise töövõtja parooli, mis oli tõenäoliselt varastatud infovaraga. MFA nõudis push-kinnitust. Ründaja saatis järjest kinnituspäringuid ja kirjutas enda väitel töövõtjale WhatsAppis, esinedes Uberi IT-toena, et päringud lõpevad alles siis, kui ta ühe kinnitab. Töövõtja kinnitaski. Sisevõrgus leidis ründaja võrgukettalt PowerShelli skripti, milles oli PAM-süsteemi administraatori parool selgetekstina.
 
-&#91;embedded content: Võrgujoonis · Uber 2022\]
+![Võrgujoonis · Uber 2022](pildid/05-uber-2022.png)
 
 **Mis oleks aidanud.** Numbri sobitamisega või FIDO2-põhine MFA; kinnituspäringute arvu piiramine ja hoiatus massiliste päringute korral; töövõtjate koolitus; paroolide hoidmine PAM-is, mitte skriptides.
 
@@ -546,7 +546,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** varukoopia on nagu fotoalbumi koopia, mida hoiad sõbra juures. Kui kodus on tulekahju, on pildid alles – aga ainult siis, kui koopia ei olnud samas toas.
 
-&#91;embedded content: Reegel 3-2-1-1-0\]
+![Reegel 3-2-1-1-0](pildid/06-reegel-3-2-1-1-0.png)
 
 Iga number kaitseb erineva ohu eest: kaks kandjat – kandja rikke eest, teine asukoht – tulekahju või varguse eest, võrgust lahti koopia – lunavara eest, null viga – selle eest, et varukoopia osutub hädahätta kasutuks.
 
@@ -586,7 +586,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründaja sai ligipääsu Code Spacesi AWS-i halduskonsoolile ja nõudis lunaraha. Kui ettevõte püüdis kontrolli tagasi võtta, kustutas ründaja masinad, andmehoidlad ja **ka varukoopiad**. Varukoopiad asusid samas AWS-i kontos ja olid kättesaadavad samade õigustega.
 
-&#91;embedded content: Võrgujoonis · Code Spaces\]
+![Võrgujoonis · Code Spaces](pildid/06-code-spaces.png)
 
 **Mis oleks aidanud.** Varukoopiad teises kontos või teise teenusepakkuja juures; MFA halduskonsoolil; kustutamise kaitse (nt objektide lukustus); juurkonto eraldamine igapäevatööst.
 
@@ -626,7 +626,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** kõige parem lukk ei aita, kui keegi avab ukse võõrale, kes ütleb end olevat elektrik.
 
-&#91;embedded content: Juhipettus · ilma kontrollita vs teise kanali kaudu\]
+![Juhipettus · ilma kontrollita vs teise kanali kaudu](pildid/07-juhipettus.png)
 
 Kontrolli **teise kanali** kaudu: helista numbrile, mille tead juba ette (mitte kirjas olevale). Kui kiri on võltsitud, ei saa petis seda kõne vastu võtta.
 
@@ -673,7 +673,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründajad helistasid Twitteri töötajatele, esinedes ettevõtte IT-toena, ja suunasid nad võltsitud VPN-i sisselogimislehele. Nii saadi nelja töötaja paroolid ja MFA-koodid. Seejärel leiti töötajad, kellel oli ligipääs **sisemisele kontohaldustööriistale**. Selle tööriistaga sai muuta ükskõik millise konto e-posti aadressi.
 
-&#91;embedded content: Võrgujoonis · Twitter 2020\]
+![Võrgujoonis · Twitter 2020](pildid/07-twitter-2020.png)
 
 **Mis oleks aidanud.** Töötajate koolitus häälõngitsuse tunnuste kohta; andmepüügikindel MFA; sisemise haldustööriista ligipääsu piiramine vähimale võimalikule arvule töötajatele ja nelja silma kinnitus tundlikele tegevustele.
 
@@ -687,7 +687,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Töötaja sai kirja, mis näis tulevat Suurbritannia finantsjuhilt. Esialgu ta kahtles, kuid seejärel kutsuti ta videokõnesse, kus osalesid „finantsjuht“ ja mitu tuttavat kolleegi. Kõik teised osalejad olid **tehisintellektiga loodud süvavõltsingud**, mis põhinesid avalikult kättesaadaval videol. Videokõne kõrvaldas töötaja kahtlused.
 
-&#91;embedded content: Võrgujoonis · Arup\]
+![Võrgujoonis · Arup](pildid/07-arup.png)
 
 **Mis oleks aidanud.** Tagasihelistamine finantsjuhile teadaoleval numbril; maksete kinnitamine eraldi süsteemis; koolitus, mis selgitab, et ka video ja hääl võivad olla võltsitud; kokkulepitud kontrollküsimus või -sõna.
 
@@ -703,7 +703,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** igal töötajal on võtmekaart, mis avab ainult need uksed, mida ta oma tööks vajab. Kui ta vahetab ametit, kaart muudetakse; kui ta lahkub, kaart tühistatakse samal päeval.
 
-&#91;embedded content: Konto elukaar (JML)\]
+![Konto elukaar (JML)](pildid/08-konto-elukaar.png)
 
 Kõige sagedamini läheb meelest just viimane samm. Endise töötaja konto, mis jäi avatuks, on nagu võti, mida ei küsitud tagasi.
 
@@ -750,7 +750,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründajad kasutasid **password sprayingut** vana **testkeskkonna** konto vastu, millel ei olnud MFA-d. Sellest testkeskkonnast leidsid nad vana testrakenduse, millel oli kõrgendatud ligipääs Microsofti **ettevõtte põhikeskkonnale**. Rakenduse kaudu said ründajad luua uusi rakendusi ja anda neile õigused postkastide lugemiseks.
 
-&#91;embedded content: Võrgujoonis · Midnight Blizzard\]
+![Võrgujoonis · Midnight Blizzard](pildid/08-midnight-blizzard.png)
 
 **Mis oleks aidanud.** Testkeskkondade inventuur ja vanade keskkondade sulgemine; MFA kõigil kontodel, ka testkontodel; rakenduste (OAuth – mehhanism, millega rakendusele antakse luba kellegi nimel andmetele ligi pääseda) õiguste regulaarne ülevaatus; testkeskkonna ja tootmiskeskkonna range eraldatus.
 
@@ -778,7 +778,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** krüpteeritud sülearvuti kaotamine on nagu lukustatud kohvri kaotamine, mille koodi keegi ei tea. Kahju on ainult kohvrist, mitte selle sisust.
 
-&#91;embedded content: Kadunud sülearvuti · krüpteerimata vs krüpteeritud\]
+![Kadunud sülearvuti · krüpteerimata vs krüpteeritud](pildid/09-kadunud-sulearvuti.png)
 
 Windowsi sisselogimisparool kaitseb ainult siis, kui arvuti käivitatakse tavapäraselt. Kui ketas välja võetakse, ei küsi keegi parooli – krüpteeritud ketta andmed on aga ilma võtmeta kasutud.
 
@@ -851,11 +851,11 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** võrgu segmenteerimine on nagu laeva veekindlad vaheseinad. Kui üks sektsioon lekib, ei upu kogu laev.
 
-&#91;embedded content: Lame vs segmenteeritud võrk\]
+![Lame vs segmenteeritud võrk](pildid/10-lame-vs-segmenteeritud.png)
 
 Segmenteerimine on nagu tuleuksed hoones: tulekahju võib alata, aga see ei jõua kõigisse ruumidesse korraga.
 
-&#91;embedded content: Võrgujoonis · segmenteeritud võrk\]
+![Võrgujoonis · segmenteeritud võrk](pildid/10-segmenteeritud-vork.png)
 
 Kontori arvutid ja serverid on eri segmentides ning nende vahel on tulemüür, mis laseb läbi ainult vajaliku liikluse. Nakatunud tööjaam ei jõua serveriteni.
 
@@ -891,7 +891,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründajad varastasid andmepüügiga parooli väikeselt **kütte- ja ventilatsioonifirmalt**, kes oli Targeti tarnija. Tarnijal oli ligipääs Targeti arveldus- ja projektiportaalile. Sealt said ründajad liikuda kassasüsteemideni, sest võrk ei olnud piisavalt segmenteeritud. Targeti turvasüsteem andis küll hoiatusi, kuid neile ei reageeritud.
 
-&#91;embedded content: Võrgujoonis · Target\]
+![Võrgujoonis · Target](pildid/10-target.png)
 
 **Mis oleks aidanud.** Tarnijate ligipääsu range eraldamine; kaardimaksete keskkonna isoleerimine (seda nõuab ka maksekaartide andmete kaitse standard PCI DSS); MFA tarnijatele; hoiatustele reageerimise protsess.
 
@@ -905,7 +905,7 @@ Põhimõisted:
 
 **Miks see juhtus.** NotPetya levis Ukraina raamatupidamistarkvara M.E.Doc kompromiteeritud uuenduse kaudu. See ei olnud tegelikult lunavara, vaid andmeid hävitav pahavara. Võrgus levis see EternalBlue haavatavuse ja varastatud administraatoriparoolide abil (Mimikatz – tööriist, mis loeb Windowsi mälust paroole ja nende räsisid). Maerski globaalne võrk oli lame ja sama domeeniadministraatori õigused kehtisid kõikjal.
 
-&#91;embedded content: Võrgujoonis · Maersk ja NotPetya\]
+![Võrgujoonis · Maersk ja NotPetya](pildid/10-maersk-notpetya.png)
 
 **Kuidas taastuti.** Kõik domeenikontrollerid hävisid – peale ühe Ghanas, mis oli juhuslikult elektrikatkestuse tõttu võrgust väljas. Sellest tehti koopia, mis toimetati Londonisse, ja selle abil taastati kogu Active Directory.
 
@@ -921,7 +921,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Ründajad sisenesid fuajee akvaariumi **internetti ühendatud termomeetri** kaudu. Andur oli samas võrgus muude süsteemidega. IoT-seadmetel on sageli nõrgad vaikeparoolid ja neid ei paigata, kuid neid ei peeta „päris arvutiteks“, mistõttu neid ka ei jälgita.
 
-&#91;embedded content: Võrgujoonis · kasiino termomeeter\]
+![Võrgujoonis · kasiino termomeeter](pildid/10-kasiino-termomeeter.png)
 
 **Mis oleks aidanud.** IoT-seadmed eraldi segmendis, kust ei ole ligipääsu sisevõrku; väljuva liikluse piiramine (termomeeter ei pea saatma gigabaite Soome); võrguliikluse anomaaliate jälgimine.
 
@@ -937,7 +937,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** poliitika on maja kodukord – see ütleb, mida tohib ja kes vastutab. Protseduur on kasutusjuhend – see ütleb samm-sammult, kuidas midagi õigesti teha.
 
-&#91;embedded content: Poliitika → kitsamad poliitikad → protseduurid\]
+![Poliitika → kitsamad poliitikad → protseduurid](pildid/11-poliitika-hierarhia.png)
 
 Poliitika ütleb, **miks** ja **mida** tehakse; protseduur ütleb samm-sammult, **kuidas**. Töötaja loeb igapäevaselt enamasti protseduure.
 
@@ -996,7 +996,7 @@ Põhimõisted:
 
 **Miks see juhtus.** Link oli loodud **SAS-tokeniga** (*Shared Access Signature*), millel olid kogu salvestuskonto **täisõigused** ja väga pikk kehtivusaeg. SAS-token on nagu lisavõti, mille saab kellelegi anda – see võti avas kogu lao, mitte ühte riiulit. Selliseid tokeneid on keeruline jälgida ja need ei ilmu tavalistesse ligipääsude ülevaatustesse. Puudus protseduur, mis oleks nõudnud avaliku jagamise jaoks eraldi salvestuskonto ja piiratud õigustega lingi kasutamist.
 
-&#91;embedded content: Võrgujoonis · Microsofti 38 TB leke\]
+![Võrgujoonis · Microsofti 38 TB leke](pildid/11-microsoft-38tb.png)
 
 **Mis oleks aidanud.** Pilveressursside jagamise protseduur (avalikud andmed eraldi kontos, ainult lugemisõigus, lühike kehtivusaeg); avalike repositooriumite automaatne skaneerimine saladuste suhtes; jagamislinkide inventuur.
 
@@ -1012,7 +1012,7 @@ Põhimõisted:
 
 > **Lihtsalt öeldes:** intsidendi käsitlemise plaan on nagu tulekahju evakuatsiooniplaan. Kõik teavad juba enne tulekahju, kuhu minna, kes mida teeb ja kellele helistada.
 
-&#91;embedded content: Intsidendi käsitlemise tsükkel\]
+![Intsidendi käsitlemise tsükkel](pildid/12-intsidendi-tsukkel.png)
 
 Tähtis on järjekord: enne kui põhjust eemaldad (4), peata levik (3) – muidu levib rünne edasi samal ajal, kui sa koristad.
 
@@ -1051,7 +1051,7 @@ Põhimõisted:
 
 **Mis juhtus.** Aprillis-mais 2007, pärast pronkssõduri teisaldamist Tallinna kesklinnast, ründasid Eestit umbes kolm nädalat järjestikused teenusetõkestusründed (DDoS). Sihtmärgiks olid riigiasutuste, pankade, meediaväljaannete ja erakondade veebilehed. Mõned pangateenused ja uudisteportaalid ei olnud mõnda aega kättesaadavad.
 
-&#91;embedded content: Võrgujoonis · Eesti 2007 DDoS\]
+![Võrgujoonis · Eesti 2007 DDoS](pildid/12-eesti-2007-ddos.png)
 
 **Miks see lõppes nii, nagu lõppes.** Ründed olid ulatuslikud, kuid Eesti suutis need kontrolli alla saada. Hiljuti loodud CERT-EE koordineeris tegevust, internetiteenuse pakkujad ja pangad tegid tihedat koostööd ning mitmel juhul piirati ajutiselt välismaist liiklust. Eesti sai abi ka rahvusvahelistelt partneritelt.
 
@@ -1077,7 +1077,7 @@ Põhimõisted:
 
 **Mis juhtus.** 2016. aastal varastasid ründajad Uberi pilvekeskkonnast umbes 57 miljoni sõitja ja juhi andmed. Ründajad leidsid ligipääsuvõtmed GitHubi repositooriumist. Uber ei teavitanud kasutajaid ega ametiasutusi, vaid maksis ründajatele 100 000 dollarit, esitledes makset vearaportite preemiaprogrammi tasuna, ja lasi neil allkirjastada konfidentsiaalsuslepingu.
 
-&#91;embedded content: Võrgujoonis · Uber 2016\]
+![Võrgujoonis · Uber 2016](pildid/12-uber-2016.png)
 
 **Miks see lõppes halvasti.** Juhtum tuli avalikuks 2017. aasta novembris pärast juhtkonna vahetust. Uber maksis USA osariikidele 148 miljonit dollarit ja ettevõtte endine turvajuht mõisteti 2022. aastal süüdi õigusemõistmise takistamises ja kuriteo varjamises.
 

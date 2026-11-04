@@ -1,123 +1,946 @@
-## Küberhügieeni põhimõtete süvendatud analüüs näidetega
+# Küberhügieeni 12 põhimõtet – õppematerjal näidete ja analüüsiga
 
-### 1. Tarkvara uuendamine (Patch Management)
+Nov 4, 2026 · @Valdo
 
-**Sisu selgitus:** Tarkvara uuendamine on turvalisuse fundamentaalne nurgakivi. See hõlmab turvapaikade (*security patches*) kiiret ja süstemaatilist paigaldamist, millega tootja parandab haavatavused. Organisatsioon peab omama kindlat **uuenduste haldamise poliitikat**, mis prioriseerib kriitilised turvapaigad ja testib need enne laiaulatuslikku juurutamist.
+## Sissejuhatus
 
-**Miks see on ülioluline:** Uuendamata tarkvara on avalikult teadaolevatele rünnetele haavatav. Kui tootja avaldab turvapaiga, on see tegelikult kurjategijatele ka "vihjeks", millist haavatavust otsida. Ründajad loovad kiiresti pahavara, mis kasutab neid auke ära (nn *Exploit Kits*), otsides internetist süsteeme, mis pole paigaldanud parandust.
+Küberhügieen on igapäevaste turvaharjumuste kogum, mis hoiab ära suurema osa rünnetest enne, kui need jõuavad kalliks intsidendiks kasvada. Peaaegu iga suur küberjuhtum viimase 15 aasta jooksul taandub ühe või mitme siin kirjeldatud põhimõtte eiramisele.
 
-**Päriseluline näide:** 2017. aasta **WannaCry lunavararünnak** on selle põhimõtte eiramise tuntuim näide. Rünnak levis kogu maailmas, nakatades üle 230 000 arvuti. Rünnak kasutas ära **Microsoft Windowsi SMBv1 (Server Message Block)** protokollis olnud haavatavust, mis oli tuntud koodnime all **EternalBlue**. Microsoft oli sellele kriitilisele haavatavusele turvapaiga (**MS17-010**) välja andnud juba märtsis 2017, kuid rünnakud algasid alles mais 2017. **Organisatsioonid, mis olid jätnud selle *kriitilise* paiga paigaldamata, said lunavaralt otse pihta**, kuna WannaCry levis arvutist arvutisse iseseisvalt nagu viirus.
+**Sihtrühm:** IT-taustaga täiskasvanud õppijad, kes tunnevad E-ITS-i põhimõtteid ja soovivad näha, kuidas need päriselus töötavad või ebaõnnestuvad.
 
----
+**Iga teema ülesehitus:**
 
-### 2. Viirusetõrje ja pahavaratõrje (Antivirus and Anti-Malware)
+1. **Sisu selgitus** – mida põhimõte tähendab ja millised on põhimõisted.
+2. **Miks see on oluline** – milline oht ilma selleta realiseerub.
+3. **Praktilised meetmed** – kontrollnimekiri, mida organisatsioonis üle vaadata.
+4. **Kolm päriselulist näidet** – iga näide on analüüsitud sama skeemi järgi:
+   - **Mis juhtus** – juhtumi lühikirjeldus;
+   - **Miks see juhtus** – juurpõhjus ja kaasa aidanud tegurid;
+   - **Mis oleks aidanud** – meetmed, mis oleksid juhtumi ära hoidnud või kahju vähendanud;
+   - **Õppetund** – üldistus, mida saab üle kanda oma organisatsiooni.
+5. **Arutelu küsimused** – tunnis või iseseisvaks tööks.
 
-**Sisu selgitus:** Kaasaegsed pahavaratõrje lahendused (sh **EDR ehk *Endpoint Detection and Response***) on oluliselt arenenud. Need ei otsi enam pelgalt faili allkirju (nn "musta nimekirja"), vaid analüüsivad **protsesside käitumist** ja süsteemi tegevusi reaalajas. See võimaldab tuvastada ka keerukaid ja seni tundmatuid ründeid (*zero-day*), mis püüavad süsteemis varjatult tegutseda. Tarkvara peab olema paigaldatud ja pidevalt aktiivne *kõigis* organisatsiooni seadmetes – ka mobiilsetes.
+**Märkus näidete kohta:** juhtumid põhinevad avalikel aruannetel, ametlikel teadaannetel ja meediakajastusel. Arvud on ümardatud. Mitu juhtumit illustreerib korraga mitut põhimõtet – see on teadlik valik, sest päriselus ei ebaõnnestu kunagi ainult üks kaitsekiht.
 
-**Miks see on ülioluline:** Pahavara on küberrünnakute levinuim tööriist. Ilma toimiva tõrjeta on süsteem avatud pahavara sisenemisele, mis võib varastada andmeid, krüpteerida faile (lunavara) või luua tagaukse (backdoor) pikaajaliseks juurdepääsuks.
+## Põhimõisted algajale
 
-**Päriseluline näide:** Keskmise suurusega finantsettevõtet rünnati sihipärase pahavaraga, mis oli programmeeritud vältima traditsioonilist viirusetõrjet (sellel puudus tuntud allkiri). Pahavara eesmärk oli **pääseda ligi töötajate salvestatud paroolidele**. Kuigi traditsiooniline kaitse ebaõnnestus, tuvastas EDR-lahendus pahavara sisenemise järel **kahtlase käitumise** – programm hakkas ebatavaliselt kiiresti skaneerima paroolide *cache*-faile. EDR **blokeeris protsessi automaatselt** ja teavitas intsidentide lahendamise meeskonda, **takistades andmevarguse** enne, kui pahavara jõudis infot edastada.
+Enne põhimõtete juurde minekut tasub selgeks teha mõned mõisted, mis korduvad peaaegu igas teemas. Kui mõni hilisem näide tundub keeruline, tule siia tagasi.
 
----
+### Varad ja varade haldus
 
-### 3. Tulemüüride kasutamine (Firewall Usage)
+**Vara** (*asset*) on kõik, millel on organisatsiooni jaoks väärtus ja mida tuleb kaitsta. IT-s on varad näiteks:
 
-**Sisu selgitus:** Tulemüür on kriitiline filter ja barjäär organisatsiooni võrgu ja välismaailma vahel. Tulemüüri põhimõte on **"kõik on keelatud, kuni pole spetsiaalselt lubatud"**. Organisatsioonid peavad rakendama mitut liiki tulemüüre: **võrgu perimeetri tasandil** (mis kaitseb välistest rünnakutest) ja **lõpp-punkti tasandil** (mis kaitseb seadmeid võrgu siseselt). Tulemüüri konfiguratsioonid peavad olema ajakohased, et vältida ebavajalike teenuste ja portide avatust internetile.
+- **riistvara** – arvutid, serverid, telefonid, printerid, võrguseadmed, tulemüürid;
+- **tarkvara** – operatsioonisüsteemid, rakendused, pilveteenused ja nende versioonid;
+- **andmed** – klientide andmed, raamatupidamine, lähtekood, lepingud;
+- **kontod ja identiteedid** – kasutajakontod, teenusekontod, administraatorikontod;
+- **teenused** – e-post, veebileht, e-pood, VPN.
 
-**Miks see on ülioluline:** Tulemüür takistab volitamata ligipääsu ja blokeerib automaatseid ründetööriistu. Õige seadistus võimaldab rakendada ka **võrgu segmenteerimist**, eraldades kriitilised süsteemid (nt finantsserverid) tavakasutajate võrkudest, piirates ründaja liikumisvabadust sisevõrgus.
+**Varade haldus** tähendab, et organisatsioon teab, **millised varad tal on, kus need asuvad, kes on nende omanik ja kui olulised need on**. Tavaliselt hoitakse seda infot varade registris või **CMDB**-s (*Configuration Management Database*, konfiguratsiooniandmebaas). Ühe serveri kirje võib sisaldada näiteks nime, IP-aadressi, operatsioonisüsteemi versiooni, paigaldatud tarkvara, asukohta, vastutajat ja seda, milliseid andmeid see hoiab.
 
-**Päriseluline näide:** Pärast seda, kui ühe transpordifirma töötaja arvuti oli nakatunud pahavaraga, püüdis pahavara ise edasi levida. Kuna ettevõte oli kasutanud **võrgu segmenteerimist** (VLAN-e) ja **sisemist tulemüüri**, et eraldada kontoriarvutid kriitilistest logistikaserveritest (mis suhtlevad kaubaga), **ei pääsenud pahavara sisenema logistikaserveritesse**. Tulemüür blokeeris selle levikukatse, hoides ära teenuste täieliku seiskumise.
+**Miks see on turvalisuse alus?** Sa ei saa kaitsta seda, millest sa ei tea. Kui keegi on kunagi püsti pannud testserveri ja selle unustanud, ei paigata seda keegi, keegi ei jälgi selle logisid ja keegi ei märka, kui sinna sisse murtakse. Paljudes selle materjali näidetes (Equifax, Microsoft, Colonial Pipeline) oli rünnaku alguspunkt just mõni unustatud süsteem või konto.
 
----
+**Igapäevaelu võrdlus:** varade register on nagu korteri inventuurinimekiri kindlustuse jaoks. Kui varga külastuse järel ei tea, mis sul kodus oli, ei tea sa ka, mis kadunud on.
 
-### 4. Paroolide haldus (Password Management)
+### Muud põhimõisted
 
-**Sisu selgitus:** Tõhus paroolihaldus tähendab, et iga teenuse ja süsteemi jaoks kasutatakse **pikki, keerulisi ja unikaalseid paroole**. Organisatsioon peab rakendama **paroolipoliitika**, mis sätestab parooli pikkuse ja keerukuse nõuded. Kõige efektiivsem lahendus on **paroolihalduri** (nt LastPass, 1Password) juurutamine ja selle kasutamise kohustuslikuks tegemine. See vahend loob juhuslikke paroole, salvestab need krüpteeritult ja täidab automaatselt, välistades paroolide korduvkasutamise.
+| Mõiste | Selgitus | Võrdlus igapäevaeluga |
+| --- | --- | --- |
+| **Haavatavus** | Viga või nõrkus tarkvaras, seadistuses või protsessis, mida saab ära kasutada. | Aken, mille lukk ei sulgu korralikult. |
+| **Oht** | Keegi või miski, kes võib haavatavust ära kasutada (ründaja, pahavara, tulekahju, inimlik viga). | Vargad, kes käivad mööda tänavat ja katsuvad aknaid. |
+| **Risk** | Kui tõenäoline on, et oht kasutab haavatavust ära, ja kui suur oleks kahju. | Kui suur on tõenäosus, et just sinu aknast sisse tullakse, ja mida sealt viia saab. |
+| **Turvameede** | Tegevus või tehnoloogia, mis vähendab riski (paik, MFA, varundus, koolitus). | Uus aknalukk või signalisatsioon. |
+| **Paik** (*patch*) | Tootja parandus, mis sulgeb haavatavuse. | Lukusepp, kes vahetab vigase luku. |
+| **Ärakasutamine** (*exploit*) | Kood või meetod, mis kasutab haavatavust ära. | Tööriist, millega vigane lukk lahti tehakse. |
+| **Pahavara** (*malware*) | Kahjulik tarkvara: viirus, uss, troojalane, lunavara, nuhkvara. | Sissetungija, kes tuleb kaasa koos postipakiga. |
+| **Lunavara** (*ransomware*) | Pahavara, mis krüpteerib andmed ja nõuab nende tagastamise eest raha. Sageli varastatakse andmed ka ja ähvardatakse need avalikustada. | Keegi paneb su kapile oma luku ja müüb sulle võtit. |
+| **Andmepüük** (*phishing*) | Võltssõnum, mis meelitab sind parooli sisestama, faili avama või raha üle kandma. | Võltsitud kiri „pangalt“, mis palub PIN-koodi. |
+| **Konto ja õigused** | Konto on kasutaja digitaalne identiteet; õigused määravad, mida konto tohib teha. | Töötaja kaart, mis avab ainult teatud uksi. |
+| **Administraator** | Konto, millel on süsteemis väga laiad või kõik õigused. | Majahoidja, kellel on kõigi uste võtmed. |
+| **Active Directory (AD)** ja **domeen** | Microsofti süsteem, mis haldab organisatsiooni kasutajaid, arvuteid ja õigusi ühest kohast. Domeenikontroller on server, kus see info asub. | Ettevõtte valvelaud, kus on kõigi töötajate ja võtmete nimekiri. |
+| **Server** | Arvuti, mis pakub teenust teistele arvutitele (failid, e-post, andmebaas, veebileht). | Köök restoranis – külastajad seda ei näe, aga kõik tuleb sealt. |
+| **Port** | Number, mille kaudu teenus võrgus suhtleb (nt 443 veebiliiklus, 3389 kaugtöölaud). | Maja uksed: igal teenusel oma uks. |
+| **Krüpteerimine** | Andmete muutmine loetamatuks kõigile, kellel ei ole võtit. | Kiri, mis on kirjutatud salakeeles. |
+| **Räsi** (*hash*) | Ühesuunaline „sõrmejälg“ andmetest. Paroole hoitakse räsina, et neid ei saaks otse lugeda. | Hakklihast ei saa tagasi tükki liha teha. |
+| **Logi** | Süsteemi kirje sellest, mis juhtus (kes logis sisse, mida muudeti). | Valvekaamera salvestis. |
+| **Pilveteenus** | Teenus, mis töötab teenusepakkuja (nt Microsoft, Amazon, Google) serverites, mitte sinu omas. | Pangaseif võrreldes kodus oleva seifiga. |
+| **Kernel** | Operatsioonisüsteemi tuum, millel on kõige suuremad õigused. | Hoone vundament ja kandvad seinad. |
+| **Intsident** | Sündmus, mis kahjustab või ohustab andmete või teenuste turvalisust. | Sissemurdmine, mis juba toimus või toimumas on. |
 
-**Miks see on ülioluline:** Korduvkasutatavad ja nõrgad paroolid on kuritegeliku tegevuse levinuim sisenemispunkt. Ründajad kasutavad **Credential Stuffing** tehnikaid, proovides varastatud paroolide nimekirju automaatselt kõikides teenustes. Kui parool on unikaalne, ei too ühe teenuse andmeleke kaasa teiste süsteemide kompromiteerimist.
+### Kolm küsimust, mida iga näite juures küsida
 
-**Päriseluline näide:** Ühe hotelliketi töötaja kasutas sama parooli oma isiklikus *streaming*-teenuse kontos ja töösüsteemis, kus hoiti hotellide broneeringuid. Kui see *streaming*-teenus sattus andmelekkesse, sai ründaja selle parooli kätte ja kasutas seda koheselt hotelli sisemiste süsteemide juures. **Ründaja sai ligipääsu sadade klientide isikuandmetele**, mis oleks ära hoitud, kui töötaja oleks kasutanud iga teenuse jaoks unikaalset parooli.
+1. **Kust ründaja sisse sai?** (sisenemispunkt)
+2. **Mis võimaldas tal edasi liikuda või kahju teha?** (puuduvad kaitsekihid)
+3. **Mis oleks teda kõige varem peatanud?** (kõige tõhusam meede)
 
----
+## 1. Tarkvara uuendamine (Patch Management)
 
-### 5. Mitmeastmeline autentimine (MFA)
+> **Lihtsalt öeldes:** paik on nagu lukusepa parandus. Kui tootja teatab, et su ukse lukk on vigane, ja saadab uue, kuid sa seda ei paigalda, siis teavad nüüd ka vargad, millist ust katsuda.
 
-**Sisu selgitus:** Mitmeastmeline autentimine (MFA või 2FA) nõuab kasutajalt sisselogimiseks kahte või enamat tõestusvahendit eri kategooriatest (*midagi, mida tead* + *midagi, mis sul on* jne). See on **ühekordselt kõige olulisem turvameede**, mida organisatsioon saab rakendada. Eriti tähtis on MFA juurutamine kõikidel kaugligipääsudel (VPN), pilveteenustes ja administraatori kontodel.
+**Sisu selgitus.** Paigahaldus on protsess, mille käigus organisatsioon saab teada uutest haavatavustest, hindab nende mõju, testib parandused ja paigaldab need kõikidesse süsteemidesse. Protsess eeldab ajakohast **varade nimekirja** – kui sa ei tea, et server on olemas, ei paiga sa seda ka.
 
-**Miks see on ülioluline:** Isegi kui parool on ründajale teada (nt õngitsuse või lekke kaudu), ei saa ta ligi ilma teise faktorita (nt füüsiline token või telefoni äpi kinnitus). **MFA blokeerib ligikaudu 99,9% identiteedivargustel põhinevatest rünnetest.**
+Põhimõisted:
 
-**Päriseluline näide:** Ehitusettevõtte IT-juht langes keeruka **phishing-rünnaku** ohvriks, mis suutis varastada tema administraatori parooli. Kuna aga IT-juhi konto oli kaitstud MFA-ga, mis nõudis juurdepääsuks **füüsilist U2F turvavõtit**, nurjus ründaja sisselogimiskatse. Ründaja püüdis korduvalt, aga ilma füüsilise võtmeta oli süsteemi sisenemine võimatu, **takistades ettevõtte kriitiliste serverite kompromiteerimise**.
+- **CVE** – avalikult teadaoleva haavatavuse unikaalne tunnus (nt CVE-2017-5638).
+- **CVSS** – haavatavuse tõsiduse hinnang skaalal 0–10.
+- **KEV-nimekiri** (CISA Known Exploited Vulnerabilities) – haavatavused, mida rünnetes **päriselt kasutatakse**; need paigatakse esimesena.
+- **Nullpäeva haavatavus** (zero-day) – haavatavus, millele parandust veel ei ole.
+- **N-päeva haavatavus** – parandus on olemas, aga paigaldamata. Enamik edukaid rünnakuid kasutab just neid.
 
----
+**Miks see on oluline.** Turvapaiga avaldamine on ka ründajale vihje: paika võrreldes vana versiooniga leitakse haavatav koht sageli mõne päevaga. Aeg paiga ilmumisest esimeste massrünnakuteni on viimastel aastatel lühenenud nädalatelt päevadele. Internetist ligipääsetavad süsteemid (VPN, tulemüürid, veebiserverid, failiedastus) on kõige suurema riskiga.
 
-### 6. Andmete varundamine (Data Backup)
+**Praktilised meetmed:**
 
-**Sisu selgitus:** Varundus on organisatsiooni taastumisvõime ja kindlustuspoliis lunavara, riistvararikkete ja inimlike vigade vastu. Varundus peab järgima ranget poliitikat, näiteks **3-2-1 reeglit**: kolm koopiat andmetest, kahel erineval andmekandjal ja üks neist peab asuma **füüsiliselt või loogiliselt väljaspool võrku** (*offline* või *immutable*). See väline asukoht on kriitiline, sest lunavara krüpteerib sageli kõik võrgu kaudu ligipääsetavad varukoopiad.
+- [ ] Varade nimekiri (CMDB) on ajakohane ja sisaldab ka tarkvaraversioone.
+- [ ] Kriitilistele ja aktiivselt ärakasutatud haavatavustele on kokku lepitud tähtaeg (nt internetis avatud süsteemidel 24–72 tundi).
+- [ ] Paigad testitakse kõigepealt piloodigrupis, seejärel juurutatakse laiemalt.
+- [ ] Haavatavuste skaneerimine kinnitab, et paik on päriselt paigaldatud.
+- [ ] Toetuse lõppenud tarkvara (EOL) on kaardistatud ja sellel on asendusplaan või isoleerimine.
+- [ ] Pärast kriitilise paiga paigaldamist kontrollitakse, kas süsteemi jõuti enne paigaldamist kompromiteerida.
 
-**Miks see on ülioluline:** See on viimane ja kõige olulisem kaitse andmete püsiva kaotuse vastu. Tõhus ja testitud varundus võimaldab organisatsioonil kriisi korral **keelduda lunaraha maksmisest** ja kiiresti taastada oma äritegevus.
+**Seos E-ITS-iga:** OPS.1.1.3 Paiga- ja muudatusehaldus.
 
-**Päriseluline näide:** Väike tootmisettevõte langes rünnaku ohvriks, mis krüpteeris kõik nende tootmisandmed ja esitas lunarahanõude. Ettevõtte IT-osakond oli teinud kriitilistest andmetest **regulaarsed varukoopiad, mis asusid võrgust lahti ühendatud andmekandjatel**. Tänu sellele **suudeti süsteemid taastada kolme päeva jooksul**, vältida lunaraha maksmist ja minimeerida seiskumise aja ning kulud. Kui aga varundus oleks olnud võrku ühendatud, oleks lunavara ka selle krüpteerinud.
+### Näide 1: WannaCry lunavara (2017)
 
----
+**Mis juhtus.** Mais 2017 levis WannaCry mõne päevaga üle 200 000 arvutisse vähemalt 100 riigis. Inglismaa tervishoiusüsteemis (NHS) oli häiritud vähemalt kolmandik haiglaid haldavatest asutustest, ära jäi ligi 7000 vastuvõttu ja osa patsiente suunati teistesse haiglatesse. Riigikontrolli (NAO) hinnangul oleks rünnaku saanud ära hoida IT-turbe põhitõdesid järgides. Kahjustatud olid ka Renault, Telefónica ja Deutsche Bahn.
 
-### 7. Turvateadlikkuse tõstmine (Security Awareness Training)
+**Miks see juhtus.** Lunavara kasutas Windowsi failijagamise protokolli SMBv1 haavatavust EternalBlue, mille parandus (MS17-010) oli välja antud juba märtsis – kaks kuud enne rünnakut. Paljudes organisatsioonides oli paik paigaldamata ja kasutusel oli ka toetuse lõppenud Windows XP. WannaCry oli **uss**: see levis ise masinast masinasse ilma kasutaja tegevuseta. Lisaks oli SMB port 445 paljudes kohtades internetist kättesaadav.
 
-**Sisu selgitus:** Turvateadlikkus on pidev koolitusprotsess, mis muudab töötajad aktiivseks kaitsekihiks. Koolitus peab keskenduma **praktilistele teemadele** (nt õngitsuse, sotsiaalse manipulatsiooni ja andmete käsitlemise) ning olema **regulaarne ja interaktiivne** (simulatsioonid, teadlikkuse testid). Organisatsiooni eesmärk on luua **turvalisuse kultuur**, kus iga töötaja on võimeline tuvastama ja teatama kahtlasest tegevusest.
+**Mis oleks aidanud.** MS17-010 paigaldamine; SMBv1 väljalülitamine; pordi 445 blokeerimine perimeetril; võrgu segmenteerimine, mis oleks levikut piiranud; EOL-süsteemide isoleerimine.
 
-**Miks see on ülioluline:** Inimene on sageli kõige nõrgem lüli küberkaitses. Paljud kõige laastavamad rünnakud algavad lihtsa sotsiaalse manipulatsiooni või õngitsusega, kus inimene klõpsab lingil või avaldab tundlikku infot.
+**Õppetund.** Paigata jäetud kriitiline haavatavus ja lame võrk on koos ussile ideaalne keskkond. Paigahaldus ja segmenteerimine täiendavad teineteist.
 
-**Päriseluline näide:** Rahvusvaheline logistikafirma korraldas töötajatele igakuiseid **õngitsuse simulatsiooni teste**. Ühel korral saadeti paljudele töötajatele e-kiri, mis väidetavalt tuli IT-osakonnast ja nõudis parooli sisestamist tarkvara uuendamiseks. Pärast mitmeid koolitusi **märkas enamik töötajaid kahtlast saatja aadressi** ja teatas sellest, jättes lingi avamata. **Vaid 1% töötajatest langes lõksu**, samas kui enne koolitust oli see osakaal olnud üle 15%.
+### Näide 2: Equifax (2017)
 
----
+**Mis juhtus.** USA krediidiinfo ettevõttest Equifax varastati umbes 147 miljoni inimese isikuandmed, sh sotsiaalkindlustusnumbrid. Ründajad olid süsteemis umbes 2,5 kuud, enne kui neid märgati. Kokkulepped ja trahvid ulatusid kuni 700 miljoni dollarini.
 
-### 8. Ligipääsude haldamine (Access Control)
+**Miks see juhtus.** Veebiraamistiku Apache Struts (Java-põhine tööriist veebirakenduste ehitamiseks) haavatavusele (CVE-2017-5638) avaldati parandus 7. märtsil 2017. Equifaxi sisemine teavitus jõudis küll IT-ni, kuid vastutus ei olnud selge ja üks vaidlusportaal jäi paikamata. Haavatavuse skaneerimine ei leidnud seda, sest skaneerimine oli valesti seadistatud. Lisaks oli liikluse inspekteerimise seadmel 19 kuud aegunud sertifikaat, mistõttu andmete väljaviimist ei nähtud.
 
-**Sisu selgitus:** See põhimõte nõuab **vähima privileegi (Least Privilege)** rakendamist: igale kasutajale antakse ainult need õigused ja ligipääsud, mida ta oma tööülesannete täitmiseks absoluutselt vajab. Ligipääsuõigusi tuleb regulaarselt auditeerida, et eemaldada need õigused, mida enam ei vajata (nn *role creep*). Eriline tähelepanu tuleb pöörata **endiste töötajate kontode deaktiveerimisele** ja **töötajate rollivahetustele**.
+**Mis oleks aidanud.** Täielik ülevaade sellest, millistes rakendustes Struts kasutusel on; nimeline vastutaja iga süsteemi paikamise eest; skaneerimise tulemuste kontroll; sertifikaatide aegumise jälgimine.
 
-**Miks see on ülioluline:** See piirab ründeulatust. Kui ründaja kompromiteerib näiteks turundusspetsialisti konto, siis **vähima privileegi tõttu ei saa ta ligi finantsdokumentidele**. See on eriti oluline, sest piirab ründaja horisontaalset liikumist organisatsiooni sisevõrgus.
+**Õppetund.** Paik on olemas alles siis, kui see on paigaldatud **igasse** süsteemi. Selleks on vaja varade nimekirja ja selget vastutust, mitte ainult teadet, et paik on saadaval.
 
-**Päriseluline näide:** Ühe pangandusasutuse andmeturbe meeskond avastas, et endine süsteemiadministraator oli kasutanud oma deaktiveerimata jäänud ligipääsu ja **kopeerinud tundlikke pangaklientide andmeid**. Selgus, et kuigi töötaja lahkus, oli tema konto ekslikult jäetud aktiivseks, omades endiselt täielikke administraatori õigusi. Kui **töötaja lahkumise protseduuris** oleks olnud **automaatne süsteemide ligipääsu eemaldamine ja audit**, oleks see juhtum ära hoitud.
+### Näide 3: Citrix Bleed (2023)
 
----
+**Mis juhtus.** Oktoobris 2023 avaldas Citrix paranduse NetScaler ADC ja Gateway seadmete (kaugligipääsu seadmed interneti ja sisevõrgu piiril) haavatavusele CVE-2023-4966. Lunavaragrupp LockBit kasutas seda muu hulgas Boeingu ja Hiina panga ICBC USA tütarettevõtte ründamiseks; viimase tõttu häirus osa USA riigivõlakirjade arveldustest.
 
-### 9. Seadmete turvalisus (Device Security)
+**Miks see juhtus.** Haavatavus lekitas seadme mälust **sessioonitokeneid**. Sessioonitoken on nagu peo käepael: kui oled korra sisse lastud, ei küsita sinult enam piletit. Ründaja sai nendega üle võtta juba sisseloginud kasutaja sessiooni, ka MFA-ga kaitstud. Paljud organisatsioonid paigaldasid paiga, aga ei katkestanud olemasolevaid sessioone, mistõttu varastatud tokenid jäid kehtima ka pärast paikamist.
 
-**Sisu selgitus:** Seadmete turvalisus hõlmab meetmeid füüsiliste seadmete (arvutid, serverid, mobiiltelefonid) kaitsmiseks. Kõige tähtsam digitaalne meede on **kogu kõvaketta krüpteerimine** (*Full Disk Encryption*), mis muudab andmed loetamatuks, kui seade satub valedesse kätesse. Lisaks sellele tuleb tagada füüsiline turvalisus (lukud, alarmsüsteemid, serveriruumide ligipääsu kontroll) ja rakendada turvaline **seadmete väljaviskamise (disposal) poliitika**.
+**Mis oleks aidanud.** Kiire paikamine (internetis avatud seade!); pärast paikamist kõikide aktiivsete sessioonide lõpetamine, nagu tootja soovitas; logide ülevaatus kompromiteerimise tunnuste leidmiseks.
 
-**Miks see on ülioluline:** Füüsiline vargus või seadme kaotus on sageli andmeleke. Kui seade on krüpteeritud, on varastatud andmete kättesaamine peaaegu võimatu ilma õige dekrüpteerimisvõtmeta.
+**Õppetund.** Paikamine sulgeb ukse, aga ei vii välja seda, kes on juba sees. Kriitilise haavatavuse puhul tuleb alati küsida: kas meid jõuti enne paikamist rünnata?
 
-**Päriseluline näide:** Avaliku sektori asutuse töötaja kaotas rongi peal mälupulga, mis sisaldas krüpteerimata tundlikke **riigihangete andmeid**. Kuna mälupulk ei olnud krüpteeritud, sai leidja andmetele koheselt ligi. **Andmeleke oleks olnud välditav**, kui asutus oleks rakendanud kohustusliku **andmekandjate krüpteerimise poliitika** ja keelanud krüpteerimata andmete viimise väljapoole turvalist kontorit.
+**Arutelu küsimused:**
 
----
+1. Kuidas teie organisatsioon teada saab, et mõnes tootes on kriitiline haavatavus? Kes otsustab, kui kiiresti see paigatakse?
+2. Mida teha süsteemiga, mida ei saa paigata (nt tööstusseade või vana meditsiiniseade)?
+3. Miks on paigahalduse jaoks vaja varade nimekirja? Too näide oma kogemusest.
 
-### 10. Võrgu turvalisus (Network Security)
+## 2. Viirusetõrje ja pahavaratõrje (Antivirus, EDR)
 
-**Sisu selgitus:** Võrgu turvalisus tähendab võrguliikluse pidevat jälgimist ja võrgu range **segmenteerimist**. Kriitilised süsteemid (nt andmebaasid, maksesüsteemid) peavad olema isoleeritud tavakasutajate ja külaliste võrkudest (nt eraldi **VLAN-id**). Kaugühendused (VPN-id) peavad olema krüpteeritud ja nõudma MFA-d. Organisatsioon peaks kasutama ka sissetungi tuvastamise ja ennetamise süsteeme (**IDS/IPS**), et tuvastada anomaaliaid ja ründekatseid võrguliikluses.
+> **Lihtsalt öeldes:** traditsiooniline viirusetõrje on nagu valvur, kes võrdleb külastajaid tagaotsitavate fotodega. EDR on valvur, kes jälgib ka seda, mida inimesed majas teevad – ka siis, kui nende nägu ei ole kellelegi tuttav.
 
-**Miks see on ülioluline:** Ründaja kasutab sisevõrku oma baasina, et otsida väärtuslikke andmeid. Segmenteerimine takistab ründajal vabalt liiklemist ja andmete leidmist.
+**Sisu selgitus.** Traditsiooniline viirusetõrje võrdleb faile teadaolevate pahavara **signatuuridega**. Kaasaegne lõpp-punkti kaitse ehk **EDR** (*Endpoint Detection and Response*) jälgib lisaks protsesside käitumist: milliseid faile protsess avab, milliseid võrguühendusi loob, kas see püüab lugeda paroolide mälu (LSASS – Windowsi protsess, mis hoiab sisseloginud kasutajate autentimisandmeid) või kustutada varikoopiaid. **XDR** laiendab sama loogikat ka võrgule, e-postile ja pilvele.
 
-**Päriseluline näide:** Suurt tehnoloogiafirmat rünnati sissetungiga nende külalis-Wi-Fi võrgu kaudu. Ründaja püüdis kasutada saadud juurdepääsu, et skaneerida sisevõrku. Kuna ettevõte oli kasutanud **võrgu segmenteerimist**, **suutis tulemüür blokeerida igasuguse ligipääsukatse külalisvõrgust arendusserverite võrku**, vältides tundliku intellektuaalomandi varastamise.
+Põhimõisted:
 
----
+- **Signatuuripõhine tuvastus** – tunneb ära ainult juba teadaoleva pahavara.
+- **Käitumispõhine tuvastus** – tunneb ära kahtlase tegevuse ka siis, kui fail on uus.
+- **Polümorfne pahavara** – muudab iga levikuga oma kuju, et signatuurist mööda pääseda.
+- **Tamper protection** – kaitse, mis takistab ründajal turvatarkvara välja lülitamast.
+- **Living off the land** – ründaja kasutab süsteemi enda tööriistu (PowerShell, WMI), mitte eraldi pahavara.
 
-### 11. Turvapoliitika ja protseduurid (Security Policy and Procedures)
+**Miks see on oluline.** Pahavara on enamiku rünnakute tööriist: see varastab paroole, avab tagaukse või krüpteerib andmed. Kaasaegsed ründajad teavad, et EDR on nende suurim takistus, ning esimese asjana püüavad nad selle välja lülitada. Seetõttu ei piisa toote olemasolust – oluline on, kas see on igal seadmel, kas keegi vaatab selle hoiatusi ja kas seda saab välja lülitada.
 
-**Sisu selgitus:** Turvapoliitika on organisatsiooni **ametlikud juhtpõhimõtted**, mis kirjeldavad **mida** peab tegema (nt "Kõik andmed peavad olema krüpteeritud"). Protseduurid on **detailne "kuidas"** (nt "Samm-sammuline juhis varukoopia tegemiseks"). Poliitika peab olema kooskõlas seaduste ja regulatsioonidega (nt GDPR), see peab olema **kõigile töötajatele kohustuslik** ning seda peab regulaarselt auditeerima, et tagada selle vastavus muutuvatele tehnoloogiatele ja ohtudele.
+**Praktilised meetmed:**
 
-**Miks see on ülioluline:** Poliitika ja protseduurid tagavad turvameetmete **järjepidevuse** ja **vastutuse**. See on peamine dokument, mis määratleb, keda peetakse vastutavaks turvapoliitika eiramise korral.
+- [ ] EDR on paigaldatud **kõigile** lõppseadmetele ja serveritele; katvust kontrollitakse varade nimekirja vastu.
+- [ ] Tamper protection on sisse lülitatud; EDR-i eemaldamine nõuab eraldi parooli või tsentraalset luba.
+- [ ] Hoiatustele reageerib keegi ööpäevaringselt (oma meeskond või teenusepakkuja, nt MDR – teenus, kus väline meeskond jälgib hoiatusi ja reageerib sinu eest).
+- [ ] Internetist pärit dokumentide makrod on blokeeritud.
+- [ ] Rakenduste lubatud nimekiri (nt AppLocker, WDAC – Windowsi tööriistad, mis lubavad käivitada ainult heakskiidetud programme) piirab, mida kasutaja saab käivitada.
+- [ ] Haavatavate draiverite blokeerimisnimekiri on kasutusel.
+- [ ] Turvatarkvara uuendusi juurutatakse etapiviisiliselt, mitte kõigile korraga.
 
-**Päriseluline näide:** Pärast andmelekke juhtumit tegi audit selgeks, et organisatsioonil puudus selge **Andmete Klassifitseerimise Poliitika**. Selle tulemusena käsitlesid töötajad konfidentsiaalseid kliendiandmeid samal viisil nagu avalikke turundusmaterjale (nt salvestasid need mittekrüpteeritud pilve). **Poliitika loomine**, mis nõudis edaspidi kõikide tundlike andmete märgistamist ja krüpteerimist, oli esimene samm edasiste lekete vältimiseks.
+**Seos E-ITS-iga:** OPS.1.1.4 Kaitse kahjurprogrammide eest; DER.1 Turvasündmuste tuvastamine.
 
----
+### Näide 1: Emotet (2014–2021)
 
-### 12. Küberintsidentide käsitlemine (Incident Response)
+**Mis juhtus.** Emotet alustas pangatroojana ja kasvas maailma ohtlikumaks pahavara levitamise platvormiks. See saatis nakatunud postkastidest edasi kirju, mis olid vastused päris kirjavahetusele, ning lisas makrodega Wordi-faile. Nakatunud masinasse laaditi edasi TrickBot ja seejärel sageli Ryuki lunavara. Europol ja mitme riigi politsei võtsid Emoteti taristu üle jaanuaris 2021.
 
-**Sisu selgitus:** Intsidendi käsitlemise plaan (IRP) on kriitiline **operatiivdokument**. See määratleb, kuidas organisatsioon küberintsidendi (lunavara, andmeleke, süsteemi tõrge) avastamisel reageerib. Plaan peab sisaldama **kommunikatsiooniplaani** (kes ja millal teavitab meediat, kliente, juhatust, CERT-EE), **tehnilist protseduuri** (kuidas isoleerida, analüüsida ja taastada) ning **õiguslikku analüüsi**. Plaan peab olema regulaarselt harjutatud (*Table-Top Exercises* või *Live Fire Exercises*), et tagada meeskonna valmisolek tegutseda suure pinge all.
+**Miks see juhtus.** Emotet muutis oma kuju pidevalt, nii et signatuuripõhine viirusetõrje jäi maha. Kirjad nägid usaldusväärsed välja, sest tulid päris kontaktidelt. Paljudes organisatsioonides said kasutajad makrosid vabalt lubada.
 
-**Miks see on ülioluline:** Intsident on varem või hiljem paratamatu. Valmisolek **vähendab dramaatiliselt kahju rahalist ja mainelist ulatust** ning lühendab taastumisaega (*RTO - Recovery Time Objective*). See on küberkestlikkuse (cyber resilience) tuum.
+**Mis oleks aidanud.** Makrode blokeerimine internetist tulnud failides (Microsoft muutis selle 2022. aastal vaikimisi seadeks); käitumispõhine EDR, mis tuvastab, kui Word käivitab PowerShelli; e-posti manuste liivakast.
 
-**Päriseluline näide:** Suurt valitsusasutust tabas **teenusetõkestuse rünnak (DDoS)**, mis seiskas lühiajaliselt nende veebiteenused. Tänu regulaarselt harjutatud **Intsidendi Reageerimise Plaanile** suudeti rünnak tuvastada ja **liiklus ümber suunata (mitigation)** 4 tunni jooksul. Plaan nägi ette, et **ametlik pressiteade ja teavitus CERT-EE-le** läheb välja 6 tunni jooksul, mis oli kiirem kui konkurentidel ja aitas hoida meediakajastuse positiivsena. Ilma plaanita oleks taastumine võtnud päevi.
+**Õppetund.** Signatuuripõhisest kaitsest üksi ei piisa. Kõige tõhusam on **vähendada ründepinda** – kui makrod ei käivitu, ei käivitu ka Emotet.
 
----
+### Näide 2: EDR-i väljalülitamine haavatava draiveriga (BYOVD, 2022–2024)
 
-Need 12 printsiipi loovad organisatsioonis tugeva ja kestliku küberkaitseraamistiku, kus ennetus ja reageerimine moodustavad terviku. Kas soovite, et süveneksime mõnda neist valdkondadest veelgi detailsemalt või uuriksime mõnda muud teemat käsiraamatust?
+**Mis juhtus.** Mitmed lunavaragrupid hakkasid enne krüpteerimist kasutama spetsiaalseid tööriistu (nt AuKill, Terminator), mis lülitavad EDR-i välja. Turvaettevõtted, sh Sophos, kirjeldasid juhtumeid, kus EDR oli küll paigaldatud, aga ründaja lülitas selle mõne minutiga välja ja krüpteeris seejärel serverid.
+
+**Miks see juhtus.** Tehnika nimi on **Bring Your Own Vulnerable Driver**: ründaja paigaldab legitiimse, digitaalselt allkirjastatud, kuid haavatava draiveri. Draiver töötab kerneli tasemel ja sellega saab lõpetada ka turvatarkvara protsesse. Selleks vajab ründaja administraatoriõigusi, mis olid tavaliselt saadud varasemas rünnaku faasis.
+
+**Mis oleks aidanud.** Haavatavate draiverite blokeerimisnimekiri (Microsofti Vulnerable Driver Blocklist); tamper protection; hoiatus, kui mõne seadme EDR-agent lakkab ootamatult raporteerimast; administraatoriõiguste piiramine.
+
+**Õppetund.** EDR on ründaja **sihtmärk**, mitte ainult takistus. Turvatööriista vaikimine on juba iseenesest hoiatusmärk.
+
+### Näide 3: CrowdStrike'i vigane uuendus (juuli 2024)
+
+**Mis juhtus.** 19. juulil 2024 levitas CrowdStrike Falconi agendile vigase sisuuuenduse. Umbes 8,5 miljonit Windowsi arvutit jooksis kokku ja jäi taaskäivitustsüklisse. Seiskusid lennufirmad, haiglad, pangad ja meediaettevõtted. Tegu ei olnud rünnakuga, vaid veaga turvatarkvaras endas.
+
+**Miks see juhtus.** Turvatarkvara töötab kerneli tasemel, mistõttu viga seal kukutab kogu operatsioonisüsteemi. Sisuuuendus jõudis kõigi klientideni peaaegu samal ajal, ilma etapiviisilise juurutuseta. Parandamiseks tuli paljud masinad käsitsi turvarežiimis käivitada; BitLockeriga masinatel oli vaja ka taastevõtit.
+
+**Mis oleks aidanud.** Tootja poolel: etapiviisiline juurutus ja parem testimine. Kliendi poolel: BitLockeri taastevõtmete kättesaadavus ka siis, kui domeenikontroller on maas; varem harjutatud taasteplaan suure hulga seadmete käsitsi parandamiseks.
+
+**Õppetund.** Iga tööriist, millel on süsteemis kõrgeimad õigused, on ka **riski allikas**. Tarnija risk ja taasteplaan kuuluvad pahavaratõrje juurde.
+
+**Arutelu küsimused:**
+
+1. Mille poolest erineb signatuuripõhine ja käitumispõhine tuvastus? Miks on vaja mõlemat?
+2. Kes teie organisatsioonis näeb EDR-i hoiatust kell 3 öösel? Mis juhtub siis?
+3. Kuidas tasakaalustada kiiret turvauuendust ja etapiviisilist juurutust?
+
+## 3. Tulemüüride kasutamine (Firewall Usage)
+
+> **Lihtsalt öeldes:** tulemüür on nagu hoone valvelaud. See otsustab, kes millise ukse kaudu sisse ja välja pääseb. Kõik uksed, mida ei kasutata, on lukus.
+
+**Sisu selgitus.** Tulemüür lubab või keelab liiklust reeglite alusel. Põhiprintsiip on **vaikimisi keelamine** (*default deny*): lubatud on ainult see, mis on selgelt vajalik. Tulemüüre on mitut tüüpi:
+
+- **Perimeetri tulemüür** – organisatsiooni võrgu ja interneti vahel.
+- **Sisetulemüür** – võrgusegmentide vahel (nt kontor ↔ serverid).
+- **Hostipõhine tulemüür** – iga arvuti või serveri enda tulemüür (nt Windows Defender Firewall).
+- **NGFW** (*Next-Generation Firewall*) – tunneb ära rakendusi ja kasutajaid, mitte ainult porte.
+- **WAF** (*Web Application Firewall*) – kaitseb veebirakendusi rünnete eest nagu SQL-süst või SSRF.
+
+**Miks see on oluline.** Iga internetti avatud port on potentsiaalne sissepääs. Ründajad skaneerivad kogu internetti pidevalt – avatud RDP, andmebaas või haldusliides leitakse mõne tunniga. Samas on tulemüür ise ka internetti avatud seade: kui tulemüüri tarkvara on haavatav, saab ründaja ligipääsu otse turvataristu südamesse.
+
+**Praktilised meetmed:**
+
+- [ ] Väljast on avatud ainult dokumenteeritud ja põhjendatud teenused; ülejäänu on keelatud.
+- [ ] RDP, SSH, andmebaasid ja haldusliidesed ei ole otse internetist kättesaadavad (kasuta VPN-i või bastion-hosti ehk hästi kaitstud vaheserverit, mille kaudu tehakse kõik haldusühendused).
+- [ ] Tulemüüri reegleid vaadatakse üle vähemalt kord aastas; ajutised reeglid kustutatakse.
+- [ ] Ka **väljuv** liiklus on piiratud – serverid ei pea saama suhelda suvalise internetiaadressiga.
+- [ ] Tulemüüri püsivara on ajakohane; haldusliides on kättesaadav ainult haldusvõrgust.
+- [ ] Välise ründepinna skaneerimine (nt Shodan või Censys – otsingumootorid, mis näitavad internetis avatud seadmeid – või oma skanner) toimub regulaarselt.
+
+**Seos E-ITS-iga:** NET.3.2 Tulemüür; NET.1.1 Võrgu arhitektuur ja lahendus.
+
+### Näide 1: Capital One (2019)
+
+**Mis juhtus.** Ründaja sai Capital One'i AWS-i pilvekeskkonnast kätte umbes 106 miljoni USA ja Kanada kliendi andmed. Ettevõtet trahviti 80 miljoni dollariga.
+
+**Miks see juhtus.** Veebirakenduse tulemüür (WAF) oli **valesti seadistatud**. Ründaja kasutas SSRF-rünnet (*Server-Side Request Forgery*): ta pani WAF-i esitama päringu AWS-i sisemisele metaandmeteenusele (teenus, mis annab pilveserverile infot tema enda seadistuse ja õiguste kohta). Sealt sai ta ajutised ligipääsuvõtmed rollile, millel olid liiga laiad õigused S3-andmehoidlatele (Amazoni pilve failihoidlad).
+
+**Mis oleks aidanud.** WAF-i korrektne seadistus ja testimine; metaandmeteenuse kaitstud versioon (IMDSv2, mis ei vasta ilma eraldi tokenita); WAF-i rolli õiguste piiramine vähima privileegi järgi; anomaalse andmeliikluse jälgimine.
+
+**Õppetund.** Turvaseade, mis on valesti seadistatud, võib saada ründaja tööriistaks. Seadistus on sama oluline kui seadme olemasolu.
+
+### Näide 2: Internetti avatud MongoDB andmebaasid (2017)
+
+**Mis juhtus.** Jaanuaris 2017 kustutasid ründajad kümnetest tuhandetest internetist ligipääsetavatest MongoDB andmebaasidest andmed ja jätsid asemele lunarahanõude. Paljudel ohvritel varukoopiat ei olnud; mõnel juhul ei olnud ründajal andmeid isegi alles.
+
+**Miks see juhtus.** Toonased MongoDB vaikeseaded ei nõudnud autentimist ja andmebaas võis kuulata kõiki võrguliideseid. Arendajad paigaldasid andmebaasi pilveserverisse ja unustasid tulemüüri reegli. Port 27017 oli otse internetist kättesaadav – ründajal piisas skriptist.
+
+**Mis oleks aidanud.** Andmebaasi port suletud hosti- ja võrgutulemüüriga; autentimine sisse lülitatud; andmebaas seotud ainult sisevõrgu aadressiga; välise ründepinna regulaarne skaneerimine.
+
+**Õppetund.** Andmebaas ei kuulu kunagi otse internetti. Vaikeseadetele ei saa loota – tulemüür peab olema kaitse ka siis, kui keegi teeb seadistusvea.
+
+### Näide 3: FortiGate'i seadistuste leke (2022 → 2025)
+
+**Mis juhtus.** Jaanuaris 2025 avaldas ründajate grupp Belsen tasuta üle 15 000 FortiGate'i tulemüüri seadistused, sh IP-aadressid, VPN-kasutajate paroolid ja tulemüüri reeglid. Uurimine näitas, et andmed olid kogutud juba 2022. aastal.
+
+**Miks see juhtus.** 2022. aastal avastati FortiOS-i haldusliidese autentimisest möödahiilimise haavatavus (CVE-2022-40684). Paljudel seadmetel oli haldusliides internetist kättesaadav ja need jõuti ära kasutada enne paikamist. Paik sulges augu, aga juba varastatud seadistused ja paroolid jäid ründajate kätte. Paljud organisatsioonid ei vahetanud pärast paikamist paroole ega vaadanud reegleid üle.
+
+**Mis oleks aidanud.** Haldusliides kättesaadav ainult haldusvõrgust või kindlatelt IP-aadressidelt; kiire paikamine; pärast kriitilist haavatavust kõigi seadmes hoitud paroolide ja võtmete vahetamine; MFA VPN-i kasutajatele.
+
+**Õppetund.** Tulemüür on kõige väärtuslikum sihtmärk, sest seal on kogu võrgu kaart ja ligipääsuandmed. Selle haldusliides ei tohi olla internetis.
+
+**Arutelu küsimused:**
+
+1. Kuidas teha kindlaks, millised teie organisatsiooni teenused on internetist nähtavad? Proovi Shodani või Censyse otsingut oma avaliku IP-aadressiga.
+2. Miks on väljuva liikluse piiramine sama oluline kui sissetuleva liikluse piiramine?
+3. Mida teha, kui leiad tulemüürist 5 aastat vana reegli, mille otstarvet keegi ei tea?
+
+## 4. Paroolide haldus (Password Management)
+
+> **Lihtsalt öeldes:** parool on võti. Kui sama võti avab su kodu, auto ja kontori, siis ühe võtme kaotamine avab kõik kolm.
+
+**Sisu selgitus.** Hea parool on **pikk, unikaalne ja juhuslik**. Tänapäevane soovitus (nt NIST SP 800-63B) eelistab pikkust keerukusele: parool või paroolifraas vähemalt 12–15 märki, ilma sunnitud perioodilise vahetuseta, kuid kohustusliku vahetusega lekke korral. Unikaalsuse tagab praktikas ainult **paroolihaldur**.
+
+Põhimõisted:
+
+- **Credential stuffing** – lekkinud kasutajanime-parooli paaride automaatne proovimine teistes teenustes.
+- **Password spraying** – üksikute levinud paroolide (nt „Talv2025!“) proovimine paljude kontode peal, et vältida konto lukustumist.
+- **Räsi** (*hash*) – parooli ühesuunaline teisendus; hea salvestus kasutab aeglast räsifunktsiooni ja soola (bcrypt, Argon2).
+- **Infovaras** (*infostealer*) – pahavara, mis varastab brauserisse salvestatud paroolid ja sessiooniküpsised.
+- **Pääsuvõti** (*passkey*) – paroolita, andmepüügikindel sisselogimine FIDO2 standardi alusel.
+
+**Miks see on oluline.** Inimesed kasutavad paroole korduvalt. Kui üks teenus lekib, proovitakse samu andmeid kohe sadades teistes teenustes. Ründaja ei pea midagi murdma – ta logib lihtsalt sisse.
+
+**Praktilised meetmed:**
+
+- [ ] Organisatsioonis on kasutusel paroolihaldur ja selle kasutamist õpetatakse.
+- [ ] Paroolipoliitika nõuab pikkust (≥ 12–15 märki), keelab levinud ja lekkinud paroolid (nt Entra ID Password Protection, Have I Been Pwned andmebaas).
+- [ ] Tööparoole ei kasutata isiklikes teenustes ja vastupidi.
+- [ ] Teenuse- ja administraatorikontode paroolid on pikad, juhuslikud ja hoitud PAM-lahenduses (administraatoriparoolide jaoks mõeldud turvaline hoidla, vt teema 8).
+- [ ] Lekete jälgimine: organisatsiooni domeeni kontode ilmumist lekkebaasidesse jälgitakse.
+- [ ] Paroolide salvestamine brauserisse on tööarvutites keelatud või kontrollitud.
+
+**Seos E-ITS-iga:** ORP.4 Identiteedi- ja õiguste haldus.
+
+### Näide 1: Dropbox (2012)
+
+**Mis juhtus.** 2012. aastal pääses ründaja Dropboxi töötaja kontole ja sealt dokumendini, mis sisaldas kasutajate e-posti aadresse. 2016. aastal selgus, et samas rünnakus varastati umbes 68 miljoni kasutaja kontoandmed koos paroolide räsidega.
+
+**Miks see juhtus.** Töötaja kasutas Dropboxi tööülesannetes sama parooli, mis tal oli LinkedInis. LinkedIn oli 2012. aastal ise lekkinud ja paroolid olid seal salvestatud nõrga räsiga (soolamata SHA-1 ehk ilma juhusliku lisandita räsi, mistõttu sama parool annab alati sama räsi ja seda saab otsida valmis tabelitest), mistõttu need murti kiiresti lahti.
+
+**Mis oleks aidanud.** Unikaalne parool igas teenuses; MFA töökontodel; lekkinud paroolide automaatne blokeerimine.
+
+**Õppetund.** Sinu organisatsiooni turvalisus sõltub ka teiste teenuste turvalisusest, kui töötajad kasutavad paroole korduvalt. Ühe teenuse leke võib avada ukse teise ettevõtte süsteemidesse.
+
+### Näide 2: 23andMe (2023)
+
+**Mis juhtus.** Geenitestide ettevõte 23andMe teatas 2023. aastal lekkest, mis puudutas umbes 6,9 miljonit kasutajat. Ründajad müüsid andmeid, sh info inimeste päritolu kohta. Ettevõte jõudis hiljem pankrotini.
+
+**Miks see juhtus.** Ründajad kasutasid **credential stuffingut**: proovisid teistest leketest pärit paroole ja pääsesid sisse umbes 14 000 kontole. Need kontod olid seotud funktsiooniga „DNA Relatives“, mis näitas info sugulaste kohta. Seetõttu andis 14 000 kontot ligipääsu miljonite inimeste andmetele. MFA ei olnud kohustuslik ja massilisi sisselogimiskatseid ei tõkestatud piisavalt.
+
+**Mis oleks aidanud.** Kohustuslik MFA; lekkinud paroolide kontroll sisselogimisel; sisselogimiskatsete kiiruse piiramine ja anomaaliate tuvastamine; andmete jagamise funktsiooni ohtude hindamine.
+
+**Õppetund.** Kasutajate parooliharjumused on teenusepakkuja probleem. Kui ühe konto kaudu näeb teiste inimeste andmeid, korrutab iga nõrk parool kahju.
+
+### Näide 3: LastPass (2022)
+
+**Mis juhtus.** Paroolihaldurit LastPass tabas 2022. aastal kaks seotud rünnakut. Teises varastati klientide krüpteeritud paroolihoidlate varukoopiad. Hiljem seostasid uurijad mitmeid krüptovaluutade vargusi hoidlatega, mille ülemparool oli nõrk.
+
+**Miks see juhtus.** Ründaja kompromiteeris ühe DevOps-inseneri **koduarvuti**, kasutades sellel olnud haavatavat meediatarkvara, ja paigaldas klahvilogija. Sealt sai ta inseneri ülemparooli ja ligipääsu pilvesalvestusele. Hoidlad olid krüpteeritud, aga nõrga ülemparooliga hoidla sai ründaja ise lahti murda. Vanematel kontodel oli ka madal PBKDF2 iteratsioonide arv (mitu korda räsimist korratakse – mida vähem kordi, seda kiiremini saab parooli ära arvata).
+
+**Mis oleks aidanud.** Kõrgete õigustega töö ainult hallatud tööseadmest; pikk ja unikaalne ülemparool; MFA; tootja poolt iteratsioonide arvu automaatne tõstmine vanadel kontodel.
+
+**Õppetund.** Paroolihaldur on endiselt parim lahendus, kuid selle **ülemparool on kõige olulisem parool**. Krüpteeritud andmete turvalisus sõltub võtme tugevusest.
+
+**Arutelu küsimused:**
+
+1. Miks on 4-sõnaline paroolifraas sageli turvalisem kui 8-märgiline keeruline parool? Arvuta mõlema ligikaudne entroopia.
+2. Kontrolli oma e-posti aadressi lehel haveibeenpwned.com. Millistes leketes see esineb ja mida see tähendab?
+3. Kas paroolihaldur on „kõik munad ühes korvis“? Too argumendid poolt ja vastu.
+
+## 5. Mitmeastmeline autentimine (MFA)
+
+> **Lihtsalt öeldes:** MFA tähendab, et lisaks võtmele on vaja ka kaarti või sõrmejälge. Varastatud võtmest üksi ei piisa.
+
+**Sisu selgitus.** MFA nõuab sisselogimisel vähemalt kahte eri tüüpi tõendit: **midagi, mida tead** (parool), **midagi, mis sul on** (telefon, turvavõti, ID-kaart) või **midagi, mis sa oled** (sõrmejälg). Kõik MFA meetodid ei ole võrdselt tugevad:
+
+| Meetod | Tugevus | Peamine nõrkus |
+| --- | --- | --- |
+| SMS-kood | Nõrk | SIM-kaardi vahetus, andmepüük |
+| Rakenduse TOTP-kood | Keskmine | Koodi saab andmepüügilehele sisestada |
+| Push-teavitus | Keskmine | MFA-väsimus (*push bombing*) |
+| Push + numbri sobitamine (sh Smart-ID kontrollkood) | Hea | Vähendab väsimusrünnet, ei välista andmepüüki |
+| FIDO2 turvavõti / pääsuvõti, ID-kaart | Väga hea | Seotud õige domeeniga või kvalifitseeritud seadmega |
+
+Põhimõisted:
+
+- **MFA-väsimus** (*MFA fatigue*) – ründaja saadab kümneid kinnituspäringuid, kuni kasutaja ühe tüdimusest kinnitab.
+- **AiTM** (*Adversary-in-the-Middle*) – andmepüügileht vahendab päris sisselogimist ja varastab sessiooniküpsise.
+- **Andmepüügikindel MFA** – meetod, mis ei tööta võltsdomeenil (FIDO2/WebAuthn).
+
+**Miks see on oluline.** Microsofti andmetel peatab MFA üle 99% automaatsetest kontode ülevõtmise katsetest. Kuid sihitud ründajad on kohanenud: nad kasutavad MFA-väsimust, AiTM-andmepüüki ja helistavad kasutajatele, esinedes IT-toena. Seetõttu on oluline nii MFA olemasolu kui ka selle tüüp.
+
+**Praktilised meetmed:**
+
+- [ ] MFA on kohustuslik kõigil välistel ligipääsudel: VPN, e-post, pilveteenused, kaugtöölaud.
+- [ ] Administraatoritel on andmepüügikindel MFA (FIDO2 võti, ID-kaart).
+- [ ] Push-teavitustel on numbri sobitamine ja asukoha kuvamine.
+- [ ] Vanad autentimisprotokollid, mis MFA-st mööda lähevad (nt Basic Auth, legacy-protokollid), on keelatud.
+- [ ] Erandid (nt teenusekontod) on dokumenteeritud ja kaitstud muul viisil (IP-piirang, tingimuslik ligipääs).
+- [ ] Kasutajad teavad: ootamatut MFA-päringut ei kinnitata kunagi, sellest teatatakse.
+
+**Seos E-ITS-iga:** ORP.4 Identiteedi- ja õiguste haldus.
+
+### Näide 1: Colonial Pipeline (mai 2021)
+
+**Mis juhtus.** USA suurima kütusetoru operaator Colonial Pipeline peatas lunavararünnaku tõttu 6 päevaks torujuhtme, mis veab umbes 45% USA idaranniku kütusest. Tanklates tekkisid järjekorrad ja kütusepuudus. Ettevõte maksis umbes 4,4 miljoni dollari suuruse lunaraha; osa sellest sai FBI hiljem tagasi.
+
+**Miks see juhtus.** Ründajad (DarkSide) logisid sisse VPN-i kaudu, kasutades **vana VPN-kontot**, mis ei olnud enam kasutusel, kuid oli endiselt aktiivne. Ettevõtte IT-osakond ei teadnudki, et see VPN-profiil on alles – see ei ilmunud ühessegi skaneeringusse. Tegevjuhi sõnul oli parool keeruline, kuid ilmselt lekkinud. VPN-il ei olnud MFA-d.
+
+**Mis oleks aidanud.** MFA VPN-il; kasutamata kontode regulaarne deaktiveerimine; lekkinud paroolide jälgimine. Ükskõik milline neist oleks rünnaku tõenäoliselt peatanud.
+
+**Õppetund.** Üks unustatud konto ilma MFA-ta võib seisata kriitilise taristu. MFA peab katma **kõik** kontod, mitte ainult aktiivselt kasutatavad.
+
+### Näide 2: Uber ja MFA-väsimus (september 2022)
+
+**Mis juhtus.** Noor ründaja, keda seostati grupiga Lapsus$, pääses Uberi sisevõrku, Slacki, pilvekeskkondadesse ja turvatööriistadesse. Ta teatas sellest ise Uberi Slackis.
+
+**Miks see juhtus.** Ründaja ostis välise töövõtja parooli, mis oli tõenäoliselt varastatud infovaraga. MFA nõudis push-kinnitust. Ründaja saatis järjest kinnituspäringuid ja kirjutas enda väitel töövõtjale WhatsAppis, esinedes Uberi IT-toena, et päringud lõpevad alles siis, kui ta ühe kinnitab. Töövõtja kinnitaski. Sisevõrgus leidis ründaja võrgukettalt PowerShelli skripti, milles oli PAM-süsteemi administraatori parool selgetekstina.
+
+**Mis oleks aidanud.** Numbri sobitamisega või FIDO2-põhine MFA; kinnituspäringute arvu piiramine ja hoiatus massiliste päringute korral; töövõtjate koolitus; paroolide hoidmine PAM-is, mitte skriptides.
+
+**Õppetund.** MFA, mida saab „ära tüüdata“, ei ole piisav. Lisaks näitab juhtum, et üks selgetekstiline parool skriptis võib anda ründajale kogu kuningriigi võtmed.
+
+### Näide 3: Twilio ja Cloudflare – sama rünnak, erinev tulemus (august 2022)
+
+**Mis juhtus.** Kampaania „0ktapus“ saatis sadade ettevõtete töötajatele SMS-e, mis viisid võltssisselogimislehele. Twilios sisestasid mitu töötajat paroolid ja ühekordsed koodid ning ründajad said ligipääsu klientide andmetele. Ka Cloudflare'is langes kolm töötajat lõksu ja sisestas oma parooli – kuid ründajad ei pääsenud sisse.
+
+**Miks see juhtus nii erinevalt.** Twilio kasutas ühekordseid koode, mida ründaja leht sai reaalajas edasi saata päris süsteemi. Cloudflare'i kõigil töötajatel olid **FIDO2 riistvaralised turvavõtmed**, mis kontrollivad saidi domeeni ega tööta võltslehel. Varastatud paroolist üksi ei piisanud.
+
+**Mis oleks aidanud (Twilio).** Andmepüügikindel MFA; võltsdomeenide jälgimine ja blokeerimine; kiire teavituskanal töötajatele kahtlastest sõnumitest.
+
+**Õppetund.** See on harv näide, kus kaks ettevõtet said täpselt sama rünnaku ja tulemus erines ainult MFA tüübi tõttu. Andmepüügikindel MFA muudab parooli varguse mõttetuks.
+
+**Arutelu küsimused:**
+
+1. Millised MFA meetodid on Eestis levinud (ID-kaart, Mobiil-ID, Smart-ID)? Kuidas need võrdlevad FIDO2-ga andmepüügi vastu?
+2. Miks ei kaitse ühekordne SMS-kood AiTM-andmepüügi eest?
+3. Kuidas kaitsta teenusekontosid, millele ei saa MFA-d lisada?
+
+## 6. Andmete varundamine (Data Backup)
+
+> **Lihtsalt öeldes:** varukoopia on nagu fotoalbumi koopia, mida hoiad sõbra juures. Kui kodus on tulekahju, on pildid alles – aga ainult siis, kui koopia ei olnud samas toas.
+
+**Sisu selgitus.** Varundus on organisatsiooni viimane kaitseliin lunavara, riistvararikete, kustutamisvigade ja looduskatastroofide vastu. Klassikaline **3-2-1 reegel** on tänapäeval laienenud **3-2-1-1-0 reegliks**:
+
+- **3** koopiat andmetest;
+- **2** erinevat andmekandjat või süsteemi;
+- **1** koopia teises asukohas;
+- **1** koopia võrgust lahti (*offline*) või muutumatu (*immutable*);
+- **0** viga taastetestis.
+
+Põhimõisted:
+
+- **RPO** (*Recovery Point Objective*) – kui palju andmeid tohib kaotada (nt viimased 4 tundi).
+- **RTO** (*Recovery Time Objective*) – kui kiiresti peab teenus taastuma.
+- **Muutumatu varukoopia** – koopia, mida ei saa kindla aja jooksul muuta ega kustutada isegi administraatoriõigustega.
+- **Varundustõmmis** – terve süsteemi (nt virtuaalmasina) seisu koopia, millest saab süsteemi tervikuna taastada.
+
+**Miks see on oluline.** Kaasaegne lunavara otsib esimese asjana üles varundussüsteemid ja kustutab või krüpteerib need, alles seejärel käivitatakse krüpteerimine. Kui varukoopia on samas domeenis ja samade administraatoriõigustega kättesaadav, hävib see koos tootmisandmetega. Testimata varukoopia on aga lihtsalt lootus.
+
+**Praktilised meetmed:**
+
+- [ ] Vähemalt üks koopia on muutumatu või võrgust lahti ühendatud.
+- [ ] Varundussüsteem on eraldi autentimisega (ei ole domeeni liige), MFA-ga ja eraldi võrgusegmendis.
+- [ ] Taastamist testitakse regulaarselt (nt kord kvartalis), sh terve süsteemi taastamist, mitte ainult üksikfaili.
+- [ ] RPO ja RTO on iga kriitilise süsteemi jaoks kokku lepitud ja varundus vastab neile.
+- [ ] Varundatud on ka konfiguratsioonid: AD, tulemüürid, võrguseadmed, pilvekeskkonnad.
+- [ ] Varundustööde ebaõnnestumisest saadetakse hoiatus ja sellele reageeritakse.
+
+**Seos E-ITS-iga:** CON.3 Andmevarundus; DER.4 Talitluspidevuse haldus.
+
+### Näide 1: Code Spaces (2014)
+
+**Mis juhtus.** Koodihoidla teenusepakkuja Code Spaces lõpetas tegevuse 12 tunni jooksul pärast rünnakut. Ettevõte ei suutnud klientide andmeid taastada.
+
+**Miks see juhtus.** Ründaja sai ligipääsu Code Spacesi AWS-i halduskonsoolile ja nõudis lunaraha. Kui ettevõte püüdis kontrolli tagasi võtta, kustutas ründaja masinad, andmehoidlad ja **ka varukoopiad**. Varukoopiad asusid samas AWS-i kontos ja olid kättesaadavad samade õigustega.
+
+**Mis oleks aidanud.** Varukoopiad teises kontos või teise teenusepakkuja juures; MFA halduskonsoolil; kustutamise kaitse (nt objektide lukustus); juurkonto eraldamine igapäevatööst.
+
+**Õppetund.** Varukoopia, mida saab hävitada samade õigustega kui tootmisandmeid, ei ole varukoopia. Varundus peab olema **eraldatud nii asukoha kui ka õiguste poolest**.
+
+### Näide 2: GitLab.com andmebaasi kustutamine (jaanuar 2017)
+
+**Mis juhtus.** GitLab.com-i administraator kustutas ekslikult tootmisandmebaasi, mõeldes, et töötab varuserveris. Kaotsi läks umbes 6 tunni andmed, sh projektid, kommentaarid ja kasutajakontod.
+
+**Miks see juhtus.** Väsinud administraator käivitas käsu valel serveril. Seejärel selgus, et **viiest varundusmeetodist ei töötanud korralikult ükski**: automaatne varundus oli vaikselt ebaõnnestunud (veateated jäid kohale jõudmata), replikatsioon oli katki ja pilvevarundus ei olnud sisse lülitatud. Andmed taastati LVM-hetktõmmisest, mille üks insener oli juhuslikult 6 tundi varem testkeskkonna jaoks teinud. GitLab dokumenteeris taastamise avalikult ja otseülekandes.
+
+**Mis oleks aidanud.** Taastamise regulaarne testimine; varundustööde jälgimine ja hoiatused; serverite selgelt eristatav nimetamine ja tootmiskeskkonnas kinnitusnõue ohtlike käskude puhul.
+
+**Õppetund.** Varundust ei ole olemas enne, kui sellest on edukalt taastatud. Lisaks näitab GitLab, et avatus intsidendi ajal võib säilitada klientide usalduse.
+
+### Näide 3: Norsk Hydro ja LockerGoga (märts 2019)
+
+**Mis juhtus.** Norra alumiiniumitootjat tabas lunavara LockerGoga, mis halvas suure osa ettevõtte IT-süsteemidest üle maailma. Mitmed tehased läksid üle käsitsi juhtimisele.
+
+**Miks see lõppes paremini kui teistel.** Norsk Hydro otsustas lunaraha **mitte maksta**. Neil olid toimivad varukoopiad, mistõttu süsteemid sai taastada. Töötajad jätkasid paberil ja käsitsi. Ettevõte teavitas avalikkust igapäevaselt. Ainuüksi esimese kvartali kulu oli ettevõtte hinnangul kuni 450 miljonit Norra krooni (umbes 52 miljonit dollarit), kuid ettevõte jäi ellu ja tema mainekahju jäi väikeseks.
+
+**Mis oleks aidanud veel rohkem.** Võrgu parem segmenteerimine, mis oleks piiranud levikut; kiirem taastamine, kui varundus oleks olnud kogu ulatuses testitud.
+
+**Õppetund.** Toimiv varundus annab **valikuvabaduse**: organisatsioon saab keelduda lunaraha maksmisest. Varundus koos käsitsi töö plaaniga (talitluspidevus) on parim vastus lunavarale.
+
+**Arutelu küsimused:**
+
+1. Mis on teie organisatsiooni kõige kriitilisema süsteemi RPO ja RTO? Kas varundus neid päriselt täidab?
+2. Kas teie varundusserver on domeeni liige? Mis juhtub, kui ründaja saab domeeni administraatoriõigused?
+3. Millal viimati taastasite terve serveri varukoopiast? Kui kaua see aega võttis?
+
+## 7. Turvateadlikkuse tõstmine (Security Awareness Training)
+
+> **Lihtsalt öeldes:** kõige parem lukk ei aita, kui keegi avab ukse võõrale, kes ütleb end olevat elektrik.
+
+**Sisu selgitus.** Turvateadlikkuse eesmärk ei ole teha igast töötajast turvaeksperti, vaid kujundada mõned kindlad harjumused: kahtlase sõnumi äratundmine, **kontrollimine teise kanali kaudu** ja kiire teatamine. Tõhus programm on regulaarne, lühike, rollipõhine (raamatupidajatele teised teemad kui arendajatele) ja kasutab simulatsioone.
+
+Põhimõisted:
+
+- **Andmepüük** (*phishing*) – võltssõnum, mis meelitab sisestama andmeid või avama faili; **sihitud andmepüük** (*spear phishing*) on suunatud konkreetsele inimesele.
+- **Häälõngitsus** (*vishing*) – telefonikõne kaudu manipuleerimine.
+- **BEC** (*Business Email Compromise*) ehk **juhipettus** – ründaja esineb juhi või partnerina ja palub raha üle kanda.
+- **Süvavõltsing** (*deepfake*) – tehisintellektiga loodud võlts hääl või video.
+- **Sotsiaalne manipulatsioon** – kiirustamise, autoriteedi, hirmu või abivalmiduse ärakasutamine.
+
+**Miks see on oluline.** Enamik rünnakuid sisaldab inimfaktorit. Tehnilised kaitsed peatavad suurema osa massandmepüügist, kuid hästi ettevalmistatud sihitud rünnak jõuab inimeseni. Juhipettus ei vaja üldse pahavara – piisab ühest veenvast kirjast või kõnest. Tehisintellekt on muutnud võltsingud palju veenvamaks ja eesti keeles kirjutatud andmepüügikirjad on muutunud grammatiliselt korrektseks.
+
+**Praktilised meetmed:**
+
+- [ ] Kõik töötajad läbivad lühikese koolituse liitumisel ja vähemalt kord aastas; kõrge riskiga rollid sagedamini.
+- [ ] Andmepüügi simulatsioonid toimuvad regulaarselt; tulemusi kasutatakse õppimiseks, mitte karistamiseks.
+- [ ] Kahtlasest sõnumist teatamine on lihtne (nt üks nupp e-postis) ja teatajat tänatakse.
+- [ ] Maksete ja pangarekvisiitide muutmisel kehtib **kohustuslik kontroll teise kanali kaudu** (helistatakse teadaolevale numbrile).
+- [ ] Suurtel maksetel on nelja silma põhimõte.
+- [ ] IT-tugi ei küsi kunagi parooli ega MFA-koodi; see on kõigile teada.
+
+**Seos E-ITS-iga:** ORP.3 Teadlikkus ja koolitus.
+
+### Näide 1: FACC juhipettus (2016)
+
+**Mis juhtus.** Austria lennukiosade tootja FACC kandis jaanuaris 2016 petturitele üle umbes 50 miljonit eurot. Ligi 11 miljonit õnnestus kinni pidada, kahju jäi umbes 42 miljoni euro suuruseks. Pärast juhtumit vallandati nii finantsjuht kui ka 17 aastat ettevõtet juhtinud tegevjuht.
+
+**Miks see juhtus.** Raamatupidamise töötaja sai e-kirja, mis näis tulevat tegevjuhilt. Kirjas räägiti salajasest ettevõtte ostust ja paluti teha kiireloomuline makse ning juhtumist mitte kellelegi rääkida. Petturid kasutasid **autoriteeti, kiirustamist ja salastatust** – kolme klassikalist manipulatsioonivõtet. Ettevõttes puudus nõue suuri makseid teise kanali kaudu kontrollida.
+
+**Mis oleks aidanud.** Maksete kinnitamise protseduur (nelja silma põhimõte, tagasihelistamine); töötajate koolitus juhipettuse tunnuste kohta; kultuur, kus juhi palvet võib ja tuleb kontrollida.
+
+**Õppetund.** Juhipettus ründab protsessi, mitte tehnoloogiat. Kõige tugevam kaitse on reegel, mis ei luba erandeid isegi tegevjuhile.
+
+### Näide 2: Twitteri häälõngitsus (juuli 2020)
+
+**Mis juhtus.** Ründajad sihtisid umbes 130 Twitteri kontot, sh Barack Obama, Elon Muski, Bill Gatesi ja Apple'i kontod, ning postitasid neilt bitcoini-pettuse. Mõne tunniga koguti üle 118 000 dollari.
+
+**Miks see juhtus.** Ründajad helistasid Twitteri töötajatele, esinedes ettevõtte IT-toena, ja suunasid nad võltsitud VPN-i sisselogimislehele. Nii saadi nelja töötaja paroolid ja MFA-koodid. Seejärel leiti töötajad, kellel oli ligipääs **sisemisele kontohaldustööriistale**. Selle tööriistaga sai muuta ükskõik millise konto e-posti aadressi.
+
+**Mis oleks aidanud.** Töötajate koolitus häälõngitsuse tunnuste kohta; andmepüügikindel MFA; sisemise haldustööriista ligipääsu piiramine vähimale võimalikule arvule töötajatele ja nelja silma kinnitus tundlikele tegevustele.
+
+**Õppetund.** Sotsiaalne manipulatsioon ei toimu ainult e-postis. Helistaja, kes teab sinu nime ja ametit, ei ole seetõttu veel usaldusväärne.
+
+### Näide 3: Arup ja süvavõltsitud videokõne (2024)
+
+**Mis juhtus.** Inseneribüroo Arup Hongkongi kontori töötaja kandis üle umbes 25 miljonit USA dollarit 15 tehinguga. Raha liikus petturitele.
+
+**Miks see juhtus.** Töötaja sai kirja, mis näis tulevat Suurbritannia finantsjuhilt. Esialgu ta kahtles, kuid seejärel kutsuti ta videokõnesse, kus osalesid „finantsjuht“ ja mitu tuttavat kolleegi. Kõik teised osalejad olid **tehisintellektiga loodud süvavõltsingud**, mis põhinesid avalikult kättesaadaval videol. Videokõne kõrvaldas töötaja kahtlused.
+
+**Mis oleks aidanud.** Tagasihelistamine finantsjuhile teadaoleval numbril; maksete kinnitamine eraldi süsteemis; koolitus, mis selgitab, et ka video ja hääl võivad olla võltsitud; kokkulepitud kontrollküsimus või -sõna.
+
+**Õppetund.** „Ma nägin teda oma silmaga“ ei ole enam usaldusväärne tõend. Kinnitamine peab toimuma kanalis, mille algatad **sina**, mitte see, kes palub.
+
+**Arutelu küsimused:**
+
+1. Milliseid manipulatsioonivõtteid (autoriteet, kiirus, salastatus, hirm) kasutati igas näites?
+2. Kuidas kujundada andmepüügi simulatsioonid nii, et töötajad ei tunneks end karistatuna?
+3. Koosta lühike juhis raamatupidajale: mida teha, kui tegevjuht palub kiiret ja salajast makset?
+
+## 8. Ligipääsude haldamine (Access Control)
+
+> **Lihtsalt öeldes:** igal töötajal on võtmekaart, mis avab ainult need uksed, mida ta oma tööks vajab. Kui ta vahetab ametit, kaart muudetakse; kui ta lahkub, kaart tühistatakse samal päeval.
+
+**Sisu selgitus.** Ligipääsude haldus vastab kolmele küsimusele: **kes** on kasutaja (identiteet), **mida** ta tohib teha (õigused) ja **kas** need õigused on endiselt vajalikud (ülevaatus). Põhiprintsiip on **vähima privileegi põhimõte**: igal kontol on ainult need õigused, mida töö päriselt nõuab.
+
+Põhimõisted:
+
+- **RBAC** (*Role-Based Access Control*) – õigused antakse rolli, mitte inimese põhjal.
+- **JML-protsess** (*Joiner–Mover–Leaver*) – liitumine, rollivahetus ja lahkumine; igas etapis õigusi lisatakse või eemaldatakse.
+- **Õiguste kuhjumine** (*privilege creep*) – rolli vahetades jäävad vanad õigused alles.
+- **PAM** (*Privileged Access Management*) – administraatoriõiguste kontroll: eraldi kontod, ajutised õigused (*just-in-time*), sessioonide salvestus.
+- **Ülevaatus** (*access review*) – juht kinnitab perioodiliselt, et alluvate õigused on endiselt vajalikud.
+
+**Miks see on oluline.** Ründaja, kes saab ühe konto, pärib kõik selle konto õigused. Mida laiemad õigused, seda suurem kahju. Lisaks tekitavad ohtu siseringi isikud: lahkunud töötajad, kelle konto jäi aktiivseks, või töötajad, kellel on rohkem ligipääsu, kui vaja.
+
+**Praktilised meetmed:**
+
+- [ ] Lahkuva töötaja kontod suletakse automaatselt personalisüsteemi kirje põhjal samal päeval.
+- [ ] Rollivahetusel vaadatakse õigused üle ja eemaldatakse vanad.
+- [ ] Administraatoritel on eraldi kontod igapäevatöö ja haldustöö jaoks.
+- [ ] Õiguste ülevaatus toimub vähemalt kord aastas, kriitilistel süsteemidel sagedamini.
+- [ ] Test-, ajutised ja teenusekontod on nimekirjas, neil on omanik ja aegumiskuupäev.
+- [ ] Suurte andmemahtude allalaadimine või eksport tekitab hoiatuse.
+
+**Seos E-ITS-iga:** ORP.4 Identiteedi- ja õiguste haldus; ORP.2 Personal.
+
+### Näide 1: Cash App / Block (2021–2022)
+
+**Mis juhtus.** Detsembris 2021 laadis endine töötaja alla aruanded, mis sisaldasid umbes 8,2 miljoni Cash Appi kasutaja andmeid, sh nimesid, kontonumbreid ja investeeringute andmeid. Ettevõte teatas sellest aprillis 2022.
+
+**Miks see juhtus.** Töötajal oli töö ajal aruannetele korrektne ligipääs. Pärast lahkumist ligipääsu **ei eemaldatud**. Suure andmemahu allalaadimine endise töötaja kontolt jäi märkamata.
+
+**Mis oleks aidanud.** Automaatne JML-protsess, mis sulgeb kõik ligipääsud lahkumise päeval; regulaarne õiguste ülevaatus; andmelekete vältimise (DLP) ja anomaalse tegevuse jälgimine.
+
+**Õppetund.** Lahkumise protsess on turvaprotsess. Iga päev, mil lahkunud töötaja konto on aktiivne, on avatud riski päev.
+
+### Näide 2: Microsoft ja Midnight Blizzard (2023–2024)
+
+**Mis juhtus.** Jaanuaris 2024 teatas Microsoft, et riikliku taustaga ründajad (Midnight Blizzard, ka APT29; APT on pikaajaline, hästi rahastatud ründaja, sageli riigi taustaga) pääsesid ligi ettevõtte tippjuhtide ning turva- ja õigusosakonna töötajate e-postile.
+
+**Miks see juhtus.** Ründajad kasutasid **password sprayingut** vana **testkeskkonna** konto vastu, millel ei olnud MFA-d. Sellest testkeskkonnast leidsid nad vana testrakenduse, millel oli kõrgendatud ligipääs Microsofti **ettevõtte põhikeskkonnale**. Rakenduse kaudu said ründajad luua uusi rakendusi ja anda neile õigused postkastide lugemiseks.
+
+**Mis oleks aidanud.** Testkeskkondade inventuur ja vanade keskkondade sulgemine; MFA kõigil kontodel, ka testkontodel; rakenduste (OAuth – mehhanism, millega rakendusele antakse luba kellegi nimel andmetele ligi pääseda) õiguste regulaarne ülevaatus; testkeskkonna ja tootmiskeskkonna range eraldatus.
+
+**Õppetund.** Unustatud testkonto on reaalne konto. Kui sellel on mingi tee tootmisesse, on see sama ohtlik kui administraatori konto.
+
+### Näide 3: Morgan Stanley siseringi leke (2015)
+
+**Mis juhtus.** Morgan Stanley finantsnõustaja kopeeris aastatel 2011–2014 umbes 730 000 kliendikonto (ligi 330 000 leibkonna) andmed oma isiklikku serverisse. Hiljem ilmus osa andmetest internetti, tõenäoliselt pärast seda, kui tema server häkiti. USA väärtpaberijärelevalve (SEC) trahvis ettevõtet 1 miljoni dollariga.
+
+**Miks see juhtus.** Nõustaja pidi nägema ainult oma klientide andmeid. Kahe sisemise aruandlusportaali õiguste kontroll oli aga vigane ja võimaldas tal teha päringuid **kõigi klientide** kohta. Ta leidis selle, proovides läbi harukontorite ja töötajagruppide numbreid. Õiguste kontrolli ei olnud aastaid testitud ega auditeeritud. Andmete massilist väljavõtmist ei märgatud.
+
+**Mis oleks aidanud.** Õiguste kontrolli testimine; regulaarne audit, kes millistele andmetele päriselt ligi pääseb; massiliste päringute ja ekspordi jälgimine; isiklikesse seadmetesse kopeerimise tõkestamine.
+
+**Õppetund.** Vähima privileegi põhimõte peab toimima ka tehniliselt, mitte ainult paberil. Õiguste kontrolli tuleb testida samamoodi nagu iga teist turvameedet.
+
+**Arutelu küsimused:**
+
+1. Kirjelda oma organisatsiooni lahkumise protsessi. Mitu süsteemi tuleb käsitsi sulgeda ja kes selle eest vastutab?
+2. Kuidas leida Active Directoryst kontod, millega ei ole 90 päeva sisse logitud? Kirjuta vastav PowerShelli käsk.
+3. Miks on administraatoril vaja kahte kontot? Mis juhtub, kui ta loeb e-posti domeeni administraatori kontoga?
+
+## 9. Seadmete turvalisus (Device Security)
+
+> **Lihtsalt öeldes:** krüpteeritud sülearvuti kaotamine on nagu lukustatud kohvri kaotamine, mille koodi keegi ei tea. Kahju on ainult kohvrist, mitte selle sisust.
+
+**Sisu selgitus.** Seadmete turvalisus katab seadme kogu elutsükli: soetamine, turvaline seadistus, kasutamine, kaotus või vargus ning lõpuks kasutusest kõrvaldamine. Kõige olulisem tehniline meede on **täisketta krüpteerimine** (BitLocker, FileVault, LUKS), mis muudab kaotatud seadme andmed loetamatuks.
+
+Põhimõisted:
+
+- **Täisketta krüpteerimine** (*Full Disk Encryption*, FDE) – kogu ketas on krüpteeritud; ilma võtmeta on andmed kasutud.
+- **MDM** (*Mobile Device Management*, nt Intune) – seadmete tsentraalne haldus: seadistus, nõuete kontroll, kaugkustutus.
+- **Turvaline baasseadistus** (*hardening*) – mittevajalikud teenused välja, kohalik administraator piiratud, ekraanilukk sees.
+- **Andmete turvaline kustutamine** – kustutamine standardi järgi (nt NIST SP 800-88) või andmekandja füüsiline hävitamine.
+- **TPM** – seadme turvakiip, mis hoiab krüpteerimisvõtmeid.
+
+**Miks see on oluline.** Sülearvuteid, telefone ja mälupulki kaotatakse ja varastatakse pidevalt. Krüpteerimata seade on andmeleke; krüpteeritud seade on lihtsalt riistvara kaotus. Sama kehtib vanade seadmete kohta – kõvaketas, mis müüakse edasi kustutamata, on andmeleke viivitusega.
+
+**Praktilised meetmed:**
+
+- [ ] Kõik sülearvutid ja telefonid on krüpteeritud; krüpteerimise olekut kontrollitakse MDM-ist.
+- [ ] Krüpteerimise taastevõtmed on turvaliselt tsentraalselt hoitud (nt Entra ID, AD).
+- [ ] Kaotatud seadet saab kaugelt lukustada ja kustutada; töötajad teavad, kellele ja kui kiiresti kaotusest teatada.
+- [ ] USB-mälupulkade kasutamine on piiratud või lubatud ainult krüpteeritud seadmetega.
+- [ ] Kasutusest kõrvaldatavate seadmete andmekandjad kustutatakse või hävitatakse dokumenteeritult; teenusepakkujalt nõutakse hävitamise tõendit.
+- [ ] Serveriruumile on füüsiline ligipääsukontroll ja logi.
+
+**Seos E-ITS-iga:** SYS.2.1 Klientarvuti; SYS.3.1 Sülearvuti; CON.6 Andmekustutus ja -hävitus; INF.2 Andmekeskus ja serveriruum.
+
+### Näide 1: USA veteranide ameti sülearvuti vargus (2006)
+
+**Mis juhtus.** USA veteranide asjade ministeeriumi (VA) analüütiku kodust varastati sülearvuti ja väline kõvaketas. Neil olid umbes 26,5 miljoni veterani ja sõjaväelase nimed, sünniajad ja sotsiaalkindlustusnumbrid. Seadmed leiti hiljem ja uurimise järgi andmetele tõenäoliselt ligi ei pääsetud, kuid ministeerium pidi teavitama miljoneid inimesi ja maksis hiljem hagi lahendamiseks 20 miljonit dollarit.
+
+**Miks see juhtus.** Töötaja viis andmed koju ilma loata. Andmed ei olnud krüpteeritud. Asutuses puudus tehniline kontroll, mis oleks takistanud nii suure andmemahu viimist välisele andmekandjale.
+
+**Mis oleks aidanud.** Täisketta krüpteerimine; väliste andmekandjate kasutamise piiramine; isikuandmete kodus töötlemise selge keeld või turvaline kaugligipääs; andmete minimeerimine.
+
+**Õppetund.** Krüpteeringuga oleks see olnud ühe sülearvuti vargus. Ilma krüpteeringuta muutus see üheks suurimaks valitsuse andmeleketeks USA ajaloos.
+
+### Näide 2: HMRC kadunud plaadid (2007)
+
+**Mis juhtus.** Suurbritannia maksuamet HMRC saatis kullerpostiga kaks CD-plaati riigikontrollile. Plaadid kadusid. Neil olid 25 miljoni inimese (umbes 7,25 miljoni pere) lastetoetuse andmed, sh pangakonto andmed. Plaate ei leitud kunagi. Juhtumi tõttu astus tagasi HMRC juht.
+
+**Miks see juhtus.** Andmed olid ainult parooliga kaitstud, mitte korralikult krüpteeritud. Riigikontroll oli palunud anonüümitud andmeid, kuid mugavuse ja kulu tõttu saadeti kogu andmebaas. Pakk saadeti asutuse sisepostiga registreerimata ja jälgimata. Hilisem sõltumatu ülevaatus (Poynter Review) ei süüdistanud üksikut töötajat: juhtum oli täielikult välditav ja põhjused olid asutuse korralduses – segane vastutus ja nõrk andmekäitluse kord.
+
+**Mis oleks aidanud.** Andmete minimeerimine (saata ainult vajalik ja anonüümitult); tugev krüpteerimine; turvaline elektrooniline edastus; suurte andmehulkade väljastamise kinnitusprotsess.
+
+**Õppetund.** Kõige turvalisem andmekandja on see, millel tundlikke andmeid üldse ei ole. Andmete minimeerimine on seadmete turvalisuse osa.
+
+### Näide 3: Morgan Stanley kustutamata kõvakettad (2016)
+
+**Mis juhtus.** Morgan Stanley sulges 2016. aastal kaks andmekeskust ja palkas seadmete kõrvaldamiseks teenusepakkuja. Hiljem selgus, et osa kõvakettaid ja servereid, millel olid umbes 15 miljoni kliendi andmed, müüdi edasi **kustutamata**. Mõned kettad jõudsid oksjonisaidile. Järelevalveasutused trahvisid ettevõtet kokku umbes 95 miljoni dollariga. Tegu on teise juhtumiga samast ettevõttest kui eelmise teema näide 3.
+
+**Miks see juhtus.** Tööd tegi kolimis- ja laofirma, millel puudus kogemus andmete hävitamises; see müüs seadmed edasi. Morgan Stanley ei kontrollinud, kas seadmed kustutati. Hilisemal kontoriserverite väljavahetamisel jäi 42 serverit kadunuks – neil oli krüpteerimisvõimekus olemas, kuid seda ei olnud kunagi sisse lülitatud.
+
+**Mis oleks aidanud.** Sertifitseeritud hävitamise teenusepakkuja; hävitamise tõendid (seerianumbrite kaupa); oma kontroll üleandmise hetkel; krüpteerimise oleku regulaarne kontroll.
+
+**Õppetund.** Seadme elutsükkel lõpeb alles siis, kui andmed on tõendatult hävitatud. Krüpteerimine aitab ainult siis, kui see on päriselt sisse lülitatud.
+
+**Arutelu küsimused:**
+
+1. Kuidas kontrollida PowerShelliga, kas arvutis on BitLocker sisse lülitatud? Kuidas kontrollida seda kõigis organisatsiooni arvutites?
+2. Mida teete oma organisatsioonis vanade kõvaketaste ja printeritega? Kas printerites on kõvaketas?
+3. Töötaja kaotas õhtul telefoni, millel on tööpost. Koosta tegevusplaan esimeseks tunniks.
+
+## 10. Võrgu turvalisus (Network Security)
+
+> **Lihtsalt öeldes:** võrgu segmenteerimine on nagu laeva veekindlad vaheseinad. Kui üks sektsioon lekib, ei upu kogu laev.
+
+**Sisu selgitus.** Võrgu turvalisus tähendab, et võrk on jagatud **segmentideks** vastavalt usaldustasemele ja funktsioonile ning segmentide vahelist liiklust kontrollitakse ja jälgitakse. Eesmärk on, et ühe seadme kompromiteerimine ei annaks ligipääsu kogu võrgule.
+
+Põhimõisted:
+
+- **Lame võrk** – kõik seadmed on samas võrgus ja näevad üksteist; ründaja jaoks ideaalne.
+- **Segmenteerimine** – võrk jagatakse VLAN-ideks või alamvõrkudeks (kontor, serverid, haldus, külalised, IoT, tööstusseadmed), mille vahel on tulemüür.
+- **Mikrosegmenteerimine** – reeglid kehtivad isegi sama segmendi masinate vahel.
+- **Horisontaalne liikumine** (*lateral movement*) – ründaja liigub ühest kompromiteeritud masinast teistesse.
+- **IDS/IPS** – sissetungi tuvastamise ja ennetamise süsteemid; **NDR** jälgib võrguliikluse anomaaliaid.
+- **Null-usaldus** (*Zero Trust*) – ühtegi ühendust ei usaldata ainult võrgus asumise tõttu; iga ligipääs kontrollitakse.
+
+**Miks see on oluline.** Ründajad sisenevad tavaliselt kõige nõrgemast kohast – töötaja arvutist, printerist või partneri kontost – ja liiguvad sealt väärtuslike süsteemide poole. Segmenteerimine muudab selle liikumise raskeks, aeglaseks ja nähtavaks. Lames võrgus levib lunavara minutitega.
+
+**Praktilised meetmed:**
+
+- [ ] Võrk on jagatud segmentideks; kriitilised süsteemid, haldusliidesed ja IoT on eraldi.
+- [ ] Segmentide vahel on lubatud ainult vajalik liiklus (nt kontoriarvutid ei vaja SMB-ühendust kõigi serveritega).
+- [ ] Partnerite ja hoolduse kaugligipääs on eraldi, piiratud vajalike süsteemidega ja MFA-ga.
+- [ ] Külaliste Wi-Fi on täielikult eraldatud sisevõrgust.
+- [ ] Võrguliiklust jälgitakse (IDS/NDR, voologid) ja hoiatustele reageeritakse.
+- [ ] Võrgujoonis on ajakohane.
+
+**Seos E-ITS-iga:** NET.1.1 Võrgu arhitektuur ja lahendus; NET.1.2 Võrguhaldus.
+
+### Näide 1: Target (2013)
+
+**Mis juhtus.** USA jaeketi Target kassasüsteemidest varastati umbes 40 miljoni maksekaardi andmed ja lisaks umbes 70 miljoni kliendi isikuandmed. Rünnaku kogukulu ulatus sadade miljonite dollariteni ning ametist lahkusid nii IT-juht kui ka tegevjuht.
+
+**Miks see juhtus.** Ründajad varastasid andmepüügiga parooli väikeselt **kütte- ja ventilatsioonifirmalt**, kes oli Targeti tarnija. Tarnijal oli ligipääs Targeti arveldus- ja projektiportaalile. Sealt said ründajad liikuda kassasüsteemideni, sest võrk ei olnud piisavalt segmenteeritud. Targeti turvasüsteem andis küll hoiatusi, kuid neile ei reageeritud.
+
+**Mis oleks aidanud.** Tarnijate ligipääsu range eraldamine; kaardimaksete keskkonna isoleerimine (seda nõuab ka maksekaartide andmete kaitse standard PCI DSS); MFA tarnijatele; hoiatustele reageerimise protsess.
+
+**Õppetund.** Ründaja ei pea sisenema sealt, kus on väärtuslikud andmed. Ta siseneb sealt, kus on kõige kergem, ja lame võrk viib ta sihtmärgini.
+
+### Näide 2: Maersk ja NotPetya (juuni 2017)
+
+**Mis juhtus.** Maailma suurim konteinerivedaja Maersk kaotas umbes 7 minutiga suurema osa oma IT-süsteemidest: umbes 45 000 arvutit ja 4000 serverit. Sadamad seiskusid üle maailma. Kahju oli umbes 250–300 miljonit dollarit. Kahjustatud olid ka Merck, FedEx, Mondelez jt.
+
+**Miks see juhtus.** NotPetya levis Ukraina raamatupidamistarkvara M.E.Doc kompromiteeritud uuenduse kaudu. See ei olnud tegelikult lunavara, vaid andmeid hävitav pahavara. Võrgus levis see EternalBlue haavatavuse ja varastatud administraatoriparoolide abil (Mimikatz – tööriist, mis loeb Windowsi mälust paroole ja nende räsisid). Maerski globaalne võrk oli lame ja sama domeeniadministraatori õigused kehtisid kõikjal.
+
+**Kuidas taastuti.** Kõik domeenikontrollerid hävisid – peale ühe Ghanas, mis oli juhuslikult elektrikatkestuse tõttu võrgust väljas. Sellest tehti koopia, mis toimetati Londonisse, ja selle abil taastati kogu Active Directory.
+
+**Mis oleks aidanud.** Segmenteerimine riikide ja funktsioonide vahel; administraatoriõiguste piiramine (tiered admin model: domeeni, serverite ja tööjaamade haldamiseks on eraldi kontod, nii et tööjaamast varastatud parool ei ava domeenikontrollerit); paikamine (MS17-010); AD varukoopia, mis ei sõltu juhusest.
+
+**Õppetund.** Lames võrgus muutub üks kompromiteeritud arvuti kogu ettevõtte probleemiks mõne minutiga. Maersk pääses tänu õnnele, mitte plaanile.
+
+### Näide 3: Kasiino akvaariumi termomeeter (2017)
+
+**Mis juhtus.** Turvafirma Darktrace kirjeldas juhtumit, kus Põhja-Ameerika kasiinost viidi välja umbes 10 GB andmeid, sh kõrge panusega mängijate andmebaas. Andmed liikusid Soome serverisse.
+
+**Miks see juhtus.** Ründajad sisenesid fuajee akvaariumi **internetti ühendatud termomeetri** kaudu. Andur oli samas võrgus muude süsteemidega. IoT-seadmetel on sageli nõrgad vaikeparoolid ja neid ei paigata, kuid neid ei peeta „päris arvutiteks“, mistõttu neid ka ei jälgita.
+
+**Mis oleks aidanud.** IoT-seadmed eraldi segmendis, kust ei ole ligipääsu sisevõrku; väljuva liikluse piiramine (termomeeter ei pea saatma gigabaite Soome); võrguliikluse anomaaliate jälgimine.
+
+**Õppetund.** Iga võrku ühendatud seade on arvuti. Kui see ei vaja ligipääsu andmebaasile, ei tohi tal seda olla.
+
+**Arutelu küsimused:**
+
+1. Joonista oma organisatsiooni (või õppeorganisatsiooni) võrgu segmendid. Millised segmendid saavad omavahel suhelda ja miks?
+2. Millised IoT-seadmed on teie võrgus (printerid, kaamerad, kliimaseadmed, uksekontrollerid)? Kus need asuvad?
+3. Kuidas aitab segmenteerimine intsidendi ajal? Mõtle Maerski näitele.
+
+## 11. Turvapoliitika ja protseduurid (Security Policy and Procedures)
+
+> **Lihtsalt öeldes:** poliitika on maja kodukord – see ütleb, mida tohib ja kes vastutab. Protseduur on kasutusjuhend – see ütleb samm-sammult, kuidas midagi õigesti teha.
+
+**Sisu selgitus.** Turvapoliitika on juhtkonna kinnitatud dokument, mis ütleb, **mida** organisatsioon nõuab ja **kes** vastutab. Selle all on kitsamad poliitikad (nt andmete klassifitseerimine, lubatud kasutus, kaugtöö) ja protseduurid, mis kirjeldavad, **kuidas** midagi tehakse. Poliitika on kasulik ainult siis, kui see on teada, arusaadav, järgitav ja seda kontrollitakse.
+
+Põhimõisted:
+
+- **Andmete klassifitseerimine** – andmed jaotatakse tasemetesse (nt avalik, sisekasutuseks, konfidentsiaalne, salajane) ja igal tasemel on oma käsitlusreeglid.
+- **Lubatud kasutuse poliitika** (*Acceptable Use Policy*) – mida tohib töövahenditega teha, sh tehisintellekti tööriistade kasutamine.
+- **Varjatud IT** (*shadow IT*) – teenused ja tööriistad, mida kasutatakse ilma IT teadmata.
+- **Tarneahela ja ülevõtmise turvahindamine** – partneri või ostetava ettevõtte turvataseme kontroll enne liitumist.
+- **ISMS** – infoturbe juhtimissüsteem, mis hoiab poliitikad, riskid ja meetmed järjepidevalt ajakohasena.
+
+**Miks see on oluline.** Tehnilised meetmed vajavad otsuseid: mida kaitsta, kui palju ja kes vastutab. Ilma poliitikata teeb iga töötaja oma otsused ja tulemus on juhuslik. Uued tehnoloogiad (pilv, tehisintellekt) toovad kaasa uued riskid kiiremini, kui poliitika jõuab neid käsitleda.
+
+**Praktilised meetmed:**
+
+- [ ] Turvapoliitika on juhtkonna kinnitatud ja vaadatakse üle vähemalt kord aastas.
+- [ ] Andmete klassifitseerimise skeem on olemas ja töötajad teavad, kuidas igat taset käsitleda.
+- [ ] Tehisintellekti tööriistade kasutamise reeglid on kirjas: milliseid andmeid tohib sisestada ja milliseid tööriistu kasutada.
+- [ ] Pilveressursside jagamise reeglid on kirjas ja nende täitmist kontrollitakse automaatselt.
+- [ ] Tarnijate ja ülevõetavate ettevõtete turvahindamine on protsessi kohustuslik osa.
+- [ ] Töötajad kinnitavad poliitikaga tutvumist ja poliitika rikkumisel on selged tagajärjed.
+
+**Seos E-ITS-iga:** ISMS.1 Turbehaldus; ORP.1 Korraldus; CON.2 Andmekaitse.
+
+### Näide 1: Marriott ja Starwoodi ülevõtmine (2016–2018)
+
+**Mis juhtus.** 2018. aastal avastas Marriott, et hotelliketi Starwood broneerimissüsteemi oli rünnatud juba 2014. aastast. Lekkisid umbes 339 miljoni külalise andmed, sh passinumbrid. Suurbritannia andmekaitseasutus ICO trahvis Marriotti 18,4 miljoni naelaga.
+
+**Miks see juhtus.** Marriott ostis Starwoodi 2016. aastal. Ründaja oli juba 2014. aastal paigaldanud Starwoodi süsteemi veebikesta (web shell – kaugjuhtimist võimaldav skript veebiserveris) ja jäi pärast ülevõtmist märkamata veel kaheks aastaks. ICO leidis, et Marriott ei rakendanud isikuandmete kaitseks piisavaid tehnilisi ja organisatsioonilisi meetmeid. Trahv puudutas ainult perioodi pärast GDPR-i jõustumist mais 2018.
+
+**Mis oleks aidanud.** Poliitika, mis nõuab ülevõetava ettevõtte IT-keskkonna turvahindamist (sh kompromiteerimise tunnuste otsingut); süsteemide kiire integreerimine või väljavahetamine; passinumbrite ja muude tundlike andmete krüpteerimine.
+
+**Õppetund.** Ettevõtte ostmisel ostad ka tema turvaprobleemid – ka need, millest keegi veel ei tea. Turvahindamine peab olema ostuprotsessi kohustuslik osa.
+
+### Näide 2: Samsung ja ChatGPT (2023)
+
+**Mis juhtus.** Märtsis 2023 lubas Samsungi pooljuhtide divisjon töötajatel kasutada ChatGPT-d. Mõne nädala jooksul toimus vähemalt kolm juhtumit, kus töötajad sisestasid tööriista konfidentsiaalset infot: lähtekoodi vea leidmiseks, testimise koodi optimeerimiseks ja koosoleku salvestise ärakirja kokkuvõtte tegemiseks. Mais 2023 keelas Samsung avalike generatiivse tehisintellekti tööriistade kasutamise tööseadmetes.
+
+**Miks see juhtus.** Tööriist lubati kasutusele enne, kui olid paigas reeglid, milliseid andmeid sinna tohib sisestada. Töötajad soovisid lihtsalt oma tööd kiiremini teha ja ei mõelnud, et sisestatud andmed lahkuvad ettevõttest ja võivad jõuda teenusepakkuja mudeli treenimisse.
+
+**Mis oleks aidanud.** Tehisintellekti kasutamise poliitika enne tööriista kasutuselevõttu; andmete klassifitseerimise skeem, mis ütleb selgelt, et lähtekood on konfidentsiaalne; ettevõtte versioon tööriistast, kus andmeid ei kasutata treenimiseks; DLP-kontroll.
+
+**Õppetund.** Poliitika peab tulema enne uut tehnoloogiat, mitte pärast esimest intsidenti. Töötajad ei riku reegleid pahatahtlikult – neid lihtsalt ei olnud.
+
+### Näide 3: Microsofti tehisintellekti meeskonna 38 TB leke (2023)
+
+**Mis juhtus.** Turvafirma Wiz avastas 2023. aastal, et Microsofti tehisintellekti uurimisrühm oli GitHubis jaganud avatud lähtekoodiga mudelite allalaadimislinki, mis tegelikult andis ligipääsu terve Azure'i salvestuskonto 38 TB andmetele. Nende hulgas olid kahe töötaja arvutite varukoopiad, paroolid, võtmed ja üle 30 000 sisemise Teamsi sõnumi.
+
+**Miks see juhtus.** Link oli loodud **SAS-tokeniga** (*Shared Access Signature*), millel olid kogu salvestuskonto **täisõigused** ja väga pikk kehtivusaeg. SAS-token on nagu lisavõti, mille saab kellelegi anda – see võti avas kogu lao, mitte ühte riiulit. Selliseid tokeneid on keeruline jälgida ja need ei ilmu tavalistesse ligipääsude ülevaatustesse. Puudus protseduur, mis oleks nõudnud avaliku jagamise jaoks eraldi salvestuskonto ja piiratud õigustega lingi kasutamist.
+
+**Mis oleks aidanud.** Pilveressursside jagamise protseduur (avalikud andmed eraldi kontos, ainult lugemisõigus, lühike kehtivusaeg); avalike repositooriumite automaatne skaneerimine saladuste suhtes; jagamislinkide inventuur.
+
+**Õppetund.** Mugavad pilvefunktsioonid vajavad selgeid protseduure. Isegi kõrge kompetentsiga meeskond teeb vigu, kui reeglid ei ütle, kuidas õigesti teha.
+
+**Arutelu küsimused:**
+
+1. Kas teie organisatsioonis on kirjas, milliseid andmeid tohib tehisintellekti tööriistadesse sisestada? Kui ei, koosta 5 reeglist koosnev mustand.
+2. Millised on teie andmete klassifitseerimise tasemed ja kuidas töötaja aru saab, millise tasemega dokument on?
+3. Kuidas eristada head poliitikat halvast? Too näide poliitikast, mida keegi ei järgi, ja põhjenda, miks.
+
+## 12. Küberintsidentide käsitlemine (Incident Response)
+
+> **Lihtsalt öeldes:** intsidendi käsitlemise plaan on nagu tulekahju evakuatsiooniplaan. Kõik teavad juba enne tulekahju, kuhu minna, kes mida teeb ja kellele helistada.
+
+**Sisu selgitus.** Intsidendi käsitlemise plaan kirjeldab, kuidas organisatsioon reageerib, kui midagi juhtub: kes otsustab, kes teeb tehnilist tööd, kes suhtleb ja kellega. Levinud raamistik (NIST SP 800-61) jagab käsitluse etappideks:
+
+1. **Ettevalmistus** – plaan, rollid, kontaktid, tööriistad, harjutused.
+2. **Tuvastamine ja analüüs** – mis juhtus, kui suur on ulatus?
+3. **Ohjeldamine** – leviku peatamine (isoleerimine, kontode blokeerimine).
+4. **Kõrvaldamine** – ründaja ja tema tööriistade eemaldamine.
+5. **Taastamine** – süsteemide turvaline tagasi töösse viimine.
+6. **Õppetunnid** – mis läks hästi, mis halvasti, mida muuta.
+
+Põhimõisted:
+
+- **Laudharjutus** (*tabletop exercise*) – meeskond arutab läbi väljamõeldud stsenaariumi ilma tehniliste süsteemideta.
+- **Teavituskohustus** – GDPR-i järgi tuleb isikuandmete rikkumisest teavitada Andmekaitse Inspektsiooni 72 tunni jooksul; küberturvalisuse seaduse ja NIS2 alusel on teenuseosutajatel kohustus teavitada RIA-t (CERT-EE).
+- **Kriisikommunikatsioon** – avalikkuse, klientide ja töötajate õigeaegne ja aus teavitamine.
+- **Tõendite säilitamine** – logid, mälutõmmised ja kettatõmmised kogutakse enne süsteemide puhastamist.
+
+**Miks see on oluline.** Intsidendi ajal on aega vähe ja stress suur. Plaanita meeskond kaotab tunde küsimustele „kes otsustab?“ ja „kellele helistada?“. Valed esimesed sammud – näiteks serveri kohene uuesti installimine – hävitavad tõendid. Avalikkuse eest varjamine muudab tehnilise intsidendi usalduskriisiks.
+
+**Praktilised meetmed:**
+
+- [ ] Intsidendi käsitlemise plaan on kirjas, kättesaadav ka siis, kui IT-süsteemid ei tööta (paberil või väljaspool oma võrku).
+- [ ] Rollid on määratud: intsidendijuht, tehniline juht, kommunikatsioon, õigusnõustaja, juhatuse esindaja.
+- [ ] Kontaktid (RIA/CERT-EE, AKI, kindlustus, IT-partnerid, õigusbüroo) on ajakohased.
+- [ ] Laudharjutus toimub vähemalt kord aastas erinevate stsenaariumitega.
+- [ ] Logid on tsentraalselt kogutud ja säilitatud piisavalt kaua (nt 90+ päeva).
+- [ ] Pärast iga intsidenti tehakse õppetundide analüüs ja meetmed viiakse ellu.
+
+**Seos E-ITS-iga:** DER.2.1 Turvaintsidentide käsitlus; DER.4 Talitluspidevuse haldus.
+
+### Näide 1: Eesti 2007. aasta küberrünnakud
+
+**Mis juhtus.** Aprillis-mais 2007, pärast pronkssõduri teisaldamist Tallinna kesklinnast, ründasid Eestit umbes kolm nädalat järjestikused teenusetõkestusründed (DDoS). Sihtmärgiks olid riigiasutuste, pankade, meediaväljaannete ja erakondade veebilehed. Mõned pangateenused ja uudisteportaalid ei olnud mõnda aega kättesaadavad.
+
+**Miks see lõppes nii, nagu lõppes.** Ründed olid ulatuslikud, kuid Eesti suutis need kontrolli alla saada. Hiljuti loodud CERT-EE koordineeris tegevust, internetiteenuse pakkujad ja pangad tegid tihedat koostööd ning mitmel juhul piirati ajutiselt välismaist liiklust. Eesti sai abi ka rahvusvahelistelt partneritelt.
+
+**Mis sellest järgnes.** Juhtum oli üks esimesi riigi vastu suunatud ulatuslikke küberrünnakuid. 2008. aastal loodi Tallinnas NATO küberkaitsekoostöö keskus (CCDCOE). Eesti arendas välja küberturvalisuse strateegia ja Kaitseliidu küberkaitseüksuse.
+
+**Õppetund.** Intsidendi lahendamine sõltub valmisolekust **koostööks**: asutuste, ettevõtete ja riikide vahel. Kontaktid ja kokkulepped tuleb luua enne kriisi, mitte selle ajal.
+
+### Näide 2: ID-kaardi turvanõrkus ROCA (2017)
+
+**Mis juhtus.** 30. augustil 2017 teavitasid Tšehhi teadlased RIA-t, et Infineoni kiipide võtmegenereerimise teegis on viga, mis teeb võimalikuks privaatvõtme tuletamise avalikust võtmest. Viga puudutas ligi 750 000 Eesti ID-kaarti, elamisloakaarti, digi-ID-d ja e-residendi kaarti.
+
+**Kuidas reageeriti.** Riik teatas avalikult võimalikust turvariskist 5. septembril – enne kui täpsed tehnilised üksikasjad avalikustati. Analüüsiti riski ja otsiti lahendusi koos tootjaga. 3. novembril peatati ohustatud kaartide sertifikaadid ning kasutajad said need kaugelt uuendada arvuti kaudu või teenindustes. Peatamise hetkeks oli uuendatud alla 6% ohustatud kaartidest ja mobiil-ID oli vaid veerandil aktiivsetest kasutajatest, mistõttu tekkisid teeninduspunktides järjekorrad ja e-teenuste kasutamine oli häiritud.
+
+**Mis oleks võinud minna paremini.** TTÜ analüüs „ID-kaardi kaasuse õppetunnid“ (2018) kritiseeris riigi hädaolukorra plaane ja tõi välja, et kriisis sai toetuda ettevõtetele ja ülikoolidele. RIA andmetel imestasid teiste riikide kolleegid Eesti avameelse kommunikatsiooni üle. Hiljem kerkis ka vaidlus kaarditootjaga muude lepingurikkumiste üle.
+
+**Õppetund.** Avatud ja varajane kommunikatsioon aitas säilitada usaldust e-riigi vastu. Intsidendiks valmistumine hõlmab ka **tarnijariske** – haavatavus võib olla toote sees, mida sa ise ei arenda.
+
+### Näide 3: Uberi 2016. aasta lekke varjamine
+
+**Mis juhtus.** 2016. aastal varastasid ründajad Uberi pilvekeskkonnast umbes 57 miljoni sõitja ja juhi andmed. Ründajad leidsid ligipääsuvõtmed GitHubi repositooriumist. Uber ei teavitanud kasutajaid ega ametiasutusi, vaid maksis ründajatele 100 000 dollarit, esitledes makset vearaportite preemiaprogrammi tasuna, ja lasi neil allkirjastada konfidentsiaalsuslepingu.
+
+**Miks see lõppes halvasti.** Juhtum tuli avalikuks 2017. aasta novembris pärast juhtkonna vahetust. Uber maksis USA osariikidele 148 miljonit dollarit ja ettevõtte endine turvajuht mõisteti 2022. aastal süüdi õigusemõistmise takistamises ja kuriteo varjamises.
+
+**Mis oleks aidanud.** Selge intsidendi käsitlemise ja teavitamise protseduur; õigusnõustaja kaasamine; juhatuse teavitamine; kasutajate ja asutuste õigeaegne teavitamine; ligipääsuvõtmete hoidmine väljaspool koodihoidlat.
+
+**Õppetund.** Intsidendi varjamine on sageli kahjulikum kui intsident ise. Tehnilisest lekkest saab mainekriis ja kriminaalasi.
+
+**Arutelu küsimused:**
+
+1. Kui teie organisatsioonis krüpteeritakse reede õhtul kell 22 kõik serverid, siis kes on esimesed kolm inimest, kellele helistatakse? Kus on nende numbrid, kui telefonikataloog on krüpteeritud?
+2. Milliseid teavitamiskohustusi (AKI, RIA, kliendid) on teie organisatsioonil ja millised on tähtajad?
+3. Võrdle ROCA ja Uberi juhtumit: mille poolest erines kommunikatsioon ja mis oli tulemus?
+
+## Kokkuvõte: põhimõtted toimivad koos
+
+Üheski siin kirjeldatud juhtumis ei ebaõnnestunud ainult üks kaitsekiht. Tüüpiline rünnak kulgeb läbi mitme nõrkuse: lekkinud parool (4) ilma MFA-ta (5) annab sisenemise, lame võrk (10) ja liigsed õigused (8) võimaldavad liikuda, puuduv jälgimine (2) laseb tegutseda märkamatult ning testimata varundus (6) ja plaanita reageerimine (12) muudavad kahju suureks. Iga põhimõte, mis toimib, katkestab selle ahela.
+
+Allolev tabel näitab, millist põhimõtet iga näide peamiselt illustreerib ja milliseid põhimõtteid samas juhtumis veel eirati.
+
+| Juhtum | Aasta | Peamine põhimõte | Ka teised puudujäägid |
+| --- | --- | --- | --- |
+| WannaCry | 2017 | 1 Uuendamine | 3 Tulemüür, 10 Võrk |
+| Equifax | 2017 | 1 Uuendamine | 2 Jälgimine, 11 Vastutus |
+| Citrix Bleed | 2023 | 1 Uuendamine | 12 Intsidendi käsitlus |
+| Emotet | 2014–2021 | 2 Pahavaratõrje | 7 Teadlikkus |
+| EDR-i väljalülitamine (BYOVD) | 2022–2024 | 2 Pahavaratõrje | 8 Ligipääsud |
+| CrowdStrike'i uuendus | 2024 | 2 Pahavaratõrje | 12 Taasteplaan |
+| Capital One | 2019 | 3 Tulemüür | 8 Ligipääsud |
+| MongoDB andmebaasid | 2017 | 3 Tulemüür | 6 Varundus |
+| FortiGate'i seadistuste leke | 2022–2025 | 3 Tulemüür | 1 Uuendamine, 5 MFA |
+| Dropbox | 2012 | 4 Paroolid | 5 MFA |
+| 23andMe | 2023 | 4 Paroolid | 5 MFA |
+| LastPass | 2022 | 4 Paroolid | 9 Seadmed |
+| Colonial Pipeline | 2021 | 5 MFA | 8 Ligipääsud |
+| Uber | 2022 | 5 MFA | 7 Teadlikkus, 4 Paroolid |
+| Twilio ja Cloudflare | 2022 | 5 MFA | 7 Teadlikkus |
+| Code Spaces | 2014 | 6 Varundus | 5 MFA, 8 Ligipääsud |
+| GitLab.com | 2017 | 6 Varundus | 11 Protseduurid |
+| Norsk Hydro | 2019 | 6 Varundus | 10 Võrk, 12 Kommunikatsioon |
+| FACC | 2016 | 7 Teadlikkus | 11 Protseduurid |
+| Twitter | 2020 | 7 Teadlikkus | 8 Ligipääsud, 5 MFA |
+| Arup | 2024 | 7 Teadlikkus | 11 Protseduurid |
+| Cash App | 2021–2022 | 8 Ligipääsud | 2 Jälgimine |
+| Microsoft / Midnight Blizzard | 2023–2024 | 8 Ligipääsud | 4 Paroolid, 5 MFA |
+| Morgan Stanley (siseringi leke) | 2015 | 8 Ligipääsud | 2 Jälgimine |
+| USA veteranide amet | 2006 | 9 Seadmed | 11 Poliitika |
+| HMRC | 2007 | 9 Seadmed | 11 Poliitika |
+| Morgan Stanley (kõvakettad) | 2016 | 9 Seadmed | 11 Tarnijad |
+| Target | 2013 | 10 Võrk | 5 MFA, 2 Jälgimine |
+| Maersk / NotPetya | 2017 | 10 Võrk | 1 Uuendamine, 6 Varundus |
+| Kasiino akvaarium | 2017 | 10 Võrk | 3 Tulemüür |
+| Marriott / Starwood | 2014–2018 | 11 Poliitika | 2 Jälgimine |
+| Samsung ja ChatGPT | 2023 | 11 Poliitika | 7 Teadlikkus |
+| Microsofti 38 TB leke | 2023 | 11 Poliitika | 8 Ligipääsud |
+| Eesti küberrünnakud | 2007 | 12 Intsidendi käsitlus | 10 Võrk |
+| ID-kaardi ROCA | 2017 | 12 Intsidendi käsitlus | 11 Tarnijad |
+| Uberi lekke varjamine | 2016 | 12 Intsidendi käsitlus | 4 Saladused koodis |
+
+### Iseseisvad ülesanded
+
+1. **Juhtumi süvaanalüüs.** Vali tabelist üks juhtum, mida tunnis põhjalikult ei käsitletud. Leia vähemalt kaks usaldusväärset allikat (ametlik aruanne, järelevalveasutuse otsus, turvafirma analüüs). Kirjelda rünnaku kulg etapiti (nt MITRE ATT&CK taktikate järgi), too välja kõik eiratud küberhügieeni põhimõtted ja koosta meetmete plaan, mis oleks rünnaku katkestanud. Maht 2–3 lehekülge.
+2. **Oma organisatsiooni kontrollnimekiri.** Võta iga teema „Praktilised meetmed“ ja hinda oma (või õppe-) organisatsiooni skaalal: täidetud / osaliselt / täitmata / ei tea. Vali kolm suurima riskiga puudujääki ja põhjenda valikut.
+3. **Laudharjutus.** Koosta 30-minutiline laudharjutuse stsenaarium, mis põhineb ühel selle materjali juhtumil, aga on kohandatud Eesti organisatsioonile. Lisa vähemalt 4 „sündmust“, mis harjutuse käigus avalduvad, ja iga sündmuse juurde küsimused osalejatele.
+4. **Ahela katkestamine.** Vali Maerski, Targeti või Uberi 2022. aasta juhtum. Joonista rünnaku ahel lülidena ja märgi iga lüli juurde üks küberhügieeni põhimõte, mis oleks selle lüli katkestanud. Milline üksik meede oleks andnud suurima kaitse?
+
+**Märkus allikate kohta:** juhtumikirjeldused põhinevad avalikult kättesaadavatel aruannetel ja ametlikel teadaannetel (viited on materjali lõpus peatükis „Allikad“); arvud on ümardatud ja võivad eri allikates veidi erineda. Õppijatel on soovitatav iga juhtumi puhul leida esmane allikas (nt ettevõtte enda teadaanne, järelevalveasutuse otsus või turvafirma tehniline analüüs).
+
+## Allikad
+
+Iga juhtumi kohta on toodud üks või kaks peamist allikat. Võimaluse korral on eelistatud esmaseid allikaid: ettevõtte enda teadaanne, järelevalveasutuse otsus, riiklik aruanne või turvafirma tehniline analüüs.
+
+| Teema | Juhtum | Allikas |
+| --- | --- | --- |
+| 1 | WannaCry ja NHS | [NAO: Investigation: WannaCry cyber attack and the NHS](https://www.nao.org.uk/reports/investigation-wannacry-cyber-attack-and-the-nhs/) |
+| 1 | Equifax | [GAO-18-559: Actions Taken by Equifax and Federal Agencies](https://www.gao.gov/products/GAO-18-559) |
+| 1 | Citrix Bleed | [CISA AA23-325A: LockBit 3.0 Affiliates Exploit Citrix Bleed](https://cisa.gov/news-events/cybersecurity-advisories/aa23-325a) |
+| 2 | Emotet | [Eurojust/Europol pressiteade (27.01.2021)](https://www.eurojust.europa.eu/worlds-most-dangerous-malware-emotet-disrupted-through-global-action); [USA justiitsministeerium](https://justice.gov/opa/pr/emotet-botnet-disrupted-international-cyber-operation) |
+| 2 | AuKill / BYOVD | [Sophos X-Ops: AuKill EDR killer malware abuses Process Explorer driver](https://www.sophos.com/en-us/blog/aukill-edr-killer-malware-abuses-process-explorer-driver) |
+| 2 | CrowdStrike | [CrowdStrike: Channel File 291 Root Cause Analysis](https://www.crowdstrike.com/en-us/blog/channel-file-291-rca-available/) |
+| 3 | Capital One | [SecurityAffairs: OCC trahv Capital One'ile](https://securityaffairs.com/106933/data-breach/capital-one-fined.html) |
+| 3 | MongoDB rünnakud | [KrebsOnSecurity: Extortionists Wipe Thousands of Databases](https://krebsonsecurity.com/2017/01/extortionists-wipe-thousands-of-databases-victims-who-pay-up-get-stiffed/) |
+| 3 | FortiGate / Belsen | [Fortinet PSIRT: Analysis of Threat Actor Data Posting](https://fortinet.com/blog/psirt-blogs/analysis-of-threat-actor-data-posting); [Outpost24 analüüs](https://outpost24.com/blog/belsen-group-threat-group/) |
+| 4 | Dropbox | [SecurityWeek: 68 Million Exposed in Old Dropbox Hack](https://www.securityweek.com/68-million-exposed-old-dropbox-hack) |
+| 4 | 23andMe | [HIPAA Journal: 6.9 Million 23andMe Users Affected](https://www.hipaajournal.com/6-9-million-23andme-users-affected-by-data-breach/) |
+| 4 | LastPass | [CSO Online: Hacked home computer of engineer led to second LastPass breach](https://www.csoonline.com/article/574613/hacked-home-computer-of-engineer-led-to-second-lastpass-data-breach.html) |
+| 5 | Colonial Pipeline | [Dark Reading: tegevjuhi tunnistus USA Senatis](https://www.darkreading.com/attacks-breaches/colonial-pipeline-ceo-ransomware-attack-started-via-pilfered-legacy-vpn-account); [BankInfoSecurity](https://www.bankinfosecurity.net/colonial-ceo-at-senate-hearing-details-ransomware-attack-a-16836) |
+| 5 | Uber 2022 | [Uberi turvateade (SEC 8-K lisa)](https://www.sec.gov/Archives/edgar/data/1543151/000155278122000558/e22427_ex99-1.htm) |
+| 5 | Twilio ja Cloudflare | [Cloudflare: The mechanics of a sophisticated phishing scam and how we stopped it](https://blog.cloudflare.com/2022-07-sms-phishing-attacks/) |
+| 6 | Code Spaces | [Help Net Security](https://www.helpnetsecurity.com/2014/06/19/code-hosting-code-spaces-destroyed-by-extortion-hack-attack/); [InfoWorld: Murder in the Amazon cloud](https://www.infoworld.com/article/2179073/murder-in-the-amazon-cloud.html) |
+| 6 | GitLab.com | [GitLab: Postmortem of database outage of January 31](https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/) |
+| 6 | Norsk Hydro | [Computer Weekly: Norsk Hydro counts cost of cyber attack](https://computerweekly.com/news/252462778/Norsk-Hydro-urges-caution-as-it-counts-cost-of-cyber-attack); [CyberScoop](https://www.cyberscoop.com/cyber-insurance-norsk-hydro-lockergoga-attack/) |
+| 7 | FACC | [SecurityWeek: Austrian Firm Fires CEO After $56-million Cyber Scam](https://www.securityweek.com/austrian-firm-fires-ceo-after-56-million-cyber-scam) |
+| 7 | Twitter 2020 | [NYDFS: Twitter Investigation Report](https://www.dfs.ny.gov/reports_and_publications/press_releases/pr202010141) |
+| 7 | Arup | [CNN: Arup revealed as $25 million deepfake scam victim](https://edition.cnn.com/2024/05/16/tech/arup-deepfake-scam-loss-hong-kong-intl-hnk) |
+| 8 | Cash App / Block | [The Record: Block says former Cash App employee accessed data](https://therecord.media/block-says-former-cash-app-employee-accessed-data-from-us-customer-accounts) |
+| 8 | Microsoft / Midnight Blizzard | [Microsoft: Midnight Blizzard – guidance for responders](https://www.microsoft.com/en-us/security/blog/2024/01/25/midnight-blizzard-guidance-for-responders-on-nation-state-attack/) |
+| 8 | Morgan Stanley 2015 | [Wiley: SEC settlement over failure to protect customer data](https://wiley.law/alert-Morgan-Stanley-Pays-1-Million-in-Settlement-with-SEC-Over-Failure-to-Protect-Customer-Data-from-Insider) |
+| 9 | USA veteranide amet | [CNN: VA will pay $20 million to settle lawsuit](https://edition.cnn.com/2009/POLITICS/01/27/va.data.theft/index.html) |
+| 9 | HMRC | [ICO: Loss of UK child benefit data](https://ico.org.uk/for-the-public/ico-40/loss-of-uk-child-benefit-data/) |
+| 9 | Morgan Stanley 2016 | [Banking Dive: SEC $35M penalty](https://www.bankingdive.com/news/morgan-stanley-fine-35m-sec-customer-data-disposal-online-auction/); [Banking Dive: OCC $60M](https://www.bankingdive.com/news/morgan-stanley-OCC-fine-data-oversight/586734/) |
+| 10 | Target | [USA Senati kaubanduskomitee: A "Kill Chain" Analysis of the 2013 Target Data Breach](https://www.commerce.senate.gov/2014/3/rockefeller-staff-report-details-target-s-missed-opportunities-to-stop-massive-data-breach) |
+| 10 | Maersk / NotPetya | [Wired: The Untold Story of NotPetya](https://www.wired.com/story/notpetya-cyberattack-ukraine-russia-code-crashed-the-world/) |
+| 10 | Kasiino akvaarium | [Security Affairs: casino fish tank hack](https://securityaffairs.com/71433/hacking/fish-tank-hack.html) |
+| 11 | Marriott / Starwood | [Yahoo Finance: ICO fines Marriott £18.4m](https://news.yahoo.com/ico-marriott-hotel-customers-personal-data-breach-security-hack-135645181.html) |
+| 11 | Samsung ja ChatGPT | [Fortune: Samsung bans employee use of ChatGPT](https://fortune.com/2023/05/02/samsung-bans-employee-use-chatgpt-data-leak) |
+| 11 | Microsofti 38 TB leke | [Wiz Research: 38TB of data accidentally exposed](https://wiz.io/blog/38-terabytes-of-private-data-accidentally-exposed-by-microsoft-ai-researchers) |
+| 12 | Eesti 2007 | [CCDCOE: Cyber attacks against Estonia (2007)](<https://cyberlaw.ccdcoe.org/wiki/Cyber_attacks_against_Estonia_(2007)?oldid=2424>); [R. Ottis analüüs (CCDCOE)](https://www.ccdcoe.org/library/publications/analysis-of-the-2007-cyber-attacks-against-estonia-from-the-information-warfare-perspective) |
+| 12 | ID-kaardi ROCA | [RIA kokkuvõte august/september 2017](https://ria.ee/sites/default/files/documents/2024-03/ria-ktt-kokkuvote-august-september-2017.pdf); [RIA kokkuvõte okt/nov 2017](https://ria.ee/sites/default/files/documents/2024-03/ria-ktt-kokkuvote-okt-nov-2017.pdf); [TTÜ: ID-kaardi kaasuse õppetunnid](https://www.ria.ee/sites/default/files/content-editors/EID/id-kaardi_oppetunnid.pdf) |
+| 12 | Uber 2016 | [Insurance Journal: Uber's former security chief convicted](https://www.insurancejournal.com/news/national/2022/10/06/688645.htm) |

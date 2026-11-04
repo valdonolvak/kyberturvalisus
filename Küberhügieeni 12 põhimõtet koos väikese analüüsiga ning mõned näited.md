@@ -67,6 +67,79 @@ Enne põhimõtete juurde minekut tasub selgeks teha mõned mõisted, mis korduva
 | **Kernel** | Operatsioonisüsteemi tuum, millel on kõige suuremad õigused. | Hoone vundament ja kandvad seinad. |
 | **Intsident** | Sündmus, mis kahjustab või ohustab andmete või teenuste turvalisust. | Sissemurdmine, mis juba toimus või toimumas on. |
 
+### Raskemad terminid näidete varal
+
+Allpool on mõisted, mis tulevad näidetes ette ja võivad esimesel lugemisel segaseks jääda. Iga mõiste juures on lihtne selgitus ja näide.
+
+#### Pahavara ja selle tuvastamine
+
+**Signatuur.** Signatuur on pahavara „sõrmejälg“: kindel baitide jada või failist arvutatud räsi, mille järgi viirusetõrje teab, et tegu on konkreetse pahavaraga. Viirusetõrje firmad koguvad neid sõrmejälgi andmebaasi ja sinu arvuti viirusetõrje laadib selle andmebaasi iga päev alla. *Näide:* politseil on tagaotsitavate fotod. Kui keegi neist tuleb poodi, tunneb valvur ta ära. Kui aga tuleb täiesti uus varas, keda andmebaasis pole, laseb valvur ta sisse. Täpselt nii jääb signatuuripõhisele viirusetõrjele märkamata uus pahavara.
+
+**Käitumispõhine tuvastus.** Selle asemel, et vaadata, *kes* fail on, vaadatakse, *mida* programm teeb. Kui Wordi dokument hakkab käivitama PowerShelli ja alla laadima faile internetist, on see kahtlane, olenemata sellest, kas faili sõrmejälg on teada. *Näide:* valvur ei vaata enam ainult nägusid, vaid märkab, kui keegi hakkab kassaaparaati lahti kangutama.
+
+**Polümorfne pahavara.** Pahavara, mis muudab iga levikuga veidi oma koodi, nii et selle sõrmejälg on iga kord erinev. Sisu ja eesmärk jäävad samaks. *Näide:* varas, kes vahetab iga päev parukat ja prille, et fotode järgi teda ära ei tuntaks.
+
+**Uss, troojalane, lunavara, botnet.**
+
+- **Uss** levib ise arvutist arvutisse, ilma et keegi midagi klõpsaks (nt WannaCry). Nagu gripp klassis: piisab, kui istud nakatunu kõrval.
+- **Troojalane** näeb välja nagu kasulik programm või dokument, kuid sees on pahavara. Nimi tuleb Trooja hobusest.
+- **Lunavara** krüpteerib failid ja nõuab nende avamise eest raha.
+- **Botnet** on tuhandetest nakatunud arvutitest koosnev „armee“, mida ründaja juhib kaugelt. Arvutite omanikud ei pruugi sellest midagi teada. Emotet oli selline botnet.
+
+**Tagauks** (*backdoor*). Salajane sissepääs, mille ründaja jätab endale süsteemi, et sinna hiljem tagasi tulla. Nagu varuvõti, mille varas laseb endale teha.
+
+**Makro.** Väike programm Wordi või Exceli faili sees, mis automatiseerib tegevusi. Raamatupidajale kasulik, aga ründaja saab makro abil panna dokumendi avamisel arvuti pahavara alla laadima.
+
+**Draiver.** Programm, mis aitab operatsioonisüsteemil seadmega suhelda, nt printeri või videokaardiga. Draiverid töötavad süsteemi kõige sügavamal tasemel (kernelis), nii et neil on väga suured õigused. Seetõttu on haavatav draiver ründaja jaoks väärtuslik.
+
+**EDR-agent.** Turvaprogramm, mis töötab igas arvutis taustal, jälgib toimuvat ja saadab info keskserverisse. Kui agent ootamatult vaikib, võib see tähendada, et ründaja lülitas selle välja.
+
+#### Haavatavused ja paigad
+
+**Ründepind** (*attack surface*). Kõik kohad, kust ründaja võiks sisse pääseda: avatud pordid, kasutajakontod, veebilehed, e-post, USB-pesad. *Näide:* majal, millel on 2 ust ja 4 akent, on väiksem ründepind kui majal, millel on 5 ust ja 20 akent. Iga kasutamata ukse sulgemine vähendab ründepinda.
+
+**Nullpäeva haavatavus** (*zero-day*). Viga, millest tootja veel ei tea või mille parandamiseks pole tal olnud ühtegi päeva. Paika veel ei ole.
+
+**CVE.** Iga avalikult teatava haavatavuse ametlik number, nt CVE-2017-5638. Nagu auto registreerimisnumber: kõik räägivad samast asjast.
+
+**Skaneerimine.** Automaatne kontroll, mis otsib võrgust avatud porte või süsteemidest teadaolevaid haavatavusi. Ründajad skaneerivad kogu internetti pidevalt, seepärast peavad ka kaitsjad oma süsteeme skaneerima.
+
+#### Kontod, sisselogimine ja õigused
+
+**Sessioon ja sessioonitoken.** Kui oled veebilehele sisse loginud, annab server sinu brauserile tokeni ehk ajutise „pääsme“. Edaspidi näitab brauser iga päringuga seda pääset ja parooli enam ei küsita. Kui ründaja varastab tokeni, on ta sinu nimel sisse logitud ilma parooli ja MFA-ta. *Näide:* kontserdil saad käepaela. Turvamees vaatab edaspidi ainult käepaela, mitte piletit. Kes su käepaela endale saab, pääseb sisse.
+
+**Sool** (*salt*). Juhuslik lisatekst, mis lisatakse paroolile enne räsi arvutamist. Nii annab kahe inimese sama parool erineva räsi. *Näide:* kui kõigi „Kevad2024“ paroolide räsid oleksid ühesugused, piisaks ründajal ühe lahtimurdmisest. Soolaga peab ta iga parooli eraldi murdma.
+
+**Entroopia.** Mõõt, kui raske on parooli ära arvata. Mida pikem ja juhuslikum parool, seda suurem entroopia. Neljakohaline PIN-kood: 10 000 varianti. 12-tähemärgiline juhuslik parool: triljoneid kordi rohkem.
+
+**Teenusekonto.** Konto, mida ei kasuta inimene, vaid programm, nt varundustarkvara, mis logib igal ööl serverisse sisse. Selliseid kontosid unustatakse sageli.
+
+**Token ja API-võti.** Pikk juhuslik tähemärkide jada, millega programm tõestab, et tal on õigus teenust kasutada. Sisuliselt parool programmile. Kui see satub GitHubi või kuhugi mujale avalikku kohta, saab igaüks seda kasutada.
+
+#### Võrk ja pilv
+
+**IP-aadress.** Arvuti aadress võrgus, nt 192.168.1.10. Nagu maja aadress, mille järgi postiljon kirja kohale toob.
+
+**VPN.** Krüpteeritud „tunnel“ internetis, mille kaudu kodust töötav inimene ühendub turvaliselt firma sisevõrku. Kes VPN-i kaudu sisse pääseb, on sisuliselt kontoris sees. Seepärast on VPN-i parool ilma MFA-ta nii ohtlik.
+
+**VLAN ja segment.** Ühe füüsilise võrgu jagamine mitmeks loogiliseks võrguks. Kontoriarvutid, serverid ja külaliste Wi-Fi on eraldi, kuigi kasutavad samu kaableid ja võrguseadmeid. *Näide:* koolimajas on õpetajate tuba ja õpilaste ruumid samas hoones, aga õpilaste võtmekaart õpetajate tuppa ei pääse.
+
+**IoT** (*Internet of Things*, asjade internet). Internetti ühendatud tavalised seadmed: nutitermostaat, valvekaamera, nutikõlar, printer, isegi akvaariumi termomeeter.
+
+**DDoS** (teenusetõkestusrünnak). Tuhanded arvutid (sageli botnet) saadavad korraga ühele veebilehele nii palju päringuid, et see ei jõua neid töödelda ja jääb kättesaamatuks. *Näide:* tuhat inimest helistab korraga pitsakohta, nii et päris kliendid ei saa läbi.
+
+**Pilv ja AWS / Azure.** Pilveteenus tähendab, et kasutad suure ettevõtte (Amazon Web Services, Microsoft Azure, Google Cloud) andmekeskuste servereid ja maksad selle eest, mida kasutad. Kõiki servereid ja andmeid juhitakse ühest halduskonsoolist, seega on konsooli parool väga väärtuslik.
+
+#### Intsidendid ja tagajärjed
+
+**Andmeleke.** Olukord, kus andmed jõuavad kellenigi, kes neid nägema ei peaks: varastatakse, saadetakse kogemata välja või jäetakse avalikult kättesaadavaks.
+
+**Väljaviimine** (*exfiltration*). Andmete salajane kopeerimine organisatsioonist välja ründaja serverisse. Sageli tehakse seda väikeste osade kaupa, et keegi ei märkaks.
+
+**Tarnija ja tarneahel.** Ettevõtted, kellelt sinu organisatsioon teenuseid või tooteid ostab: IT-partner, tarkvaratootja, hooldusfirma. Kui tarnija on nõrk, saab ründaja tema kaudu sinuni jõuda (vt Target, NotPetya, ROCA).
+
+**Järelevalveasutus ja trahv.** Riigiasutus, mis kontrollib, kas ettevõtted järgivad seadusi, nt Eestis Andmekaitse Inspektsioon (AKI). Suurbritannias on selleks ICO, USA-s pankade puhul OCC ja börsiettevõtete puhul SEC.
+
 ### Kolm küsimust, mida iga näite juures küsida
 
 1. **Kust ründaja sisse sai?** (sisenemispunkt)
@@ -102,6 +175,8 @@ Põhimõisted:
 
 ### Näide 1: WannaCry lunavara (2017)
 
+**Kes said kannatada?** WannaCry ei rünnanud ühte kindlat ettevõtet, vaid kõiki paikamata Windowsi arvuteid. Kõige rohkem kannatas Inglismaa riiklik tervishoiusüsteem **NHS** (*National Health Service*) – riigi haiglate ja perearstide võrk, mis on umbes nagu Eesti Haigekassa ja kõik riigihaiglad kokku. Pihta said ka automaker Renault, Hispaania telekomifirma Telefónica (nagu meie Telia) ja Saksa raudtee Deutsche Bahn.
+
 **Mis juhtus.** Mais 2017 levis WannaCry mõne päevaga üle 200 000 arvutisse vähemalt 100 riigis. Inglismaa tervishoiusüsteemis (NHS) oli häiritud vähemalt kolmandik haiglaid haldavatest asutustest, ära jäi ligi 7000 vastuvõttu ja osa patsiente suunati teistesse haiglatesse. Riigikontrolli (NAO) hinnangul oleks rünnaku saanud ära hoida IT-turbe põhitõdesid järgides. Kahjustatud olid ka Renault, Telefónica ja Deutsche Bahn.
 
 **Miks see juhtus.** Lunavara kasutas Windowsi failijagamise protokolli SMBv1 haavatavust EternalBlue, mille parandus (MS17-010) oli välja antud juba märtsis – kaks kuud enne rünnakut. Paljudes organisatsioonides oli paik paigaldamata ja kasutusel oli ka toetuse lõppenud Windows XP. WannaCry oli **uss**: see levis ise masinast masinasse ilma kasutaja tegevuseta. Lisaks oli SMB port 445 paljudes kohtades internetist kättesaadav.
@@ -112,6 +187,8 @@ Põhimõisted:
 
 ### Näide 2: Equifax (2017)
 
+**Kes nad on?** **Equifax** on üks kolmest suurest USA krediidiinfo ettevõttest. Ta kogub infot selle kohta, kuidas inimesed oma laene ja arveid maksavad, ning pangad küsivad temalt enne laenu andmist, kas inimene on usaldusväärne. Eestis teeb sarnast tööd Creditinfo. Equifaxil olid andmed peaaegu poole USA elanikkonna kohta.
+
 **Mis juhtus.** USA krediidiinfo ettevõttest Equifax varastati umbes 147 miljoni inimese isikuandmed, sh sotsiaalkindlustusnumbrid. Ründajad olid süsteemis umbes 2,5 kuud, enne kui neid märgati. Kokkulepped ja trahvid ulatusid kuni 700 miljoni dollarini.
 
 **Miks see juhtus.** Veebiraamistiku Apache Struts (Java-põhine tööriist veebirakenduste ehitamiseks) haavatavusele (CVE-2017-5638) avaldati parandus 7. märtsil 2017. Equifaxi sisemine teavitus jõudis küll IT-ni, kuid vastutus ei olnud selge ja üks vaidlusportaal jäi paikamata. Haavatavuse skaneerimine ei leidnud seda, sest skaneerimine oli valesti seadistatud. Lisaks oli liikluse inspekteerimise seadmel 19 kuud aegunud sertifikaat, mistõttu andmete väljaviimist ei nähtud.
@@ -121,6 +198,8 @@ Põhimõisted:
 **Õppetund.** Paik on olemas alles siis, kui see on paigaldatud **igasse** süsteemi. Selleks on vaja varade nimekirja ja selget vastutust, mitte ainult teadet, et paik on saadaval.
 
 ### Näide 3: Citrix Bleed (2023)
+
+**Kes nad on?** **Citrix** on USA tarkvaraettevõte, mille tooteid kasutavad suurfirmad ja asutused selleks, et töötajad saaksid kodust turvaliselt tööprogramme kasutada. NetScaler on seade, mis seisab interneti ja firma sisevõrgu vahel nagu valvelaud. **Boeing** on üks maailma suurimaid lennukitootjaid ja **ICBC** on maailma suurim pank (Hiina riigipank), mille USA tütarettevõte tegeleb muu hulgas riigivõlakirjade kauplemisega.
 
 **Mis juhtus.** Oktoobris 2023 avaldas Citrix paranduse NetScaler ADC ja Gateway seadmete (kaugligipääsu seadmed interneti ja sisevõrgu piiril) haavatavusele CVE-2023-4966. Lunavaragrupp LockBit kasutas seda muu hulgas Boeingu ja Hiina panga ICBC USA tütarettevõtte ründamiseks; viimase tõttu häirus osa USA riigivõlakirjade arveldustest.
 
@@ -166,6 +245,8 @@ Põhimõisted:
 
 ### Näide 1: Emotet (2014–2021)
 
+**Mis see on?** **Emotet** ei ole ettevõte, vaid pahavara nimi. Selle taga oli kurjategijate grupp, kes rentis nakatunud arvuteid edasi teistele kurjategijatele, umbes nagu „ligipääs rendiks“. **Europol** on Euroopa Liidu politseikoostöö amet, mis koordineerib eri riikide politsei ühisoperatsioone.
+
 **Mis juhtus.** Emotet alustas pangatroojana ja kasvas maailma ohtlikumaks pahavara levitamise platvormiks. See saatis nakatunud postkastidest edasi kirju, mis olid vastused päris kirjavahetusele, ning lisas makrodega Wordi-faile. Nakatunud masinasse laaditi edasi TrickBot ja seejärel sageli Ryuki lunavara. Europol ja mitme riigi politsei võtsid Emoteti taristu üle jaanuaris 2021.
 
 **Miks see juhtus.** Emotet muutis oma kuju pidevalt, nii et signatuuripõhine viirusetõrje jäi maha. Kirjad nägid usaldusväärsed välja, sest tulid päris kontaktidelt. Paljudes organisatsioonides said kasutajad makrosid vabalt lubada.
@@ -176,6 +257,8 @@ Põhimõisted:
 
 ### Näide 2: EDR-i väljalülitamine haavatava draiveriga (BYOVD, 2022–2024)
 
+**Kes nad on?** Siin ei ole üht ohvrit, vaid mitu lunavaragruppi, kes kasutasid sama nippi. **Sophos** on Briti küberturbeettevõte, mis teeb viirusetõrje- ja EDR-tooteid ning uurib rünnakuid. Selle uurijad avastasid ja kirjeldasid AuKill-tööriista.
+
 **Mis juhtus.** Mitmed lunavaragrupid hakkasid enne krüpteerimist kasutama spetsiaalseid tööriistu (nt AuKill, Terminator), mis lülitavad EDR-i välja. Turvaettevõtted, sh Sophos, kirjeldasid juhtumeid, kus EDR oli küll paigaldatud, aga ründaja lülitas selle mõne minutiga välja ja krüpteeris seejärel serverid.
 
 **Miks see juhtus.** Tehnika nimi on **Bring Your Own Vulnerable Driver**: ründaja paigaldab legitiimse, digitaalselt allkirjastatud, kuid haavatava draiveri. Draiver töötab kerneli tasemel ja sellega saab lõpetada ka turvatarkvara protsesse. Selleks vajab ründaja administraatoriõigusi, mis olid tavaliselt saadud varasemas rünnaku faasis.
@@ -185,6 +268,8 @@ Põhimõisted:
 **Õppetund.** EDR on ründaja **sihtmärk**, mitte ainult takistus. Turvatööriista vaikimine on juba iseenesest hoiatusmärk.
 
 ### Näide 3: CrowdStrike'i vigane uuendus (juuli 2024)
+
+**Kes nad on?** **CrowdStrike** on USA küberturbeettevõte, mille EDR-toodet Falcon kasutavad tuhanded suurettevõtted, haiglad, pangad ja lennufirmad üle maailma. Toode uuendab end automaatselt mitu korda päevas, et tunda ära uusimaid rünnakuid.
 
 **Mis juhtus.** 19. juulil 2024 levitas CrowdStrike Falconi agendile vigase sisuuuenduse. Umbes 8,5 miljonit Windowsi arvutit jooksis kokku ja jäi taaskäivitustsüklisse. Seiskusid lennufirmad, haiglad, pangad ja meediaettevõtted. Tegu ei olnud rünnakuga, vaid veaga turvatarkvaras endas.
 
@@ -227,6 +312,8 @@ Põhimõisted:
 
 ### Näide 1: Capital One (2019)
 
+**Kes nad on?** **Capital One** on üks USA suurimaid panku, mis on tuntud eriti krediitkaartide poolest. Pank viis suure osa oma süsteemidest Amazoni pilve (AWS), et mitte pidada ise andmekeskusi.
+
 **Mis juhtus.** Ründaja sai Capital One'i AWS-i pilvekeskkonnast kätte umbes 106 miljoni USA ja Kanada kliendi andmed. Ettevõtet trahviti 80 miljoni dollariga.
 
 **Miks see juhtus.** Veebirakenduse tulemüür (WAF) oli **valesti seadistatud**. Ründaja kasutas SSRF-rünnet (*Server-Side Request Forgery*): ta pani WAF-i esitama päringu AWS-i sisemisele metaandmeteenusele (teenus, mis annab pilveserverile infot tema enda seadistuse ja õiguste kohta). Sealt sai ta ajutised ligipääsuvõtmed rollile, millel olid liiga laiad õigused S3-andmehoidlatele (Amazoni pilve failihoidlad).
@@ -237,6 +324,8 @@ Põhimõisted:
 
 ### Näide 2: Internetti avatud MongoDB andmebaasid (2017)
 
+**Mis see on?** **MongoDB** on populaarne andmebaasitarkvara, mida kasutavad paljud veebilehed ja rakendused andmete hoidmiseks. Ohvreid oli tuhandeid: väikefirmad, idufirmad, haiglad ja üksikud arendajad, kes olid andmebaasi pilveserverisse paigaldanud.
+
 **Mis juhtus.** Jaanuaris 2017 kustutasid ründajad kümnetest tuhandetest internetist ligipääsetavatest MongoDB andmebaasidest andmed ja jätsid asemele lunarahanõude. Paljudel ohvritel varukoopiat ei olnud; mõnel juhul ei olnud ründajal andmeid isegi alles.
 
 **Miks see juhtus.** Toonased MongoDB vaikeseaded ei nõudnud autentimist ja andmebaas võis kuulata kõiki võrguliideseid. Arendajad paigaldasid andmebaasi pilveserverisse ja unustasid tulemüüri reegli. Port 27017 oli otse internetist kättesaadav – ründajal piisas skriptist.
@@ -246,6 +335,8 @@ Põhimõisted:
 **Õppetund.** Andmebaas ei kuulu kunagi otse internetti. Vaikeseadetele ei saa loota – tulemüür peab olema kaitse ka siis, kui keegi teeb seadistusvea.
 
 ### Näide 3: FortiGate'i seadistuste leke (2022 → 2025)
+
+**Kes nad on?** **Fortinet** on üks maailma suurimaid tulemüüride tootjaid. Selle FortiGate'i seadmeid kasutatakse ka paljudes Eesti ettevõtetes, koolides ja asutustes. **Belsen** on 2025. aastal esile kerkinud kurjategijate grupp, mis müüb varastatud ligipääsu teiste ettevõtete võrkudesse.
 
 **Mis juhtus.** Jaanuaris 2025 avaldas ründajate grupp Belsen tasuta üle 15 000 FortiGate'i tulemüüri seadistused, sh IP-aadressid, VPN-kasutajate paroolid ja tulemüüri reeglid. Uurimine näitas, et andmed olid kogutud juba 2022. aastal.
 
@@ -290,6 +381,8 @@ Põhimõisted:
 
 ### Näide 1: Dropbox (2012)
 
+**Kes nad on?** **Dropbox** on pilvesalvestusteenus, kuhu inimesed hoiavad oma faile, umbes nagu Google Drive või OneDrive. **LinkedIn** on tööalane sotsiaalvõrgustik, kus inimesed avaldavad oma CV ja otsivad tööd.
+
 **Mis juhtus.** 2012. aastal pääses ründaja Dropboxi töötaja kontole ja sealt dokumendini, mis sisaldas kasutajate e-posti aadresse. 2016. aastal selgus, et samas rünnakus varastati umbes 68 miljoni kasutaja kontoandmed koos paroolide räsidega.
 
 **Miks see juhtus.** Töötaja kasutas Dropboxi tööülesannetes sama parooli, mis tal oli LinkedInis. LinkedIn oli 2012. aastal ise lekkinud ja paroolid olid seal salvestatud nõrga räsiga (soolamata SHA-1 ehk ilma juhusliku lisandita räsi, mistõttu sama parool annab alati sama räsi ja seda saab otsida valmis tabelitest), mistõttu need murti kiiresti lahti.
@@ -300,6 +393,8 @@ Põhimõisted:
 
 ### Näide 2: 23andMe (2023)
 
+**Kes nad on?** **23andMe** on USA ettevõte, mis müüs koduseid DNA-teste: klient saatis süljeproovi ja sai teada oma päritolu ning sai leida sugulasi, kes olid samuti testi teinud. Eestis kogub inimeste geeniandmeid näiteks Geenivaramu, kuid see on teadusasutus, mitte kommertsteenus.
+
 **Mis juhtus.** Geenitestide ettevõte 23andMe teatas 2023. aastal lekkest, mis puudutas umbes 6,9 miljonit kasutajat. Ründajad müüsid andmeid, sh info inimeste päritolu kohta. Ettevõte jõudis hiljem pankrotini.
 
 **Miks see juhtus.** Ründajad kasutasid **credential stuffingut**: proovisid teistest leketest pärit paroole ja pääsesid sisse umbes 14 000 kontole. Need kontod olid seotud funktsiooniga „DNA Relatives“, mis näitas info sugulaste kohta. Seetõttu andis 14 000 kontot ligipääsu miljonite inimeste andmetele. MFA ei olnud kohustuslik ja massilisi sisselogimiskatseid ei tõkestatud piisavalt.
@@ -309,6 +404,8 @@ Põhimõisted:
 **Õppetund.** Kasutajate parooliharjumused on teenusepakkuja probleem. Kui ühe konto kaudu näeb teiste inimeste andmeid, korrutab iga nõrk parool kahju.
 
 ### Näide 3: LastPass (2022)
+
+**Kes nad on?** **LastPass** on paroolihaldur – programm, mis hoiab kõiki sinu paroole krüpteeritud „seifis“ ja täidab need ise sisselogimisel. Sarnased tooted on Bitwarden ja 1Password. Seifi avamiseks on vaja ühte ülemparooli.
 
 **Mis juhtus.** Paroolihaldurit LastPass tabas 2022. aastal kaks seotud rünnakut. Teises varastati klientide krüpteeritud paroolihoidlate varukoopiad. Hiljem seostasid uurijad mitmeid krüptovaluutade vargusi hoidlatega, mille ülemparool oli nõrk.
 
@@ -359,6 +456,8 @@ Põhimõisted:
 
 ### Näide 1: Colonial Pipeline (mai 2021)
 
+**Kes nad on?** **Colonial Pipeline** on USA ettevõte, mis haldab umbes 8800 km pikkust torujuhet, mida mööda veetakse bensiini, diislit ja lennukikütust Texasest kuni New Yorgini. Kui toru seisab, jääb tanklates kütusest puudu. **DarkSide** oli lunavaragrupp, mis rentis oma lunavara teistele kurjategijatele.
+
 **Mis juhtus.** USA suurima kütusetoru operaator Colonial Pipeline peatas lunavararünnaku tõttu 6 päevaks torujuhtme, mis veab umbes 45% USA idaranniku kütusest. Tanklates tekkisid järjekorrad ja kütusepuudus. Ettevõte maksis umbes 4,4 miljoni dollari suuruse lunaraha; osa sellest sai FBI hiljem tagasi.
 
 **Miks see juhtus.** Ründajad (DarkSide) logisid sisse VPN-i kaudu, kasutades **vana VPN-kontot**, mis ei olnud enam kasutusel, kuid oli endiselt aktiivne. Ettevõtte IT-osakond ei teadnudki, et see VPN-profiil on alles – see ei ilmunud ühessegi skaneeringusse. Tegevjuhi sõnul oli parool keeruline, kuid ilmselt lekkinud. VPN-il ei olnud MFA-d.
@@ -369,6 +468,8 @@ Põhimõisted:
 
 ### Näide 2: Uber ja MFA-väsimus (september 2022)
 
+**Kes nad on?** **Uber** on taksoäpp, sarnane Eestis kasutatava Boltiga. **Lapsus$** oli peamiselt teismelistest koosnev häkkerite grupp, mis murdis 2022. aastal sisse mitmesse suurfirmasse (Microsoft, Nvidia, Samsung, Okta) – mitte keerukate tööriistade, vaid peamiselt inimeste petmise abil.
+
 **Mis juhtus.** Noor ründaja, keda seostati grupiga Lapsus$, pääses Uberi sisevõrku, Slacki, pilvekeskkondadesse ja turvatööriistadesse. Ta teatas sellest ise Uberi Slackis.
 
 **Miks see juhtus.** Ründaja ostis välise töövõtja parooli, mis oli tõenäoliselt varastatud infovaraga. MFA nõudis push-kinnitust. Ründaja saatis järjest kinnituspäringuid ja kirjutas enda väitel töövõtjale WhatsAppis, esinedes Uberi IT-toena, et päringud lõpevad alles siis, kui ta ühe kinnitab. Töövõtja kinnitaski. Sisevõrgus leidis ründaja võrgukettalt PowerShelli skripti, milles oli PAM-süsteemi administraatori parool selgetekstina.
@@ -378,6 +479,8 @@ Põhimõisted:
 **Õppetund.** MFA, mida saab „ära tüüdata“, ei ole piisav. Lisaks näitab juhtum, et üks selgetekstiline parool skriptis võib anda ründajale kogu kuningriigi võtmed.
 
 ### Näide 3: Twilio ja Cloudflare – sama rünnak, erinev tulemus (august 2022)
+
+**Kes nad on?** **Twilio** on USA ettevõte, mille kaudu teised firmad saadavad SMS-e ja helistavad automaatselt – näiteks saadab Twilio paljude äppide sisselogimiskoode. **Cloudflare** on ettevõte, mis kaitseb ja kiirendab miljoneid veebilehti, nii et osa kogu maailma internetiliiklusest läbib selle servereid.
 
 **Mis juhtus.** Kampaania „0ktapus“ saatis sadade ettevõtete töötajatele SMS-e, mis viisid võltssisselogimislehele. Twilios sisestasid mitu töötajat paroolid ja ühekordsed koodid ning ründajad said ligipääsu klientide andmetele. Ka Cloudflare'is langes kolm töötajat lõksu ja sisestas oma parooli – kuid ründajad ei pääsenud sisse.
 
@@ -427,6 +530,8 @@ Põhimõisted:
 
 ### Näide 1: Code Spaces (2014)
 
+**Kes nad on?** **Code Spaces** oli väike ettevõte, mis pakkus programmeerijatele kohta lähtekoodi hoidmiseks ja koos töötamiseks, umbes nagu GitHub. Kogu teenus töötas Amazoni pilves (AWS).
+
 **Mis juhtus.** Koodihoidla teenusepakkuja Code Spaces lõpetas tegevuse 12 tunni jooksul pärast rünnakut. Ettevõte ei suutnud klientide andmeid taastada.
 
 **Miks see juhtus.** Ründaja sai ligipääsu Code Spacesi AWS-i halduskonsoolile ja nõudis lunaraha. Kui ettevõte püüdis kontrolli tagasi võtta, kustutas ründaja masinad, andmehoidlad ja **ka varukoopiad**. Varukoopiad asusid samas AWS-i kontos ja olid kättesaadavad samade õigustega.
@@ -437,6 +542,8 @@ Põhimõisted:
 
 ### Näide 2: GitLab.com andmebaasi kustutamine (jaanuar 2017)
 
+**Kes nad on?** **GitLab** on platvorm, kus programmeerijad hoiavad koodi ja töötavad koos, GitHubi konkurent. GitLab.com on selle pilveteenus, mida kasutasid juba siis sajad tuhanded arendajad.
+
 **Mis juhtus.** GitLab.com-i administraator kustutas ekslikult tootmisandmebaasi, mõeldes, et töötab varuserveris. Kaotsi läks umbes 6 tunni andmed, sh projektid, kommentaarid ja kasutajakontod.
 
 **Miks see juhtus.** Väsinud administraator käivitas käsu valel serveril. Seejärel selgus, et **viiest varundusmeetodist ei töötanud korralikult ükski**: automaatne varundus oli vaikselt ebaõnnestunud (veateated jäid kohale jõudmata), replikatsioon oli katki ja pilvevarundus ei olnud sisse lülitatud. Andmed taastati LVM-hetktõmmisest, mille üks insener oli juhuslikult 6 tundi varem testkeskkonna jaoks teinud. GitLab dokumenteeris taastamise avalikult ja otseülekandes.
@@ -446,6 +553,8 @@ Põhimõisted:
 **Õppetund.** Varundust ei ole olemas enne, kui sellest on edukalt taastatud. Lisaks näitab GitLab, et avatus intsidendi ajal võib säilitada klientide usalduse.
 
 ### Näide 3: Norsk Hydro ja LockerGoga (märts 2019)
+
+**Kes nad on?** **Norsk Hydro** on üks maailma suurimaid alumiiniumitootjaid, Norra ettevõte, millel on umbes 35 000 töötajat ja tehased kümnetes riikides. Selle alumiiniumi kasutatakse autodes, akendes ja ehituses.
 
 **Mis juhtus.** Norra alumiiniumitootjat tabas lunavara LockerGoga, mis halvas suure osa ettevõtte IT-süsteemidest üle maailma. Mitmed tehased läksid üle käsitsi juhtimisele.
 
@@ -490,6 +599,8 @@ Põhimõisted:
 
 ### Näide 1: FACC juhipettus (2016)
 
+**Kes nad on?** **FACC** on Austria ettevõte, mis toodab lennukite osi (nt salongi sisustust ja tiivaosi) Airbusile ja Boeingule. 50 miljonit eurot oli umbes kümnendik ettevõtte aastasest käibest.
+
 **Mis juhtus.** Austria lennukiosade tootja FACC kandis jaanuaris 2016 petturitele üle umbes 50 miljonit eurot. Ligi 11 miljonit õnnestus kinni pidada, kahju jäi umbes 42 miljoni euro suuruseks. Pärast juhtumit vallandati nii finantsjuht kui ka 17 aastat ettevõtet juhtinud tegevjuht.
 
 **Miks see juhtus.** Raamatupidamise töötaja sai e-kirja, mis näis tulevat tegevjuhilt. Kirjas räägiti salajasest ettevõtte ostust ja paluti teha kiireloomuline makse ning juhtumist mitte kellelegi rääkida. Petturid kasutasid **autoriteeti, kiirustamist ja salastatust** – kolme klassikalist manipulatsioonivõtet. Ettevõttes puudus nõue suuri makseid teise kanali kaudu kontrollida.
@@ -500,6 +611,8 @@ Põhimõisted:
 
 ### Näide 2: Twitteri häälõngitsus (juuli 2020)
 
+**Kes nad on?** **Twitter** (praegu nimega X) on sotsiaalvõrgustik, kus inimesed avaldavad lühikesi postitusi. 2020. aastal oli sellel üle 300 miljoni kasutaja, sh presidendid, kuulsused ja suurfirmad. Ründajad olid kolm noort, kellest peamine oli 17-aastane.
+
 **Mis juhtus.** Ründajad sihtisid umbes 130 Twitteri kontot, sh Barack Obama, Elon Muski, Bill Gatesi ja Apple'i kontod, ning postitasid neilt bitcoini-pettuse. Mõne tunniga koguti üle 118 000 dollari.
 
 **Miks see juhtus.** Ründajad helistasid Twitteri töötajatele, esinedes ettevõtte IT-toena, ja suunasid nad võltsitud VPN-i sisselogimislehele. Nii saadi nelja töötaja paroolid ja MFA-koodid. Seejärel leiti töötajad, kellel oli ligipääs **sisemisele kontohaldustööriistale**. Selle tööriistaga sai muuta ükskõik millise konto e-posti aadressi.
@@ -509,6 +622,8 @@ Põhimõisted:
 **Õppetund.** Sotsiaalne manipulatsioon ei toimu ainult e-postis. Helistaja, kes teab sinu nime ja ametit, ei ole seetõttu veel usaldusväärne.
 
 ### Näide 3: Arup ja süvavõltsitud videokõne (2024)
+
+**Kes nad on?** **Arup** on Briti inseneri- ja arhitektuuribüroo, mis on projekteerinud näiteks Sydney ooperimaja ja Pekingi olümpiastaadioni. Ettevõttel on üle 18 000 töötaja ja kontorid üle maailma, ka Hongkongis.
 
 **Mis juhtus.** Inseneribüroo Arup Hongkongi kontori töötaja kandis üle umbes 25 miljonit USA dollarit 15 tehinguga. Raha liikus petturitele.
 
@@ -553,6 +668,8 @@ Põhimõisted:
 
 ### Näide 1: Cash App / Block (2021–2022)
 
+**Kes nad on?** **Cash App** on USA mobiilimakse äpp, millega saab sõpradele raha saata ja aktsiaid osta, umbes nagu Revolut. Selle omanik on ettevõte **Block** (endine Square).
+
 **Mis juhtus.** Detsembris 2021 laadis endine töötaja alla aruanded, mis sisaldasid umbes 8,2 miljoni Cash Appi kasutaja andmeid, sh nimesid, kontonumbreid ja investeeringute andmeid. Ettevõte teatas sellest aprillis 2022.
 
 **Miks see juhtus.** Töötajal oli töö ajal aruannetele korrektne ligipääs. Pärast lahkumist ligipääsu **ei eemaldatud**. Suure andmemahu allalaadimine endise töötaja kontolt jäi märkamata.
@@ -563,6 +680,8 @@ Põhimõisted:
 
 ### Näide 2: Microsoft ja Midnight Blizzard (2023–2024)
 
+**Kes nad on?** **Microsoft** on Windowsi, Office'i ja Azure'i pilve tootja. **Midnight Blizzard** on nimi, mille Microsoft andis riikliku taustaga häkkerite grupile (tuntud ka kui APT29 või Cozy Bear), keda seostatakse Venemaa välisluurega.
+
 **Mis juhtus.** Jaanuaris 2024 teatas Microsoft, et riikliku taustaga ründajad (Midnight Blizzard, ka APT29; APT on pikaajaline, hästi rahastatud ründaja, sageli riigi taustaga) pääsesid ligi ettevõtte tippjuhtide ning turva- ja õigusosakonna töötajate e-postile.
 
 **Miks see juhtus.** Ründajad kasutasid **password sprayingut** vana **testkeskkonna** konto vastu, millel ei olnud MFA-d. Sellest testkeskkonnast leidsid nad vana testrakenduse, millel oli kõrgendatud ligipääs Microsofti **ettevõtte põhikeskkonnale**. Rakenduse kaudu said ründajad luua uusi rakendusi ja anda neile õigused postkastide lugemiseks.
@@ -572,6 +691,8 @@ Põhimõisted:
 **Õppetund.** Unustatud testkonto on reaalne konto. Kui sellel on mingi tee tootmisesse, on see sama ohtlik kui administraatori konto.
 
 ### Näide 3: Morgan Stanley siseringi leke (2015)
+
+**Kes nad on?** **Morgan Stanley** on üks suurimaid USA investeerimispanku. Selle varahaldusosakond haldab jõukate klientide raha ja investeeringuid. Finantsnõustaja on töötaja, kes nõustab kliente, kuhu raha paigutada.
 
 **Mis juhtus.** Morgan Stanley finantsnõustaja kopeeris aastatel 2011–2014 umbes 730 000 kliendikonto (ligi 330 000 leibkonna) andmed oma isiklikku serverisse. Hiljem ilmus osa andmetest internetti, tõenäoliselt pärast seda, kui tema server häkiti. USA väärtpaberijärelevalve (SEC) trahvis ettevõtet 1 miljoni dollariga.
 
@@ -616,6 +737,8 @@ Põhimõisted:
 
 ### Näide 1: USA veteranide ameti sülearvuti vargus (2006)
 
+**Kes nad on?** **VA** (*Department of Veterans Affairs*) on USA ministeerium, mis hoolitseb endiste sõjaväelaste eest: maksab pensione, korraldab tervishoidu ja toetusi. Eestis teeb osa sellest tööd Sotsiaalkindlustusamet.
+
 **Mis juhtus.** USA veteranide asjade ministeeriumi (VA) analüütiku kodust varastati sülearvuti ja väline kõvaketas. Neil olid umbes 26,5 miljoni veterani ja sõjaväelase nimed, sünniajad ja sotsiaalkindlustusnumbrid. Seadmed leiti hiljem ja uurimise järgi andmetele tõenäoliselt ligi ei pääsetud, kuid ministeerium pidi teavitama miljoneid inimesi ja maksis hiljem hagi lahendamiseks 20 miljonit dollarit.
 
 **Miks see juhtus.** Töötaja viis andmed koju ilma loata. Andmed ei olnud krüpteeritud. Asutuses puudus tehniline kontroll, mis oleks takistanud nii suure andmemahu viimist välisele andmekandjale.
@@ -626,6 +749,8 @@ Põhimõisted:
 
 ### Näide 2: HMRC kadunud plaadid (2007)
 
+**Kes nad on?** **HMRC** (*His Majesty's Revenue and Customs*) on Suurbritannia maksu- ja tolliamet, nagu meie Maksu- ja Tolliamet (EMTA). Lisaks maksudele maksab ta välja ka lastetoetusi. **Riigikontroll** (NAO) kontrollib, kas riigiasutused kasutavad raha õigesti.
+
 **Mis juhtus.** Suurbritannia maksuamet HMRC saatis kullerpostiga kaks CD-plaati riigikontrollile. Plaadid kadusid. Neil olid 25 miljoni inimese (umbes 7,25 miljoni pere) lastetoetuse andmed, sh pangakonto andmed. Plaate ei leitud kunagi. Juhtumi tõttu astus tagasi HMRC juht.
 
 **Miks see juhtus.** Andmed olid ainult parooliga kaitstud, mitte korralikult krüpteeritud. Riigikontroll oli palunud anonüümitud andmeid, kuid mugavuse ja kulu tõttu saadeti kogu andmebaas. Pakk saadeti asutuse sisepostiga registreerimata ja jälgimata. Hilisem sõltumatu ülevaatus (Poynter Review) ei süüdistanud üksikut töötajat: juhtum oli täielikult välditav ja põhjused olid asutuse korralduses – segane vastutus ja nõrk andmekäitluse kord.
@@ -635,6 +760,8 @@ Põhimõisted:
 **Õppetund.** Kõige turvalisem andmekandja on see, millel tundlikke andmeid üldse ei ole. Andmete minimeerimine on seadmete turvalisuse osa.
 
 ### Näide 3: Morgan Stanley kustutamata kõvakettad (2016)
+
+**Kes nad on?** Sama investeerimispank kui teema 8 näites 3. **Andmekeskus** on hoone, kus on sadu või tuhandeid servereid koos jahutuse, voolu ja turvaga. Kui andmekeskus suletakse, tuleb kõik seadmed ja nende kettad turvaliselt hävitada.
 
 **Mis juhtus.** Morgan Stanley sulges 2016. aastal kaks andmekeskust ja palkas seadmete kõrvaldamiseks teenusepakkuja. Hiljem selgus, et osa kõvakettaid ja servereid, millel olid umbes 15 miljoni kliendi andmed, müüdi edasi **kustutamata**. Mõned kettad jõudsid oksjonisaidile. Järelevalveasutused trahvisid ettevõtet kokku umbes 95 miljoni dollariga. Tegu on teise juhtumiga samast ettevõttest kui eelmise teema näide 3.
 
@@ -680,6 +807,8 @@ Põhimõisted:
 
 ### Näide 1: Target (2013)
 
+**Kes nad on?** **Target** on üks USA suurimaid jaekette – kaubamajad, kust saab nii toitu, riideid kui ka elektroonikat, umbes nagu Prisma või Selver, kuid umbes 1800 kauplusega. **Kassasüsteem** (POS) on poe kassas olev arvuti ja kaardilugeja.
+
 **Mis juhtus.** USA jaeketi Target kassasüsteemidest varastati umbes 40 miljoni maksekaardi andmed ja lisaks umbes 70 miljoni kliendi isikuandmed. Rünnaku kogukulu ulatus sadade miljonite dollariteni ning ametist lahkusid nii IT-juht kui ka tegevjuht.
 
 **Miks see juhtus.** Ründajad varastasid andmepüügiga parooli väikeselt **kütte- ja ventilatsioonifirmalt**, kes oli Targeti tarnija. Tarnijal oli ligipääs Targeti arveldus- ja projektiportaalile. Sealt said ründajad liikuda kassasüsteemideni, sest võrk ei olnud piisavalt segmenteeritud. Targeti turvasüsteem andis küll hoiatusi, kuid neile ei reageeritud.
@@ -689,6 +818,8 @@ Põhimõisted:
 **Õppetund.** Ründaja ei pea sisenema sealt, kus on väärtuslikud andmed. Ta siseneb sealt, kus on kõige kergem, ja lame võrk viib ta sihtmärgini.
 
 ### Näide 2: Maersk ja NotPetya (juuni 2017)
+
+**Kes nad on?** **Maersk** on Taani ettevõte, maailma üks suurimaid konteinerlaevade operaatoreid. Selle laevad veavad umbes viiendiku kogu maailma konteinerkaubast ning ettevõttele kuuluvad ka sadamaterminalid. **M.E.Doc** on Ukrainas laialt kasutatud raamatupidamistarkvara, nagu meil Merit või Directo.
 
 **Mis juhtus.** Maailma suurim konteinerivedaja Maersk kaotas umbes 7 minutiga suurema osa oma IT-süsteemidest: umbes 45 000 arvutit ja 4000 serverit. Sadamad seiskusid üle maailma. Kahju oli umbes 250–300 miljonit dollarit. Kahjustatud olid ka Merck, FedEx, Mondelez jt.
 
@@ -701,6 +832,8 @@ Põhimõisted:
 **Õppetund.** Lames võrgus muutub üks kompromiteeritud arvuti kogu ettevõtte probleemiks mõne minutiga. Maersk pääses tänu õnnele, mitte plaanile.
 
 ### Näide 3: Kasiino akvaariumi termomeeter (2017)
+
+**Kes nad on?** Kasiino nime ei ole avalikustatud, teada on vaid, et see asus Põhja-Ameerikas. **Darktrace** on Briti küberturbeettevõte, mis jälgib klientide võrguliiklust ja otsib sealt ebatavalist käitumist – nii avastati ka see juhtum.
 
 **Mis juhtus.** Turvafirma Darktrace kirjeldas juhtumit, kus Põhja-Ameerika kasiinost viidi välja umbes 10 GB andmeid, sh kõrge panusega mängijate andmebaas. Andmed liikusid Soome serverisse.
 
@@ -745,6 +878,8 @@ Põhimõisted:
 
 ### Näide 1: Marriott ja Starwoodi ülevõtmine (2016–2018)
 
+**Kes nad on?** **Marriott** on maailma suurim hotelliketi omanik, kellel on tuhandeid hotelle üle maailma. **Starwood** oli teine suur hotelliketi omanik (nt Sheraton ja Westin), mille Marriott 2016. aastal ostis. **ICO** on Suurbritannia andmekaitseasutus, nagu meie Andmekaitse Inspektsioon.
+
 **Mis juhtus.** 2018. aastal avastas Marriott, et hotelliketi Starwood broneerimissüsteemi oli rünnatud juba 2014. aastast. Lekkisid umbes 339 miljoni külalise andmed, sh passinumbrid. Suurbritannia andmekaitseasutus ICO trahvis Marriotti 18,4 miljoni naelaga.
 
 **Miks see juhtus.** Marriott ostis Starwoodi 2016. aastal. Ründaja oli juba 2014. aastal paigaldanud Starwoodi süsteemi veebikesta (web shell – kaugjuhtimist võimaldav skript veebiserveris) ja jäi pärast ülevõtmist märkamata veel kaheks aastaks. ICO leidis, et Marriott ei rakendanud isikuandmete kaitseks piisavaid tehnilisi ja organisatsioonilisi meetmeid. Trahv puudutas ainult perioodi pärast GDPR-i jõustumist mais 2018.
@@ -755,6 +890,8 @@ Põhimõisted:
 
 ### Näide 2: Samsung ja ChatGPT (2023)
 
+**Kes nad on?** **Samsung** on Lõuna-Korea tehnoloogiaettevõte, mis teeb telefone, telereid ja mälukiipe. Selle pooljuhtide divisjon toodab kiipe, mille valmistamise tehnoloogia on ettevõtte üks väärtuslikumaid saladusi. **ChatGPT** on OpenAI tehisintellekti vestlusrobot.
+
 **Mis juhtus.** Märtsis 2023 lubas Samsungi pooljuhtide divisjon töötajatel kasutada ChatGPT-d. Mõne nädala jooksul toimus vähemalt kolm juhtumit, kus töötajad sisestasid tööriista konfidentsiaalset infot: lähtekoodi vea leidmiseks, testimise koodi optimeerimiseks ja koosoleku salvestise ärakirja kokkuvõtte tegemiseks. Mais 2023 keelas Samsung avalike generatiivse tehisintellekti tööriistade kasutamise tööseadmetes.
 
 **Miks see juhtus.** Tööriist lubati kasutusele enne, kui olid paigas reeglid, milliseid andmeid sinna tohib sisestada. Töötajad soovisid lihtsalt oma tööd kiiremini teha ja ei mõelnud, et sisestatud andmed lahkuvad ettevõttest ja võivad jõuda teenusepakkuja mudeli treenimisse.
@@ -764,6 +901,8 @@ Põhimõisted:
 **Õppetund.** Poliitika peab tulema enne uut tehnoloogiat, mitte pärast esimest intsidenti. Töötajad ei riku reegleid pahatahtlikult – neid lihtsalt ei olnud.
 
 ### Näide 3: Microsofti tehisintellekti meeskonna 38 TB leke (2023)
+
+**Kes nad on?** Sama Microsoft, mis teema 8 näites 2. Seekord oli tegu ettevõtte enda teadlastega, kes jagasid avalikult tehisintellekti mudeleid. **Wiz** on pilveturbele keskendunud ettevõte, mis otsib internetist valesti seadistatud pilveressursse ja teavitab omanikke.
 
 **Mis juhtus.** Turvafirma Wiz avastas 2023. aastal, et Microsofti tehisintellekti uurimisrühm oli GitHubis jaganud avatud lähtekoodiga mudelite allalaadimislinki, mis tegelikult andis ligipääsu terve Azure'i salvestuskonto 38 TB andmetele. Nende hulgas olid kahe töötaja arvutite varukoopiad, paroolid, võtmed ja üle 30 000 sisemise Teamsi sõnumi.
 
@@ -814,6 +953,8 @@ Põhimõisted:
 
 ### Näide 1: Eesti 2007. aasta küberrünnakud
 
+**Kes olid osapooled?** Rünnati Eesti riiki tervikuna: Riigikogu, ministeeriumide, pankade ja meediaväljaannete veebilehti. **CERT-EE** on Eesti riiklik küberintsidentidele reageerimise meeskond, mis praegu kuulub Riigi Infosüsteemi Ameti (RIA) koosseisu.
+
 **Mis juhtus.** Aprillis-mais 2007, pärast pronkssõduri teisaldamist Tallinna kesklinnast, ründasid Eestit umbes kolm nädalat järjestikused teenusetõkestusründed (DDoS). Sihtmärgiks olid riigiasutuste, pankade, meediaväljaannete ja erakondade veebilehed. Mõned pangateenused ja uudisteportaalid ei olnud mõnda aega kättesaadavad.
 
 **Miks see lõppes nii, nagu lõppes.** Ründed olid ulatuslikud, kuid Eesti suutis need kontrolli alla saada. Hiljuti loodud CERT-EE koordineeris tegevust, internetiteenuse pakkujad ja pangad tegid tihedat koostööd ning mitmel juhul piirati ajutiselt välismaist liiklust. Eesti sai abi ka rahvusvahelistelt partneritelt.
@@ -824,6 +965,8 @@ Põhimõisted:
 
 ### Näide 2: ID-kaardi turvanõrkus ROCA (2017)
 
+**Kes olid osapooled?** **RIA** (Riigi Infosüsteemi Amet) vastutab Eestis e-riigi turvalisuse eest. **PPA** (Politsei- ja Piirivalveamet) väljastab ID-kaarte. **Infineon** on Saksa ettevõte, mis tootis ID-kaardi kiibi. **Masaryki ülikool** on Tšehhi ülikool, mille teadlased vea avastasid.
+
 **Mis juhtus.** 30. augustil 2017 teavitasid Tšehhi teadlased RIA-t, et Infineoni kiipide võtmegenereerimise teegis on viga, mis teeb võimalikuks privaatvõtme tuletamise avalikust võtmest. Viga puudutas ligi 750 000 Eesti ID-kaarti, elamisloakaarti, digi-ID-d ja e-residendi kaarti.
 
 **Kuidas reageeriti.** Riik teatas avalikult võimalikust turvariskist 5. septembril – enne kui täpsed tehnilised üksikasjad avalikustati. Analüüsiti riski ja otsiti lahendusi koos tootjaga. 3. novembril peatati ohustatud kaartide sertifikaadid ning kasutajad said need kaugelt uuendada arvuti kaudu või teenindustes. Peatamise hetkeks oli uuendatud alla 6% ohustatud kaartidest ja mobiil-ID oli vaid veerandil aktiivsetest kasutajatest, mistõttu tekkisid teeninduspunktides järjekorrad ja e-teenuste kasutamine oli häiritud.
@@ -833,6 +976,8 @@ Põhimõisted:
 **Õppetund.** Avatud ja varajane kommunikatsioon aitas säilitada usaldust e-riigi vastu. Intsidendiks valmistumine hõlmab ka **tarnijariske** – haavatavus võib olla toote sees, mida sa ise ei arenda.
 
 ### Näide 3: Uberi 2016. aasta lekke varjamine
+
+**Kes nad on?** Sama taksoäpp **Uber** kui teema 5 näites 2, kuid kuus aastat varem. **Bug bounty** ehk vigade preemiaprogramm on süsteem, kus ettevõte maksab turvauurijatele raha, kui need leiavad ja teatavad haavatavusest. Uber kasutas seda programmi valesti, et maksta ründajatele vaikimise eest.
 
 **Mis juhtus.** 2016. aastal varastasid ründajad Uberi pilvekeskkonnast umbes 57 miljoni sõitja ja juhi andmed. Ründajad leidsid ligipääsuvõtmed GitHubi repositooriumist. Uber ei teavitanud kasutajaid ega ametiasutusi, vaid maksis ründajatele 100 000 dollarit, esitledes makset vearaportite preemiaprogrammi tasuna, ja lasi neil allkirjastada konfidentsiaalsuslepingu.
 

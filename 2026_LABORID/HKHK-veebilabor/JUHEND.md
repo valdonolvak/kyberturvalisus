@@ -4,75 +4,144 @@
 
 See labor täiendab OWASP Juice Shopi ja WebGoati laboreid ühe olulise asjaga:
 siin on **sinu enda rakenduse lähtekood**, nii et sa saad vea päriselt
-**parandada**, konteineri uuesti ehitada ja **testi korrata**. Just seda tsüklit
+**parandada**, rakenduse uuesti käivitada ja **testi korrata**. Just seda tsüklit
 Juice Shop ja WebGoat ei võimalda.
 
-Rakendus on väljamõeldud kasutajatoe süsteem „HKHK Tugi". Selles on **kuus
+Rakendus on väljamõeldud kasutajatoe süsteem „HKHK Tugi“. Selles on **kuus
 tahtlikku turvaviga**:
 
-| # | Haavatavus | Fail | OWASP Top 10 |
-|---|-----------|------|--------------|
-| 1 | SQL Injection | `login.php` | A03 Injection |
-| 2 | Broken Access Control (IDOR) | `ticket.php` | A01 |
-| 3 | Reflected XSS | `search.php` | A03 |
-| 4 | CSRF | `profile.php` | A01 / varasem A08 |
-| 5 | Path Traversal | `download.php` | A01 |
-| 6 | Unrestricted File Upload | `upload.php` | A04 / A05 |
+| # | Haavatavus | Fail | OWASP Top 10 | Lühidalt |
+|---|-----------|------|--------------|----------|
+| A | SQL Injection | `login.php` | A03 Injection | Sisend muutub SQL-koodiks, sisselogimine ilma paroolita |
+| B | Broken Access Control (IDOR) | `ticket.php` | A01 | ID-d muutes näed teiste kasutajate andmeid |
+| C | Reflected XSS | `search.php` | A03 | Sinu JavaScript käivitub teise kasutaja brauseris |
+| D | CSRF | `profile.php` | A01 / varasem A08 | Võõras leht teeb toimingu ohvri nimel |
+| E | Path Traversal | `download.php` | A01 | `../` abil loed faile väljaspool lubatud kausta |
+| F | Unrestricted File Upload | `upload.php` | A04 / A05 | Laadid üles PHP-faili ja käivitad selle serveris |
 
 > ⚠️ **Hoiatus.** Rakendus on *tahtlikult katki*. Käivita see **ainult
-> isoleeritud laborivõrgus**. Ära ava seda kunagi Internetti ega kooli
+> isoleeritud laborivõrgus**. Ära ava seda kunagi internetti ega kooli
 > tootmisvõrku.
+
+> ⚖️ **Seadus ja eetika.** Kõiki selles juhendis kirjeldatud võtteid tohid
+> kasutada **ainult selles laboris**. Võõrale süsteemile loata ligipääs ja
+> selle ründamine on Eestis kuritegu (Karistusseadustik § 206, § 217).
+> Turvaspetsialist testib ainult siis, kui omanik on selleks loa andnud.
+
+---
+
+# 0. Põhimõisted enne alustamist
+
+Enne rünnakute juurde minekut pead teadma, kuidas veebirakendus töötab. Iga
+haavatavus selles laboris on lihtsalt viga mõnes allpool kirjeldatud sammus.
+
+![Üks päring: brauserist PHP-sse, andmebaasi ja tagasi](pildid/paringu-teekond.svg)
+
+1. **Brauser** (või `curl`) saadab serverile **HTTP-päringu**.
+2. **PHP-kood** (`hkhk-web` konteiner) loeb päringust parameetrid ja koostab
+   nende põhjal **SQL-päringu**.
+3. **Andmebaas** (`hkhk-db`, MariaDB) tagastab andmeread.
+4. PHP paneb andmed **HTML-lehe** sisse ja saadab selle **HTTP-vastusena**
+   tagasi brauserile.
+
+Kõik, mis tuleb päringuga brauserist, on **kasutaja sisend**: URL-i
+parameetrid, vormiväljad, küpsised, päised ja üleslaaditud failid. Ründaja
+saab neid kõiki ise vabalt muuta. Turvalise rakenduse põhireegel on:
+**ära kunagi usalda kasutaja sisendit.**
+
+## Sõnastik
+
+| Termin | Selgitus |
+|--------|----------|
+| **HTTP-päring / -vastus** | Brauseri ja serveri suhtlus. Päringus on meetod (GET, POST), aadress, päised ja vahel sisu; vastuses on olekukood (200, 302, 404…), päised ja sisu (nt HTML). |
+| **GET** | Päring, mille parameetrid on URL-is (`?id=3`). Mõeldud andmete **lugemiseks**. |
+| **POST** | Päring, mille andmed on päringu sisus (nt vorm). Mõeldud andmete **muutmiseks**. |
+| **Olekukood** | `200 OK` – õnnestus; `302 Found` – ümbersuunamine; `403 Forbidden` – keelatud; `404 Not Found` – ei leitud; `405 Method Not Allowed` – vale meetod. |
+| **Küpsis (cookie)** | Väike andmetükk, mille server annab brauserile ja mille brauser saadab iga järgmise päringuga tagasi. |
+| **Sessioon** | Serveri „mälu“ sisselogitud kasutaja kohta. Brauseris hoiab seda küpsis `PHPSESSID`. Kes teab küpsist, on serveri jaoks see kasutaja. |
+| **SQL** | Keel andmebaasist andmete küsimiseks (`SELECT … FROM … WHERE …`). |
+| **HTML / JavaScript** | HTML kirjeldab lehe sisu; JavaScript on kood, mida **brauser** lehel käivitab. |
+| **Veebijuur** | Serveri kaust (`/var/www/html`), mille failid on URL-i kaudu kättesaadavad. `.php` failid seal **käivitatakse**. |
+| **Haavatavus** | Viga rakenduses, mida saab ära kasutada. |
+| **Kontrollitud test** | Rünnak, mida teed teadlikult oma laboris, et tõendada haavatavuse olemasolu. |
+| **Tõendus** | Päring, vastus ja logirida, mis näitavad, et rünnak õnnestus. |
+| **OWASP Top 10** | Veebirakenduste kümme levinumat riskiklassi ([owasp.org](https://owasp.org/www-project-top-ten/)). |
+
+## Tööriistad
+
+| Tööriist | Kus | Milleks |
+|----------|-----|---------|
+| `curl` | Kali | Saadab HTTP-päringu käsurealt; näed täpselt, mida saatsid ja mis tuli vastu. `-i` näitab vastuse päiseid, `-b`/`-c` loeb või salvestab küpsiseid, `--data-urlencode` saadab vormi välja. |
+| **Burp Suite** | Kali | Vahendaja brauseri ja serveri vahel: saad päringut enne saatmist pealt kuulata ja muuta. |
+| `nmap` | Kali | Näitab, millised pordid serveril on avatud. |
+| **Developer Tools (F12)** | brauser | Vahekaart *Network* näitab päringuid ja vastuseid, *Application/Storage* küpsiseid. |
+| `docker compose logs -f web` | tugi | Rakenduse logi: mida PHP iga päringuga tegi. |
+| `general.log` | tugi | Andmebaasi logi: iga SQL-päring, mis tegelikult käivitati. |
 
 ---
 
 # 1. Eeldused
 
-Vajad serverit (WEB-SRV, Ubuntu Server 24.04), kus on Docker Engine ja
-Docker Compose plugin paigaldatud (vt põhijuhendi LABOR 2). Kontrolli:
+Laborivõrk peab olema seadistatud juhendi [VORK.md](VORK.md) järgi:
+
+![Laborivõrgu topoloogia](pildid/topoloogia.svg)
+
+| Masin | Aadress | Roll selles laboris |
+|-------|---------|---------------------|
+| **tugi** (Debian + Docker) | `192.168.XXX.20`, nimi `tugi.hkhk.internal` | Haavatav veebirakendus pordil 8000 |
+| **Kali Linux** | DHCP | Ründaja: `curl`, `nmap`, Burp Suite, CSRF-leht pordil 8001 |
+| **Windows 7** | DHCP | Ohvri brauser (XSS, CSRF) |
+| **DC01** (Windows Server 2019) | `192.168.XXX.10` | DNS: tänu sellele töötab nimi `tugi.hkhk.internal` |
+
+**XXX** on sinu SDN VNet-i number. Juhendi käsud kasutavad nime
+`tugi.hkhk.internal`, nii et neid ei pea muutma. Kui DNS mingil põhjusel ei
+tööta, asenda nimi Debiani IP-aadressiga `192.168.XXX.20`.
+
+Kontrolli Debianil, et Docker on paigaldatud:
 
 ```bash
-sudo docker --version
-sudo docker compose version
+docker --version
+docker compose version
 ```
 
-Testimiseks kasutad lisaks:
-
-* **Windowsi klienti** (brauser + Developer Tools);
-* **Kali Linuxit** (`curl`, `nmap`, Burp Suite).
-
-Kõik näited kasutavad serveri aadressi `192.168.50.10`. Kui sinu serveril on
-teine aadress, muuda seda failis `.env`.
+> Kui sinu kasutaja ei ole `docker` grupis, lisa igale `docker` käsule ette
+> `sudo`.
 
 ---
 
 # 2. Rakenduse käivitamine
 
-Paki kaust `hkhk-veebilabor` serverisse lahti ja mine sinna sisse:
+Paki kaust `hkhk-veebilabor` Debiani masinasse lahti ja mine sinna sisse:
 
 ```bash
 cd hkhk-veebilabor
 ```
 
-Ava fail `.env` ja pane sinna serveri laborivõrgu IP:
+Tee seadistusfail näidisfailist ja pane sinna Debiani laborivõrgu IP:
 
 ```bash
+cp .env.example .env
 nano .env
 ```
 
 ```text
-LAB_IP=192.168.50.10
+LAB_IP=192.168.XXX.20
 ```
+
+**Miks see oluline on?** Docker avab pordi 8000 **ainult sellel aadressil**.
+Nii on haavatav rakendus nähtav ainult sinu laborivõrgus. Andmebaasi port
+3306 ei ole üldse väljapoole avatud.
 
 Ehita ja käivita konteinerid:
 
 ```bash
-sudo docker compose up -d --build
+docker compose up -d --build
 ```
 
 Kontrolli, et mõlemad konteinerid töötavad:
 
 ```bash
-sudo docker compose ps
+docker compose ps
 ```
 
 Oodatav väljund:
@@ -80,13 +149,13 @@ Oodatav väljund:
 ```text
 NAME       IMAGE               STATUS                   PORTS
 hkhk-db    mariadb:11          Up (healthy)
-hkhk-web   hkhk-veebilabor-web Up                       192.168.50.10:8000->80/tcp
+hkhk-web   hkhk-veebilabor-web Up                       192.168.XXX.20:8000->80/tcp
 ```
 
-Ava brauseris:
+Ava Windows 7 või Kali brauseris:
 
 ```text
-http://192.168.50.10:8000/
+http://tugi.hkhk.internal:8000/
 ```
 
 Laborikontod (kõik paroolid on väljamõeldud):
@@ -97,19 +166,33 @@ Laborikontod (kõik paroolid on väljamõeldud):
 | `juri` | `juri123` | tavakasutaja |
 | `admin` | `Adm1n!Labor#2026` | administraator |
 
-## Logide jälgimine
+## Sisselogitud sessioon curl-i jaoks
 
-Hoia **teises terminalis** kogu labori vältel avatuna rakenduse logi. Siin
-näed, mida server iga päringuga teeb:
+Mitu testi vajab Mari sisselogitud sessiooni. Logi Kalil Mari nimel sisse ja
+salvesta küpsis faili `mari.jar`:
 
 ```bash
-sudo docker compose logs -f web
+curl -s -i -c mari.jar \
+  --data-urlencode "username=mari" --data-urlencode "password=mari123" \
+  http://tugi.hkhk.internal:8000/login.php
+```
+
+Edaspidi annab `-b mari.jar` iga päringuga kaasa Mari küpsise, nii et server
+peab sind Mariks. Täpselt nii töötab ka brauser.
+
+## Logide jälgimine
+
+Hoia Debianil **teises terminalis** kogu labori vältel avatuna rakenduse
+logi. Siin näed, mida server iga päringuga teeb:
+
+```bash
+docker compose logs -f web
 ```
 
 Andmebaasi tegelikke SQL-päringuid näed nii:
 
 ```bash
-sudo docker compose exec db tail -f /var/lib/mysql/general.log
+docker compose exec db tail -f /var/lib/mysql/general.log
 ```
 
 > Kõik allpool toodud logiread on **päris väljund** selle rakenduse
@@ -122,24 +205,53 @@ sudo docker compose exec db tail -f /var/lib/mysql/general.log
 
 Iga labor järgib sama mustrit:
 
-```text
-seadista → kontrolli → vaata kuidas töötab → tee kontrollitud test →
-tõenda → paranda → testi uuesti → vasta küsimustele
-```
+![Iga labori õppetsükkel](pildid/oppetsukkel.svg)
 
-Parandamine käib nii: parandatud failid on kaustas `lahendused/`. Kui juhend
-ütleb „paranda", kopeeri vastav fail `src/`-i ja ehita konteiner uuesti:
+1. **Seadista ja kontrolli**, et rakendus töötab.
+2. **Vaata, kuidas süsteem töötab**: tee tavaline toiming ja loe logist, mida
+   server tegi.
+3. **Kontrollitud test**: saada päring, mis kasutab viga ära.
+4. **Tõenda**: salvesta päring, vastus ja logirida.
+5. **Paranda**: asenda haavatav fail parandatud versiooniga.
+6. **Testi uuesti** täpselt sama päringuga ja näita, et rünnak enam ei toimi.
+7. **Vasta küsimustele**.
+
+**Parandamine** käib nii: parandatud failid on kaustas `lahendused/`. Kui
+juhend ütleb „paranda“, kopeeri vastav fail `src/`-i ja taaskäivita
+veebikonteiner:
 
 ```bash
 cp lahendused/login.php src/login.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
-Seejärel **korda sama testi** ja vaata, et vastus on nüüd turvaline.
+Kaust `src/` on konteinerisse otse ühendatud (*bind mount*), seega konteinerit
+pole vaja uuesti ehitada. Piisab taaskäivitusest.
+
+Enne kopeerimist **ava mõlemad failid ja võrdle neid**, näiteks
+`diff src/login.php lahendused/login.php`. Õppimise mõte on mõista, **milline
+rida** viga parandab, mitte faili kopeerimine.
 
 ---
 
 # LABOR A – SQL Injection (`login.php`)
+
+## Mis see on?
+
+**SQL Injection** (SQL-süst) tekib siis, kui rakendus paneb kasutaja sisendi
+**otse SQL-lause teksti sisse**. Andmebaas saab kätte ühe pika teksti ega tea,
+milline osa on programmeerija kirjutatud kood ja milline osa kasutaja
+sisestatud andmed. Kui sisendis on SQL-i erimärke, näiteks ülakoma `'` või
+kommentaar `--`, muudavad need päringu tähendust.
+
+Tagajärg: ründaja saab sisse logida ilma paroolita, lugeda kõiki tabeleid või
+andmeid muuta ja kustutada.
+
+![SQL Injection: kasutaja sisend muutub SQL-koodiks](pildid/sqli.svg)
+
+**Mida sa selles laboris teed:** kõigepealt lõhud ühe ülakomaga päringu ära
+(tõend, et sisend jõuab SQL-ini). Seejärel logid sisse administraatorina
+parooli teadmata ja lõpuks parandad koodi parameetriseeritud päringuga.
 
 ## A.1. Vaata, kuidas süsteem töötab
 
@@ -152,7 +264,7 @@ SQL-päringu server koostas:
 ```
 
 Näed kohe probleemi: kasutajanimi `mari` on pandud **otse** SQL-lause sisse
-jutumärkide vahele. Server ei erista kasutaja sisendit SQL-koodist.
+ülakomade vahele. Server ei erista kasutaja sisendit SQL-koodist.
 
 ## A.2. Kontrollitud test – katkesta päring
 
@@ -165,11 +277,11 @@ Kali terminalist (sama asja saab teha ka brauseris):
 
 ```bash
 curl -s -i --data-urlencode "username=mari'" --data-urlencode "password=x" \
-  http://192.168.50.10:8000/login.php
+  http://tugi.hkhk.internal:8000/login.php
 ```
 
 Server annab vea (sest `display_errors` on sees – see on omaette
-turvaviga, misconfiguration):
+turvaviga, *security misconfiguration*):
 
 ```text
 Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access
@@ -177,17 +289,21 @@ violation: 1064 You have an error in your SQL syntax; ... near 'x')' at line 1
 in /var/www/html/login.php:13
 ```
 
-See **tõendab**, et sinu ülakoma jõudis muutmata kujul SQL-mootorini ja
-lõhkus päringu struktuuri. Logis:
+**Mis juhtus?** Sinu ülakoma sulges SQL-is kasutajanime teksti liiga vara.
+Ülejäänud lause jäi „katki“ ja andmebaas ei saanud sellest aru. See
+**tõendab**, et sinu sisend jõudis muutmata kujul SQL-mootorini. Logis:
 
 ```text
 [HKHK] user=- LOGIN SQL: SELECT id, username, role FROM users WHERE username = 'mari'' AND password = MD5('x')
 PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: ... near 'x')' at line 1
 ```
 
+Pane tähele ka seda, et veateade näitab ründajale faili asukohta
+(`/var/www/html/login.php`) ja reanumbrit. Ka see info aitab ründajat.
+
 ## A.3. Kontrollitud test – möödu autentimisest
 
-Nüüd kasuta ülakoma ja kommentaari, et parooli kontroll „ära lõigata".
+Nüüd kasuta ülakoma ja kommentaari, et parooli kontroll „ära lõigata“.
 Kasutajanimeks:
 
 ```text
@@ -200,7 +316,7 @@ Parooliks ükskõik mis. Serverile saadetud päring:
 curl -s -i -c admin.jar \
   --data-urlencode "username=admin'-- -" \
   --data-urlencode "password=suvaline" \
-  http://192.168.50.10:8000/login.php
+  http://tugi.hkhk.internal:8000/login.php
 ```
 
 Server koostab sellise lause (näed logist):
@@ -210,8 +326,19 @@ Server koostab sellise lause (näed logist):
 [HKHK] user=admin LOGIN OK uid=1
 ```
 
-Osa `-- -` muudab parooli kontrolli SQL-kommentaariks. Server logib sind
-sisse **administraatorina, parooli teadmata**. Vastuses näed ümbersuunamist:
+Loe lauset osade kaupa:
+
+| Osa | Mida andmebaas sellest arvab |
+|-----|------------------------------|
+| `username = 'admin'` | Otsi kasutajat nimega `admin`. Ülakoma sulges teksti. |
+| `-- ` | Siit algab kommentaar: kõike edasi ignoreeritakse. |
+| `-' AND password = MD5('suvaline')` | Kommentaar – **parooli ei kontrollita üldse**. |
+
+MariaDB-s peab `--` järel olema tühik. Lõpus olev `-` hoiab tühiku alles ka
+siis, kui brauser või vorm rea lõpust tühikud ära kärbib.
+
+Server logib sind sisse **administraatorina, parooli teadmata**. Vastuses
+näed ümbersuunamist:
 
 ```text
 HTTP/1.1 302 Found
@@ -221,25 +348,33 @@ Location: tickets.php
 Küpsisega `admin.jar` pääsed nüüd admin-vaatesse:
 
 ```bash
-curl -s -b admin.jar http://192.168.50.10:8000/admin.php
+curl -s -b admin.jar http://tugi.hkhk.internal:8000/admin.php
 ```
 
-**Tõendus:** salvesta ekraanipilt admin-lehest + see logirida `LOGIN OK uid=1`.
+**Tõendus:** salvesta ekraanitõmmis admin-lehest + see logirida `LOGIN OK uid=1`.
 
 ## A.4. Paranda
 
 ```bash
 cp lahendused/login.php src/login.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
-Parandus kasutab **parameetriseeritud päringut** – kasutaja sisend on nüüd
-alati andmed, mitte kood:
+Parandus kasutab **parameetriseeritud päringut** (*prepared statement*):
 
 ```php
 $st = $pdo->prepare('SELECT id, username, role FROM users WHERE username = ? AND password = MD5(?)');
 $st->execute([$u, $p]);
 ```
+
+**Miks see aitab?** Päring saadetakse andmebaasile kahes osas:
+
+1. `prepare` – SQL-mall, kus andmete kohal on küsimärgid `?`. Andmebaas
+   analüüsib selle lause ära **enne**, kui ta näeb kasutaja sisendit.
+2. `execute` – kasutaja andmed eraldi. Need lähevad küsimärkide kohale
+   **alati andmetena** ega saa enam lause struktuuri muuta.
+
+Nii on `admin'-- -` lihtsalt üks imelik kasutajanimi, mitte SQL-käsk.
 
 ## A.5. Testi uuesti
 
@@ -247,7 +382,7 @@ Proovi sama rünnakut `admin'-- -`:
 
 ```bash
 curl -s -i --data-urlencode "username=admin'-- -" --data-urlencode "password=suvaline" \
-  http://192.168.50.10:8000/login.php
+  http://tugi.hkhk.internal:8000/login.php
 ```
 
 Nüüd:
@@ -259,7 +394,7 @@ HTTP/1.1 200 OK
 ```
 
 Andmebaasi logis näed, et päring on nüüd **ette valmistatud** ja ründeköis
-läheb sisse ühe tüki andmetena (pane tähele `\'` – ülakoma on turvaliselt
+läheb sisse ühe tükina andmetena (pane tähele `\'` – ülakoma on turvaliselt
 varjestatud):
 
 ```text
@@ -275,6 +410,10 @@ Rakenduse logis:
 [HKHK] user=- LOGIN FAIL username=admin'-- -
 ```
 
+> **Lisatähelepanek.** Paroole hoitakse siin MD5-räsina. MD5 on paroolide
+> jaoks liiga kiire ja ilma soolata räsisid on lihtne murda. Päris rakenduses
+> kasuta PHP funktsioone `password_hash()` ja `password_verify()`.
+
 ## A.6. Küsimused
 
 1. Miks ei peatanud ülakoma varjestamine (escaping) üksinda probleemi, vaid
@@ -286,16 +425,40 @@ Rakenduse logis:
 
 # LABOR B – Broken Access Control / IDOR (`ticket.php`)
 
+## Mis see on?
+
+**Juurdepääsukontroll** (*access control*) otsustab, mida sisselogitud
+kasutaja tohib näha ja teha. Siin on kaks erinevat mõistet:
+
+* **Autentimine** – *kes sa oled?* (sisselogimine kasutajanime ja parooliga)
+* **Autoriseerimine** – *mida sul on lubatud teha?* (kas see pöördumine on sinu oma)
+
+**IDOR** (*Insecure Direct Object Reference*, ebaturvaline otseviide
+objektile) tekib siis, kui URL-is on objekti number (`?id=3`) ja server annab
+objekti välja lihtsalt numbri järgi, kontrollimata, kas see kuulub
+päringu tegijale. Ründaja muudab numbrit ja näeb teiste kasutajate andmeid.
+
+See on OWASP Top 10 nimekirja **esimene** risk (A01), sest viga on lihtne
+teha ja lihtne ära kasutada: piisab brauseri aadressiribal ühe numbri
+muutmisest.
+
+![IDOR: server kontrollib, kes sa oled, aga mitte, mida sa näha tohid](pildid/idor.svg)
+
+**Mida sa selles laboris teed:** Marina logituna avad pöördumise, mis kuulub
+administraatorile, lihtsalt URL-is ID-d muutes. Seejärel lisad päringusse
+omaniku kontrolli.
+
 ## B.1. Vaata, kuidas süsteem töötab
 
-Logi sisse kui `mari`. Ava „Minu pöördumised" ja vajuta ühele pöördumisele.
+Logi sisse kui `mari`. Ava „Minu pöördumised“ ja vajuta ühele pöördumisele.
 URL on kujul:
 
 ```text
-http://192.168.50.10:8000/ticket.php?id=3
+http://tugi.hkhk.internal:8000/ticket.php?id=3
 ```
 
-Number `id` on **otsene viide objektile** (Insecure Direct Object Reference).
+Number `id` on **otsene viide objektile**: andmebaasi tabeli `tickets` rea
+number.
 
 ## B.2. Kontrollitud test
 
@@ -303,8 +466,8 @@ Mari pöördumised on ID 3 ja 5. Proovi käsitsi avada ID 4, mis **ei kuulu
 Marile** (see on admini konfidentsiaalne pöördumine):
 
 ```bash
-# mari.jar = Mari sisselogitud sessioon
-curl -s -b mari.jar "http://192.168.50.10:8000/ticket.php?id=4"
+# mari.jar = Mari sisselogitud sessioon (vt peatükk 2)
+curl -s -b mari.jar "http://tugi.hkhk.internal:8000/ticket.php?id=4"
 ```
 
 Server tagastab Marile võõra pöördumise sisu:
@@ -316,20 +479,23 @@ HTTP/1.1 200 OK
   Sisu: Ajutine VPN-i võti serveriruumi jaoks: LABOR-VPN-7731 (väljamõeldud).
 ```
 
-Logis näed, et server **ei kontrollinud omanikku**, kontrollis ainult, et
-keegi on sisse loginud (Mari uid on 2, aga pöördumine 4 kuulub uid=1 adminile):
+Logis näed, et server **ei kontrollinud omanikku**, vaid ainult seda, et
+keegi on sisse loginud. Mari uid on 2, aga pöördumine 4 kuulub adminile (uid=1):
 
 ```text
 [HKHK] user=mari TICKET VIEW id=4 uid=2
 ```
 
-**Tõendus:** ekraanipilt võõra pöördumise sisust + logirida.
+Proovi ka teisi numbreid. Nii käib ka päris rünnak: ründaja
+proovib automaatselt läbi kõik ID-d (*enumeration*).
+
+**Tõendus:** ekraanitõmmis võõra pöördumise sisust + logirida.
 
 ## B.3. Paranda ja testi uuesti
 
 ```bash
 cp lahendused/ticket.php src/ticket.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
 Parandus lisab omaniku kontrolli **SQL-päringusse endasse**:
@@ -338,10 +504,13 @@ Parandus lisab omaniku kontrolli **SQL-päringusse endasse**:
 WHERE t.id = ? AND t.user_id = ?
 ```
 
+Teise küsimärgi väärtus tuleb **serveri sessioonist** (sisselogitud kasutaja
+uid), mitte päringust. Kasutaja ei saa seda ise muuta.
+
 Korda testi:
 
 ```bash
-curl -s -i -b mari.jar "http://192.168.50.10:8000/ticket.php?id=4"
+curl -s -i -b mari.jar "http://tugi.hkhk.internal:8000/ticket.php?id=4"
 ```
 
 Nüüd:
@@ -366,10 +535,32 @@ HTTP/1.1 404 Not Found
 
 # LABOR C – Reflected XSS (`search.php`)
 
+## Mis see on?
+
+**XSS** (*Cross-Site Scripting*, saidiülene skriptimine) tekib siis, kui
+rakendus paneb kasutaja sisendi **HTML-lehe sisse ilma kodeerimata**. Kui
+sisendis on `<script>` silt, ei saa brauser aru, et see on andmed. Ta peab
+seda lehe koodiks ja **käivitab selle**.
+
+Oluline on mõista, **kelle** arvutis kood käivitub: mitte serveris, vaid
+**teise kasutaja brauseris**, tema sisselogitud sessioonis. Nii saab ründaja
+näiteks varastada ohvri sessiooniküpsise ja logida tema nimel sisse, muuta
+lehe sisu või saata ohvri nimel päringuid.
+
+* **Reflected** (peegeldatud) XSS – skript on lingis ja server „peegeldab“
+  selle kohe vastusesse tagasi. Ohver peab lingil klõpsama.
+* **Stored** (salvestatud) XSS – skript salvestatakse andmebaasi (nt
+  kommentaari) ja käivitub igaühel, kes lehte vaatab.
+
+![Reflected XSS: server peegeldab sisendi HTML-i ja brauser käivitab selle](pildid/xss.svg)
+
+**Mida sa selles laboris teed:** paned otsingusõnaks JavaScripti ja näed, et
+brauser käivitab selle. Seejärel parandad väljundi kodeerimisega.
+
 ## C.1. Vaata, kuidas süsteem töötab
 
-Logi sisse. Ava „Otsing" ja otsi sõna `test`. Otsingusõna kuvatakse tagasi
-lehel: *„Otsingu tulemused päringule: test"*.
+Logi sisse. Ava „Otsing“ ja otsi sõna `test`. Otsingusõna kuvatakse tagasi
+lehel: *„Otsingu tulemused päringule: test“*.
 
 Oluline: SQL-päring ise on siin **turvaline** (parameetriseeritud). Probleem
 on **väljundis** – otsingusõna pannakse HTML-i kodeerimata.
@@ -384,8 +575,11 @@ Otsi järgmist teksti (brauseris otsingukasti, või URL-iga):
 
 ```bash
 curl -s -b mari.jar \
-  "http://192.168.50.10:8000/search.php?q=%3Cscript%3Ealert(document.cookie)%3C/script%3E"
+  "http://tugi.hkhk.internal:8000/search.php?q=%3Cscript%3Ealert(document.cookie)%3C/script%3E"
 ```
+
+URL-is on `<` kodeeritud kujul `%3C` ja `>` kujul `%3E`, sest need märgid ei
+tohi URL-is olla muutmata kujul. Server dekodeerib need tagasi.
 
 Serveri vastuses on sinu skript **muutmata HTML-ina**:
 
@@ -393,8 +587,10 @@ Serveri vastuses on sinu skript **muutmata HTML-ina**:
 <p>Otsingu tulemused päringule: <b><script>alert(document.cookie)</script></b></p>
 ```
 
-Brauseris avades käivitub `alert`, mis näitab sessiooniküpsist. See
-**tõendab**, et ründaja sisestatud JavaScript jookseb ohvri brauseris.
+Ava sama link **Windows 7 brauseris**, kus Mari on sisse logitud. Käivitub
+`alert`, mis näitab sessiooniküpsist. See **tõendab**, et ründaja kirjutatud
+JavaScript jookseb ohvri brauseris. Päris rünnakus ei näidataks küpsist
+aknas, vaid saadetaks see vaikselt ründaja serverisse.
 
 Logis näed, et SQL-pool oli korras (kasutati `LIKE ?`), aga server peegeldas
 sisendi tagasi:
@@ -407,15 +603,24 @@ sisendi tagasi:
 
 ```bash
 cp lahendused/search.php src/search.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
-Parandus kodeerib väljundi (`htmlspecialchars` funktsioon `e()`) ja lisab
-Content-Security-Policy päise. Korda testi:
+Parandus kodeerib väljundi (`htmlspecialchars`, abifunktsioon `e()`) ja lisab
+**Content-Security-Policy** (CSP) päise.
+
+* **Väljundi kodeerimine** muudab HTML-i erimärgid ohutuks: `<` → `&lt;`,
+  `>` → `&gt;`, `"` → `&quot;`. Brauser näitab neid ekraanil märkidena, aga ei
+  tõlgenda neid koodina.
+* **CSP** on teine kaitsekiht: päis ütleb brauserile, et lehel tohib käivitada
+  ainult lubatud skripte. Kui kodeerimine kuskil ununeb, ei käivita brauser
+  sisse süstitud skripti ikkagi.
+
+Korda testi:
 
 ```bash
 curl -s -b mari.jar \
-  "http://192.168.50.10:8000/search.php?q=%3Cscript%3Ealert(document.cookie)%3C/script%3E"
+  "http://tugi.hkhk.internal:8000/search.php?q=%3Cscript%3Ealert(document.cookie)%3C/script%3E"
 ```
 
 Nüüd on `<` muudetud ohutuks tekstiks:
@@ -436,24 +641,53 @@ Brauser kuvab teksti, aga **ei käivita** seda skriptina.
 
 # LABOR D – CSRF (`profile.php`)
 
+## Mis see on?
+
+**CSRF** (*Cross-Site Request Forgery*, saidiülese päringu võltsimine) kasutab
+ära seda, et **brauser saadab küpsised automaatselt kaasa** igale päringule,
+mis läheb vastavale serverile – ka siis, kui päringu algatas hoopis teine
+veebileht.
+
+Rünnaku käik:
+
+1. Mari logib sisse rakendusse `tugi` ja tema brauserisse jääb sessiooniküpsis.
+2. Mari avab samas brauseris ründaja lehe, näiteks „Võitsid kinkekaardi!“.
+3. Ründaja lehel on peidetud element (pilt, vorm), mis teeb päringu `tugi`
+   serverisse, näiteks „muuda e-posti aadress“.
+4. Brauser saadab selle päringu **koos Mari küpsisega**.
+5. Server näeb kehtivat sessiooni ja arvab, et Mari ise soovis muudatust.
+
+Ründaja ei näe kunagi Mari küpsist ega vastust. Ta paneb lihtsalt Mari
+brauseri tema nimel toimingu tegema.
+
+![CSRF: võõras leht paneb ohvri brauseri tegema toimingut ohvri nimel](pildid/csrf.svg)
+
+**Mida sa selles laboris teed:** käivitad Kalil ründaja lehe, avad selle
+Windows 7 brauseris, kus Mari on sisse logitud, ja näed, kuidas Mari e-post
+muutub ilma tema teadmata. Seejärel lisad kolm kaitset.
+
 ## D.1. Vaata, kuidas süsteem töötab
 
-Logi sisse kui `mari`. Ava „Profiil" ja muuda e-posti aadressi. Toiming
+Logi sisse kui `mari`. Ava „Profiil“ ja muuda e-posti aadressi. Toiming
 muudab serveris olekut (andmebaasi kirjet).
 
-Selles versioonis on **kolm viga**: toiming aktsepteerib GET-päringut,
-puudub CSRF-token ja küpsisel puudub `SameSite`.
+Selles versioonis on **kolm viga**:
+
+1. toiming aktsepteerib **GET**-päringut (muutus käib lihtsalt lingi avamisega);
+2. vormis puudub **CSRF-token** (server ei kontrolli, kas päring tuli tema enda vormist);
+3. küpsisel puudub **SameSite** (brauser saadab küpsise ka võõralt lehelt algatatud päringutega).
 
 ## D.2. Kontrollitud test
 
 Kaustas `rundaja/` on fail `kinkekaart.html` – pahatahtlik leht, mis saadab
-Mari brauseri kaudu vaikselt päringu. Simuleeri seda päringut (`-e` lisab
-võõra Referer-päise, nagu tuleks päring teiselt saidilt):
+Mari brauseri kaudu vaikselt päringu. Simuleeri seda päringut kõigepealt
+`curl`-iga (`-e` lisab võõra Referer-päise, nagu tuleks päring teiselt saidilt;
+asenda `<KALI_IP>` Kali aadressiga, vt `ip -4 addr`):
 
 ```bash
 curl -s -i -b mari.jar \
-  -e "http://192.168.50.30:8001/kinkekaart.html" \
-  "http://192.168.50.10:8000/profile.php?email=kaaperdatud@kurjam.labor"
+  -e "http://<KALI_IP>:8001/kinkekaart.html" \
+  "http://tugi.hkhk.internal:8000/profile.php?email=kaaperdatud@kurjam.labor"
 ```
 
 Server muudab e-posti aadressi ära:
@@ -467,28 +701,41 @@ HTTP/1.1 200 OK
 Logis on näha, et toiming tehti **GET-meetodiga teiselt saidilt**:
 
 ```text
-[HKHK] user=mari PROFILE EMAIL CHANGE method=GET new=kaaperdatud@kurjam.labor referer=http://192.168.50.30:8001/kinkekaart.html
+[HKHK] user=mari PROFILE EMAIL CHANGE method=GET new=kaaperdatud@kurjam.labor referer=http://<KALI_IP>:8001/kinkekaart.html
 ```
 
-Päris laboris paned `kinkekaart.html` Kali masinasse
-(`cd rundaja && python3 -m http.server 8001`), avad selle Windowsi brauseris,
-kus Mari on sisse logitud, ja vaatad, kuidas e-post muutub ohvri enda
-brauseri kaudu.
+**Päris rünnak ohvri brauseri kaudu:**
+
+1. Kalil käivita ründaja leht:
+   ```bash
+   cd rundaja && python3 -m http.server 8001
+   ```
+2. Windows 7 brauseris logi sisse kui `mari` aadressil
+   `http://tugi.hkhk.internal:8000`.
+3. Ava **samas brauseris** uus vahekaart `http://<KALI_IP>:8001/kinkekaart.html`.
+4. Mine tagasi Mari profiilile ja vaata, et e-post on muutunud – Mari ei
+   vajutanud midagi.
 
 ## D.3. Paranda ja testi uuesti
 
 ```bash
 cp lahendused/config.php  src/config.php
 cp lahendused/profile.php src/profile.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
-Parandus: ainult POST, CSRF-token igas vormis, `SameSite=Strict` küpsis.
+Parandusel on kolm kihti:
+
+| Kaitse | Kuidas see toimib |
+|--------|-------------------|
+| **Ainult POST** | Olekut muutvat toimingut ei saa teha lingi või pildi aadressiga. |
+| **CSRF-token** | Server paneb igasse vormi juhusliku salajase väärtuse ja kontrollib seda. Ründaja leht ei tea tokenit, seega tema päring lükatakse tagasi. |
+| **`SameSite=Strict` küpsis** | Brauser ei saada küpsist kaasa päringutega, mis algatati teiselt saidilt. Server ei näe siis Mari sessiooni üldse. |
 
 **Test 1 – GET lükatakse tagasi:**
 
 ```bash
-curl -s -i -b mari.jar "http://192.168.50.10:8000/profile.php?email=x@x.labor"
+curl -s -i -b mari.jar "http://tugi.hkhk.internal:8000/profile.php?email=x@x.labor"
 ```
 ```text
 HTTP/1.1 405 Method Not Allowed
@@ -498,7 +745,7 @@ HTTP/1.1 405 Method Not Allowed
 **Test 2 – POST ilma tokenita lükatakse tagasi:**
 
 ```bash
-curl -s -i -b mari.jar -d "email=x@x.labor" "http://192.168.50.10:8000/profile.php"
+curl -s -i -b mari.jar -d "email=x@x.labor" "http://tugi.hkhk.internal:8000/profile.php"
 ```
 ```text
 HTTP/1.1 403 Forbidden
@@ -511,11 +758,15 @@ HTTP/1.1 403 Forbidden
 [HKHK] user=mari PROFILE EMAIL CHANGE method=POST new=mari.uus@hkhk.labor
 ```
 
-Pane ka tähele, et sisselogimisel on küpsisel nüüd kaitse:
+Pane ka tähele, et sisselogimisel on küpsisel nüüd kaitse (logi uuesti sisse,
+et saada uus küpsis):
 
 ```text
 Set-Cookie: PHPSESSID=...; path=/; HttpOnly; SameSite=Strict
 ```
+
+Korda ka päris rünnakut Windows 7 brauseris: kinkekaardi leht ei suuda enam
+e-posti muuta.
 
 ## D.4. Küsimused
 
@@ -527,26 +778,43 @@ Set-Cookie: PHPSESSID=...; path=/; HttpOnly; SameSite=Strict
 
 # LABOR E – Path Traversal (`download.php`)
 
+## Mis see on?
+
+**Path Traversal** (kataloogist väljumine, ka *directory traversal*) tekib
+siis, kui rakendus paneb kasutaja antud failinime **otse failitee sisse**.
+Failiteedes tähendab `..` „üks kaust ülespoole“. Mitu `../` järjest viivad
+lubatud kaustast välja kuni failisüsteemi juureni `/`, kust saab minna mis
+tahes faili juurde.
+
+Tagajärg: ründaja loeb faile, mida ta kunagi näha ei tohiks – süsteemifaile,
+rakenduse lähtekoodi, seadistusfaile koos andmebaasi paroolidega.
+
+![Path Traversal: ../ abil ronitakse lubatud kaustast välja](pildid/path-traversal.svg)
+
+**Mida sa selles laboris teed:** loed juhendite allalaadimise kaudu serveri
+faili `/etc/passwd` ja rakenduse seadistusfaili. Seejärel piirad allalaadimise
+lubatud failidega.
+
 ## E.1. Vaata, kuidas süsteem töötab
 
-Logi sisse. Ava „Juhendid". Faile laaditakse alla URL-iga:
+Logi sisse. Ava „Juhendid“. Faile laaditakse alla URL-iga:
 
 ```text
-http://192.168.50.10:8000/download.php?file=wifi-juhend.txt
+http://tugi.hkhk.internal:8000/download.php?file=wifi-juhend.txt
 ```
 
 Server liidab failinime otse kataloogiteele: `files/ + wifi-juhend.txt`.
 
 ## E.2. Kontrollitud test
 
-Proovi „välja ronida" lubatud kaustast `../` abil ja lugeda süsteemifaili:
+Proovi „välja ronida“ lubatud kaustast `../` abil ja lugeda süsteemifaili:
 
 ```bash
 curl -s -i -b mari.jar \
-  "http://192.168.50.10:8000/download.php?file=../../../../etc/passwd"
+  "http://tugi.hkhk.internal:8000/download.php?file=../../../../etc/passwd"
 ```
 
-Server tagastab serveri kasutajate faili sisu:
+Server tagastab konteineri kasutajate faili sisu:
 
 ```text
 HTTP/1.1 200 OK
@@ -557,11 +825,14 @@ daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 ...
 ```
 
-Sama meetodiga saab lugeda ka rakenduse enda konfiguratsiooni koos
-andmebaasi parooliga:
+Fail `/etc/passwd` on klassikaline tõendusfail, sest see on igas Linuxis
+olemas. Paroole seal tänapäeval pole, kuid on kasutajate nimekiri.
+
+Sama meetodiga saab lugeda ka rakenduse enda seadistust koos andmebaasi
+parooliga. See on päris rünnakul palju väärtuslikum saak:
 
 ```bash
-curl -s -b mari.jar "http://192.168.50.10:8000/download.php?file=../config.php"
+curl -s -b mari.jar "http://tugi.hkhk.internal:8000/download.php?file=../config.php"
 ```
 
 Logis on näha, kuhu tee tegelikult osutab:
@@ -570,20 +841,27 @@ Logis on näha, kuhu tee tegelikult osutab:
 [HKHK] user=mari DOWNLOAD path=/var/www/html/files/../../../../etc/passwd
 ```
 
-**Tõendus:** ekraanipilt `/etc/passwd` sisust brauseris + logirida.
+**Tõendus:** ekraanitõmmis `/etc/passwd` sisust brauseris + logirida.
 
 ## E.3. Paranda ja testi uuesti
 
 ```bash
 cp lahendused/download.php src/download.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
-Parandus: lubatud failide **nimekiri** + `realpath`-kontroll, et tee jääks
-lubatud kataloogi. Korda testi:
+Parandusel on kaks kihti:
+
+1. **Lubatud failide nimekiri** (*allowlist*) – allalaadida saab ainult
+   kindlaksmääratud faile. Kõik muu annab vastuse 404.
+2. **`realpath()` kontroll** – funktsioon arvutab välja faili tegeliku
+   lõpliku tee (kõik `../` on lahti kirjutatud). Seejärel kontrollitakse,
+   kas see tee algab lubatud kaustaga `/var/www/html/files/`.
+
+Korda testi:
 
 ```bash
-curl -s -i -b mari.jar "http://192.168.50.10:8000/download.php?file=../../../../etc/passwd"
+curl -s -i -b mari.jar "http://tugi.hkhk.internal:8000/download.php?file=../../../../etc/passwd"
 ```
 ```text
 HTTP/1.1 404 Not Found
@@ -602,7 +880,7 @@ Lubatud fail töötab endiselt:
 ## E.4. Küsimused
 
 1. Mida tähendab `../` failiteel?
-2. Miks on lubatud failide nimekiri turvalisem kui „keelatud märkide"
+2. Miks on lubatud failide nimekiri turvalisem kui „keelatud märkide“
    filtreerimine?
 3. Mida teeb `realpath()` ja miks see aitab?
 
@@ -610,9 +888,33 @@ Lubatud fail töötab endiselt:
 
 # LABOR F – Faili üleslaadimine (`upload.php`)
 
+## Mis see on?
+
+**Piiramata faili üleslaadimine** (*unrestricted file upload*) tekib siis, kui
+rakendus lubab üles laadida faile, kontrollimata korralikult, **mis fail see
+tegelikult on**, ja salvestab selle kohta, kust veebiserver saab seda
+käivitada.
+
+Selles rakenduses on kolm viga korraga:
+
+1. tüüpi kontrollitakse ainult **kliendi saadetud** `Content-Type` päise järgi
+   (selle kirjutab klient ise ja võib valetada);
+2. fail salvestatakse **veebijuure alla** (`/var/www/html/uploads/`), kus
+   Apache käivitab iga `.php` faili;
+3. failinimi on **kasutaja antud** (`test-upload.php`).
+
+Tagajärg on kõige raskem võimalik: **koodi kaugkäivitamine** (*Remote Code
+Execution*, RCE). Ründaja saab serveris käivitada mis tahes käske.
+
+![Faili üleslaadimine: PHP-fail maskeeritakse pildiks ja käivitatakse serveris](pildid/upload.svg)
+
+**Mida sa selles laboris teed:** laadid üles PHP-skripti, valetad päises, et
+see on PNG-pilt, ja käivitad skripti serveris. Seejärel lisad sisu järgi
+tüübi kontrolli ja salvestad failid väljaspool veebijuurt.
+
 ## F.1. Vaata, kuidas süsteem töötab
 
-Logi sisse. Ava „Üleslaadimine". Server kontrollib ainult **kliendi
+Logi sisse. Ava „Üleslaadimine“. Server kontrollib ainult **kliendi
 saadetud** Content-Type päist ja salvestab faili veebijuure alla
 kasutaja antud nimega.
 
@@ -622,22 +924,23 @@ Kaustas `rundaja/` on fail `test-upload.php` – kahjutu PHP-skript, mis
 prindib serveri info. See **tõendab koodi käivitamist**, kui ta serveris
 jookseb.
 
-Esiteks näita, et aus üleslaadimine blokeeritakse:
+Esiteks näita, et aus üleslaadimine blokeeritakse (`curl` saadab PHP-faili
+õige tüübiga):
 
 ```bash
 curl -s -b mari.jar -F "f=@rundaja/test-upload.php" \
-  http://192.168.50.10:8000/upload.php
+  http://tugi.hkhk.internal:8000/upload.php
 ```
 ```text
 <p class='err'>Lubatud on ainult pildifailid (PNG, JPEG, GIF).</p>
 ```
 
 Nüüd **võltsi** Content-Type päis väärtuseks `image/png` (Burp Suite'is
-muudad seda päringut, `curl`-iga paned tüübi juurde):
+muudad päringut enne saatmist; `curl`-iga paned tüübi failinime järele):
 
 ```bash
 curl -s -b mari.jar -F "f=@rundaja/test-upload.php;type=image/png" \
-  http://192.168.50.10:8000/upload.php
+  http://tugi.hkhk.internal:8000/upload.php
 ```
 ```text
 <p class='ok'>Fail salvestatud: <a href='uploads/test-upload.php'>uploads/test-upload.php</a></p>
@@ -646,7 +949,7 @@ curl -s -b mari.jar -F "f=@rundaja/test-upload.php;type=image/png" \
 Server uskus kliendi valet. Ava üleslaaditud fail – **PHP käivitub serveris**:
 
 ```bash
-curl -s http://192.168.50.10:8000/uploads/test-upload.php
+curl -s http://tugi.hkhk.internal:8000/uploads/test-upload.php
 ```
 ```text
 HKHK LABOR: see PHP-kood kaivitati serveris!
@@ -654,14 +957,18 @@ Kasutaja: www-data
 Server: Linux ... x86_64
 ```
 
+Pane tähele: viimane päring tehti **ilma küpsiseta**. Kui fail on üles
+laaditud, saab seda käivitada igaüks, kes teab aadressi.
+
 Logis:
 
 ```text
 [HKHK] user=mari UPLOAD name=test-upload.php type=image/png size=290
 ```
 
-**Tõendus:** ekraanipilt serveris käivitunud skripti väljundist. See on
-kõige raskem tagajärg – ründaja saab serveris oma koodi käivitada.
+**Tõendus:** ekraanitõmmis serveris käivitunud skripti väljundist. See on
+kõige raskem tagajärg – ründaja saab serveris oma koodi käivitada. Kasutaja
+`www-data` näitab, et kood jookseb veebiserveri õigustes.
 
 ## F.3. Paranda ja testi uuesti
 
@@ -669,18 +976,22 @@ kõige raskem tagajärg – ründaja saab serveris oma koodi käivitada.
 cp lahendused/config.php src/config.php
 cp lahendused/upload.php src/upload.php
 cp lahendused/view.php   src/view.php
-sudo docker compose restart web
+docker compose restart web
 ```
 
-Parandus: tegelik tüüp tuvastatakse faili **sisu** järgi (`finfo`), server
-genereerib failinime ise, failid salvestatakse **väljaspoole veebijuurt** ja
-neid serveeritakse läbi `view.php`.
+Parandusel on kolm kihti:
+
+| Kaitse | Kuidas see toimib |
+|--------|-------------------|
+| **Tüüp sisu järgi** (`finfo`) | Server loeb faili esimesed baidid (nn *magic bytes*). PNG-fail algab alati kindla baidijadaga; PHP-skript mitte. Päist ei usaldata. |
+| **Server annab failinime** | Fail salvestatakse juhusliku nimega, nt `44cbfebb….png`. Ründaja ei saa valida laiendit `.php` ega ülekirjutada teisi faile. |
+| **Väljaspool veebijuurt** | Faile ei saa otse URL-iga avada. Neid näitab `view.php`, mis saadab faili pildina, mitte ei käivita seda. |
 
 Korda võlts-PNG rünnakut:
 
 ```bash
 curl -s -b mari.jar -F "f=@rundaja/test-upload.php;type=image/png" \
-  http://192.168.50.10:8000/upload.php
+  http://tugi.hkhk.internal:8000/upload.php
 ```
 ```text
 <p class='err'>Lubatud on ainult pildifailid (PNG, JPEG, GIF).</p>
@@ -711,45 +1022,62 @@ Päris pilt läheb läbi ja salvestatakse turvalise nimega:
 
 ---
 
-# 4. Labori lähtestamine ja peatamine
+# 4. Kokkuvõte: kuus viga, üks põhjus
+
+Kõigi kuue haavatavuse põhjus on sama: **rakendus usaldas kasutaja sisendit**.
+
+| Labor | Mida usaldati | Õige kaitse |
+|-------|---------------|-------------|
+| A – SQL Injection | Sisend pandi SQL-i teksti | Parameetriseeritud päring |
+| B – IDOR | URL-i `id` | Omaniku kontroll serveris (sessioonist) |
+| C – XSS | Sisend pandi HTML-i | Väljundi kodeerimine + CSP |
+| D – CSRF | Küpsis üksi tõendab tahet | POST + CSRF-token + SameSite |
+| E – Path Traversal | Failinimi pandi teesse | Lubatud nimekiri + `realpath()` |
+| F – Upload | Kliendi Content-Type päis | Sisu kontroll, serveri nimi, väljaspool veebijuurt |
+
+---
+
+# 5. Labori lähtestamine ja peatamine
 
 Peata rakendus (andmed jäävad alles):
 
 ```bash
-sudo docker compose stop
+docker compose stop
 ```
 
 Täielik lähtestamine – kustutab andmebaasi ja ehitab puhtalt uuesti (kasulik,
 kui tahad labori järgmisele rühmale algseisu viia):
 
 ```bash
-sudo docker compose down -v
-sudo docker compose up -d --build
+docker compose down -v
+docker compose up -d --build
 ```
 
 Üks mugav töövoog õppijale: enne iga labori algust tee kõik haavatavad failid
-tagasi algseisu `git`-iga või kopeerides varukoopiast, et saaks „enne ja
-pärast" selgelt näidata.
+tagasi algseisu `git`-iga (`git checkout -- src/`) või kopeerides
+varukoopiast, et saaks „enne ja pärast“ selgelt näidata.
 
 ---
 
-# 5. Mida õpetaja hoiab enda käes
+# 6. Mida õpetaja hoiab enda käes
 
 Kaust `lahendused/` on **õpetaja lahendusvõti**. Soovitus: anna õppijale ainult
 haavatav `src/` ja see juhend ilma `lahendused/` kaustata; parandatud failid
 jaga alles pärast seda, kui õppija on rünnaku ise tõendanud ja parandusettepaneku
 kirjutanud.
 
+Kui repo on avalik (*public*), hoia `lahendused/` eraldi privaatses repos.
+
 ---
 
-# 6. Vastavus hindamismudelile
+# 7. Vastavus hindamismudelile
 
 See labor teeb teostatavaks need kaks kriteeriumi, mis Juice Shopi/WebGoatiga
 jäid õhku:
 
 | Kriteerium | Kuidas siin täidetakse |
 |-----------|------------------------|
-| Parandus (1 p) | Õppija kopeerib/kirjutab parameetriseeritud päringu, `htmlspecialchars`, CSRF-tokeni jne ja ehitab konteineri uuesti |
+| Parandus (1 p) | Õppija kopeerib/kirjutab parameetriseeritud päringu, `htmlspecialchars`, CSRF-tokeni jne ja taaskäivitab konteineri |
 | Paranduse kontroll (1 p) | Õppija kordab täpselt sama `curl`/Burp testi ja näitab, et vastus muutus (nt 200 → 404, või skript → kodeeritud tekst) |
 
 Tõenduseks sobib iga labori puhul kolm asja: ründe HTTP-päring ja -vastus,

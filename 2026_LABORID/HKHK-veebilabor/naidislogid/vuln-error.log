@@ -1,0 +1,15 @@
+[Thu Nov 05 14:50:53.248036 2026] [php:notice] [pid 3747] [client 127.0.0.1:37006] [HKHK] user=- LOGIN SQL: SELECT id, username, role FROM users WHERE username = 'mari' AND password = MD5('mari123')
+[Thu Nov 05 14:50:53.248626 2026] [php:notice] [pid 3747] [client 127.0.0.1:37006] [HKHK] user=mari LOGIN OK uid=2
+[Thu Nov 05 14:50:53.262469 2026] [php:notice] [pid 3748] [client 127.0.0.1:37016] [HKHK] user=- LOGIN SQL: SELECT id, username, role FROM users WHERE username = 'mari'' AND password = MD5('x')
+[Thu Nov 05 14:50:53.262741 2026] [php:error] [pid 3748] [client 127.0.0.1:37016] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'x')' at line 1 in /var/www/html/login.php:13\nStack trace:\n#0 /var/www/html/login.php(13): PDO->query()\n#1 {main}\n  thrown in /var/www/html/login.php on line 13
+[Thu Nov 05 14:50:53.273435 2026] [php:notice] [pid 3749] [client 127.0.0.1:37022] [HKHK] user=- LOGIN SQL: SELECT id, username, role FROM users WHERE username = 'admin'-- -' AND password = MD5('suvaline')
+[Thu Nov 05 14:50:53.273806 2026] [php:notice] [pid 3749] [client 127.0.0.1:37022] [HKHK] user=admin LOGIN OK uid=1
+[Thu Nov 05 14:50:53.284285 2026] [php:notice] [pid 3750] [client 127.0.0.1:37024] [HKHK] user=admin ADMIN VIEW
+[Thu Nov 05 14:51:00.660374 2026] [php:notice] [pid 3746] [client 127.0.0.1:37038] [HKHK] user=mari TICKET VIEW id=3 uid=2
+[Thu Nov 05 14:51:00.671387 2026] [php:notice] [pid 3747] [client 127.0.0.1:37042] [HKHK] user=mari TICKET VIEW id=4 uid=2
+[Thu Nov 05 14:51:00.681667 2026] [php:notice] [pid 3748] [client 127.0.0.1:37054] [HKHK] user=mari SEARCH q=<script>alert(document.cookie)</script>
+[Thu Nov 05 14:51:00.691178 2026] [php:notice] [pid 3749] [client 127.0.0.1:37070] [HKHK] user=mari PROFILE EMAIL CHANGE method=GET new=kaaperdatud@kurjam.labor referer=http://192.168.50.30:8001/kinkekaart.html, referer: http://192.168.50.30:8001/kinkekaart.html
+[Thu Nov 05 14:51:00.700153 2026] [php:notice] [pid 3750] [client 127.0.0.1:37082] [HKHK] user=mari DOWNLOAD path=/var/www/html/files/../../../../etc/passwd
+[Thu Nov 05 14:51:00.709130 2026] [php:notice] [pid 3746] [client 127.0.0.1:37088] [HKHK] user=mari DOWNLOAD path=/var/www/html/files/../config.php
+[Thu Nov 05 14:51:00.721858 2026] [php:notice] [pid 3747] [client 127.0.0.1:37098] [HKHK] user=mari UPLOAD name=test-upload.php type=application/octet-stream size=290
+[Thu Nov 05 14:51:00.732819 2026] [php:notice] [pid 3748] [client 127.0.0.1:37110] [HKHK] user=mari UPLOAD name=test-upload.php type=image/png size=290

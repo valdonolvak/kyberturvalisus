@@ -1,0 +1,63 @@
+		    51 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    51 Prepare	SELECT id, username, role FROM users WHERE username = ? AND password = MD5(?)
+		    51 Execute	SELECT id, username, role FROM users WHERE username = 'mari' AND password = MD5('mari123')
+		    51 Close stmt	
+		    51 Quit	
+		    52 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    52 Prepare	SELECT id, username, role FROM users WHERE username = ? AND password = MD5(?)
+		    52 Execute	SELECT id, username, role FROM users WHERE username = 'mari\'' AND password = MD5('x')
+		    52 Close stmt	
+		    52 Quit	
+		    53 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    53 Prepare	SELECT id, username, role FROM users WHERE username = ? AND password = MD5(?)
+		    53 Execute	SELECT id, username, role FROM users WHERE username = 'admin\'-- -' AND password = MD5('suvaline')
+		    53 Close stmt	
+		    53 Quit	
+		    54 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    54 Prepare	SELECT t.*, u.username FROM tickets t JOIN users u ON u.id = t.user_id WHERE t.id = ? AND t.user_id = ?
+		    54 Execute	SELECT t.*, u.username FROM tickets t JOIN users u ON u.id = t.user_id WHERE t.id = '3' AND t.user_id = '2'
+		    54 Close stmt	
+		    54 Quit	
+		    55 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    55 Prepare	SELECT t.*, u.username FROM tickets t JOIN users u ON u.id = t.user_id WHERE t.id = ? AND t.user_id = ?
+		    55 Execute	SELECT t.*, u.username FROM tickets t JOIN users u ON u.id = t.user_id WHERE t.id = '4' AND t.user_id = '2'
+		    55 Close stmt	
+		    55 Quit	
+		    56 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    56 Prepare	SELECT id, title FROM tickets WHERE user_id = ? AND title LIKE ?
+		    56 Execute	SELECT id, title FROM tickets WHERE user_id = '2' AND title LIKE '%<script>alert(document.cookie)</script>%'
+		    56 Close stmt	
+		    56 Quit	
+		    57 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    57 Prepare	SELECT username, full_name, email FROM users WHERE id = ?
+		    57 Execute	SELECT username, full_name, email FROM users WHERE id = '2'
+		    57 Close stmt	
+		    57 Quit	
+		    58 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    58 Prepare	SELECT username, full_name, email FROM users WHERE id = ?
+		    58 Execute	SELECT username, full_name, email FROM users WHERE id = '2'
+		    58 Close stmt	
+		    58 Quit	
+		    59 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    59 Prepare	SELECT username, full_name, email FROM users WHERE id = ?
+		    59 Execute	SELECT username, full_name, email FROM users WHERE id = '2'
+		    59 Close stmt	
+		    59 Quit	
+		    60 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    60 Prepare	UPDATE users SET email = ? WHERE id = ?
+		    60 Execute	UPDATE users SET email = 'mari.uus@hkhk.labor' WHERE id = '2'
+		    60 Prepare	SELECT username, full_name, email FROM users WHERE id = ?
+		    60 Close stmt	
+		    60 Execute	SELECT username, full_name, email FROM users WHERE id = '2'
+		    60 Close stmt	
+		    60 Quit	
+		    61 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    61 Quit	
+		    62 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    62 Quit	
+		    63 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    63 Quit	
+		    64 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    64 Quit	
+261105 14:51:29	    65 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    65 Quit	

@@ -1,0 +1,46 @@
+# HKHK veebiturbe labor – tahtlikult haavatav PHP/MySQL rakendus
+# AINULT ISOLEERITUD LABORIVÕRGUS KASUTAMISEKS!
+#
+# Käivitamine:  sudo docker compose up -d --build
+# Logid:        sudo docker compose logs -f web
+# Lähtestamine: sudo docker compose down -v && sudo docker compose up -d --build
+
+services:
+  web:
+    build: ./web
+    container_name: hkhk-web
+    ports:
+      # Rakendus kuulab ainult laborivõrgu aadressil (vt .env)
+      - "${LAB_IP:-127.0.0.1}:8000:80"
+    volumes:
+      - ./src:/var/www/html
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mariadb:11
+    container_name: hkhk-db
+    environment:
+      MARIADB_ROOT_PASSWORD: RootLabor2026
+      MARIADB_DATABASE: hkhk_tugi
+      MARIADB_USER: hkhk_app
+      MARIADB_PASSWORD: HkhkLabor2026
+    # general log = andmebaas logib KÕIK SQL-päringud (ainult laboris!)
+    command: --general-log=1 --general-log-file=/var/lib/mysql/general.log
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    # Andmebaasi porti EI avaldata hostile – sellele pääseb ligi ainult web-konteiner
+
+volumes:
+  dbdata:

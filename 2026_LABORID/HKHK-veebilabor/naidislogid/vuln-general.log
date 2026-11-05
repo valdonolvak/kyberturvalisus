@@ -1,0 +1,33 @@
+261105 14:50:53	    38 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    38 Query	SELECT id, username, role FROM users WHERE username = 'mari' AND password = MD5('mari123')
+		    38 Quit	
+		    39 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    39 Query	SELECT id, username, role FROM users WHERE username = 'mari'' AND password = MD5('x')
+		    39 Quit	
+		    40 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    40 Query	SELECT id, username, role FROM users WHERE username = 'admin'-- -' AND password = MD5('suvaline')
+		    40 Quit	
+		    41 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    41 Query	SELECT id, username, full_name, email, role FROM users ORDER BY id
+		    41 Quit	
+261105 14:51:00	    42 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    42 Query	SELECT t.*, u.username FROM tickets t JOIN users u ON u.id = t.user_id WHERE t.id = '3'
+		    42 Quit	
+		    43 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    43 Query	SELECT t.*, u.username FROM tickets t JOIN users u ON u.id = t.user_id WHERE t.id = '4'
+		    43 Quit	
+		    44 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    44 Query	SELECT id, title FROM tickets WHERE user_id = '2' AND title LIKE '%<script>alert(document.cookie)</script>%'
+		    44 Quit	
+		    45 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    45 Query	UPDATE users SET email = 'kaaperdatud@kurjam.labor' WHERE id = '2'
+		    45 Query	SELECT username, full_name, email FROM users WHERE id = '2'
+		    45 Quit	
+		    46 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    46 Quit	
+		    47 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    47 Quit	
+		    48 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    48 Quit	
+		    49 Connect	hkhk_app@localhost on hkhk_tugi using TCP/IP
+		    49 Quit	

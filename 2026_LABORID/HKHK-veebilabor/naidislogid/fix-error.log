@@ -1,0 +1,19 @@
+[Thu Nov 05 14:51:23.809285 2026] [php:notice] [pid 3750] [client 127.0.0.1:52778] [HKHK] user=- LOGIN prepared statement, username=mari
+[Thu Nov 05 14:51:23.809383 2026] [php:notice] [pid 3750] [client 127.0.0.1:52778] [HKHK] user=mari LOGIN OK uid=2
+[Thu Nov 05 14:51:23.821840 2026] [php:notice] [pid 3746] [client 127.0.0.1:52788] [HKHK] user=- LOGIN prepared statement, username=mari'
+[Thu Nov 05 14:51:23.821867 2026] [php:notice] [pid 3746] [client 127.0.0.1:52788] [HKHK] user=- LOGIN FAIL username=mari'
+[Thu Nov 05 14:51:23.830933 2026] [php:notice] [pid 3747] [client 127.0.0.1:52790] [HKHK] user=- LOGIN prepared statement, username=admin'-- -
+[Thu Nov 05 14:51:23.830949 2026] [php:notice] [pid 3747] [client 127.0.0.1:52790] [HKHK] user=- LOGIN FAIL username=admin'-- -
+[Thu Nov 05 14:51:23.839711 2026] [php:notice] [pid 3748] [client 127.0.0.1:52792] [HKHK] user=mari TICKET VIEW id=3 uid=2
+[Thu Nov 05 14:51:23.848369 2026] [php:notice] [pid 3749] [client 127.0.0.1:52794] [HKHK] user=mari TICKET DENIED id=4 uid=2
+[Thu Nov 05 14:51:23.855622 2026] [php:notice] [pid 3750] [client 127.0.0.1:52810] [HKHK] user=mari SEARCH q=<script>alert(document.cookie)</script>
+[Thu Nov 05 14:51:23.864596 2026] [php:notice] [pid 3746] [client 127.0.0.1:52826] [HKHK] user=mari PROFILE EMAIL CHANGE REJECTED method=GET, referer: http://192.168.50.30:8001/kinkekaart.html
+[Thu Nov 05 14:51:23.873380 2026] [php:notice] [pid 3747] [client 127.0.0.1:52838] [HKHK] user=mari PROFILE CSRF TOKEN INVALID referer=http://192.168.50.30:8001/kinkekaart.html, referer: http://192.168.50.30:8001/kinkekaart.html
+[Thu Nov 05 14:51:23.894641 2026] [php:notice] [pid 3749] [client 127.0.0.1:52844] [HKHK] user=mari PROFILE EMAIL CHANGE method=POST new=mari.uus@hkhk.labor
+[Thu Nov 05 14:51:23.901854 2026] [php:notice] [pid 3750] [client 127.0.0.1:52846] [HKHK] user=mari DOWNLOAD DENIED file=../../../../etc/passwd
+[Thu Nov 05 14:51:23.910144 2026] [php:notice] [pid 3746] [client 127.0.0.1:52852] [HKHK] user=mari DOWNLOAD path=/var/www/html/files/wifi-juhend.txt
+[Thu Nov 05 14:51:23.920239 2026] [php:notice] [pid 3747] [client 127.0.0.1:52866] [HKHK] user=mari UPLOAD name=test-upload.php client_type=image/png size=290
+[Thu Nov 05 14:51:23.931553 2026] [php:notice] [pid 3747] [client 127.0.0.1:52866] [HKHK] user=mari UPLOAD REJECTED real_type=text/x-php
+[Thu Nov 05 14:51:23.938152 2026] [php:error] [pid 3748] [client 127.0.0.1:52874] script '/var/www/html/uploads/test-upload.php' not found or unable to stat
+[Thu Nov 05 14:51:23.948303 2026] [php:notice] [pid 3749] [client 127.0.0.1:52884] [HKHK] user=mari UPLOAD name=logo.png client_type=image/png size=67
+[Thu Nov 05 14:51:23.948462 2026] [php:notice] [pid 3749] [client 127.0.0.1:52884] [HKHK] user=mari UPLOAD SAVED 44cbfebbcdd63ad0cc7524ac5dad6c01.png real_type=image/png

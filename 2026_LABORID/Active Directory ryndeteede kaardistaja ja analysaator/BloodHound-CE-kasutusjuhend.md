@@ -27,6 +27,10 @@ Graafis tühi vaade on normaalne — midagi kuvatakse alles siis, kui teed otsin
 
 ## 2. Põhiriba: Search / Pathfinding / Cypher
 
+Nii näeb BloodHound CE veebiliides välja: vasakul menüü (**Explore**, Privilege Zones, Quick Upload jne), keskel graaf, ülal kolm vahelehte (**SEARCH / PATHFINDING / CYPHER**) ja paremal avatud serva **Abuse Info** paneel.
+
+![BloodHound CE veebiliides — Pathfinding vaade ja GenericAll serva Abuse Info paneel](./pildid/bloodhound-ce-veebiliides.png)
+
 Ülaservas on kolm vahelehte:
 
 | Vaheleht | Milleks |
@@ -34,6 +38,8 @@ Graafis tühi vaade on normaalne — midagi kuvatakse alles siis, kui teed otsin
 | **SEARCH** | Leia ja tsentreeri **üks** objekt (kasutaja, grupp, arvuti) |
 | **PATHFINDING** | Leia **tee kahe sõlme vahel** (algus → siht) |
 | **CYPHER** | Päringukeel — valmis päringud ja oma päringud |
+
+Pildil: algsõlm `JAAN.TAMM`, sihtsõlm `ADMINISTRATOR`, graafil serv `GenericAll`, ja paremal selle serva Abuse Info käsud.
 
 ---
 
@@ -164,41 +170,31 @@ net group "Serveri-Admins" /domain
 ```
 (PowerView'ga: `Add-DomainGroupMember -Identity 'Serveri-Admins' -Members 'jaan.tamm'`.)
 
-**Tähtis mõlema puhul:** uus grupiliikmelisus jõustub alles **uues sisselogimises** — Kerberose pilet tehakse login'i ajal. Jaan peab pärast lisamist **välja/sisse logima**, et saada Domain Adminsi õigused. Kontroll pärast uut login'i:
-```cmd
-whoami /groups | findstr /i "Domain Admins"
+**Mis edasi — miks see annab täieliku kontrolli.** Grupp `Serveri-Admins` ei ole Domain Adminsi liige, aga tal on **DCSync** domeenil. Kui jaan on grupis, saab ta replitseerida paroolihashid (sh `krbtgt`) → Golden Ticket → täielik ülevõtt. Kalist autenditakse värskelt, nii et grupiliikmelisus kehtib kohe:
+```bash
+secretsdump.py 'hkhk.local/jaan.tamm:Suvi2026!'@10.0.30.10 -just-dc-user krbtgt
 ```
+
+> Kui kasutad jaan'i **juba avatud Win11 interaktiivset sessiooni**, jõustub uus liikmelisus alles pärast **välja/sisse logimist** (Kerberose pilet tehakse login'i ajal). Kontroll: `whoami /groups | findstr /i "Serveri-Admins"`. Kalist käivitatud `secretsdump.py` seda ei vaja, sest autendib ise uue pileti.
 
 Lokaalset admini Win11-l pole vaja — õigus on AD-s ja seda jõustab DC.
 
-### 8.2 Tõrge: `ACCESS_DENIED` / `insufficientAccessRights`, kuigi BloodHound näitab `GenericAll`
+### 8.2 Miks `Serveri-Admins` EI ole Domain Adminsi liige (AdminSDHolder)
 
-Üks sagedasemaid alguse komistuskohti. Kui lisamine ebaõnnestub:
+Hea küsimus: miks grupil on **DCSync**, mitte lihtsalt Domain Adminsi liikmelisus? Vastus on **AdminSDHolder / SDProp** — oluline AD õppepunkt.
+
+Kui teeksid sihtgrupi (`Serveri-Admins`) Domain Adminsi liikmeks, muutuks ta **kaitstud objektiks**: AD mehhanism **SDProp** lähtestaks iga ~60 min selle grupi ACL-i turvamallile ja lülitaks pärimise välja — **kustutades jaan'i `GenericAll` ACE**. Tulemus: BloodHound näitaks serva (kogus selle varem), aga abuse ebaõnnestuks:
 - `net rpc` → `NT_STATUS_ACCESS_DENIED`
 - bloodyAD → `insufficientAccessRights ... ERROR_DS_INSUFF_ACCESS_RIGHTS`
 
-ja seda **mõlema tööriistaga korraga**, siis asi pole protokollis — kasutajal **ei olegi (enam)** seda õigust, kuigi graaf näitab serva.
-
-**Põhjus — AdminSDHolder / SDProp.** Kui sihtgrupp (nt `Serveri-Admins`) on tehtud **Domain Adminsi liikmeks**, kaitseb AD seda mehhanismiga **AdminSDHolder**: iga ~60 min **lähtestab SDProp** kaitstud objektide ACL-i turvamallile ja lülitab pärimise välja. See kustutab külvatud `GenericAll` ACE. BloodHound võis serva koguda varem, enne kui SDProp jõudis käia.
-
-**Kontrolli DC-l** (`adminCount = 1` kinnitab, et objekt on kaitstud):
+mõlema tööriistaga korraga (= asi pole protokollis, vaid õigust pole enam). Kaitstust tunneb ära `adminCount = 1`:
 ```powershell
 Get-ADGroup Serveri-Admins -Properties adminCount | Select-Object Name, adminCount
 ```
 
-**Kiire parandus demo jaoks** (DC-l, admin õigustes) — taasta pärimine, anna GenericAll uuesti, nulli adminCount:
-```powershell
-$g = Get-ADGroup 'Serveri-Admins'
-$acl = Get-Acl "AD:\$($g.DistinguishedName)"
-$acl.SetAccessRuleProtection($false,$true)
-$sid = (Get-ADUser 'jaan.tamm').SID
-$acl.AddAccessRule( (New-Object System.DirectoryServices.ActiveDirectoryAccessRule($sid,'GenericAll','Allow')) )
-Set-Acl "AD:\$($g.DistinguishedName)" $acl
-Set-ADObject $g -Clear adminCount
-```
-> See kehtib **kuni järgmise SDProp tsüklini** (≤60 min), siis kustub taas. Püsivaks laboriks ei tohi GenericAll'i sihtgrupp olla Domain Adminsi liige — vt labori teede disaini põhitöölehel.
+**Seepärast** kasutab see labor hoopis **DCSync domeeniobjektil**: domeeni juure ACL-i AdminSDHolder **ei lähtesta**, nii et tee püsib ja jaan'i GenericAll grupil ei kustu. Ühtlasi õpetlikum — päris ründajad väldivad Domain Adminsi otsest sihtimist ACL-idega ja eelistavad just selliseid püsivaid teid (DCSync, lokaalne admin masinatel).
 
-**Õppepunkt:** just seepärast väldivad päris ründajad Domain Adminsi otsest sihtimist ACL-idega ja eelistavad teid, mida SDProp ei puutu — nt **DCSync domeeniobjektil** (domeeni juure ACL-i AdminSDHolder ei lähtesta) või lokaalse admini õigused masinatel.
+> **Kui ikkagi näed `ACCESS_DENIED`-i** (nt vana skriptiversiooniga, kus grupp oli DA liige): kontrolli `adminCount`, ja kas jooksuta uuesti praegune `Seed-ADLabor.ps1` (DCSync-disain) **või** nulli kaitse ajutiselt — `Set-ADObject (Get-ADGroup 'Serveri-Admins') -Clear adminCount` ja anna GenericAll uuesti (kehtib kuni järgmise SDProp tsüklini).
 
 ---
 
@@ -224,7 +220,7 @@ Kasutades Pathfindingut, paremklõpsu „Shortest Paths to Here" ja Cypheri valm
 
 | # | Serv / tee | Kuidas leida |
 |---|---|---|
-| 1 | `Serveri-Admins —MemberOf→ Domain Admins` | Pathfinding jaan.tamm → DA |
+| 1 | `Serveri-Admins —DCSync→ domeen` | SEARCH Serveri-Admins → Outbound; või Pathfinding jaan.tamm → domeen |
 | 2 | `jaan.tamm —GenericAll→ Serveri-Admins` | sama tee esimene serv |
 | 3 | `mari.kask —ForceChangePassword→ peeter.saar` | SEARCH mari.kask → Outbound õigused |
 | 4 | `liis.oja —DCSync→ domeen` | SEARCH liis.oja → Outbound; või Cypher DCSync |

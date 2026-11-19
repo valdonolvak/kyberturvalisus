@@ -21,12 +21,29 @@ $labOU    = "OU=$OUName,$domainDN"
 
 Write-Host "=== Labori puhastus ===" -ForegroundColor Cyan
 
-# Eemalda istutatud grupp Domain Adminsist (muidu jääb pesastatud tee alles,
-# kui grupp mingil põhjusel kustutamata jääb)
-try {
-    Remove-ADGroupMember -Identity 'Domain Admins' -Members 'Serveri-Admins' -Confirm:$false -ErrorAction Stop
-    Write-Host "  Eemaldatud: Serveri-Admins Domain Adminsist" -ForegroundColor Green
-} catch { Write-Host "  (Serveri-Admins polnud Domain Adminsis)" -ForegroundColor Gray }
+# 1) Eemalda DCSync (jm) ACE-d DOMEENIOBJEKTILT — need EI asu kustutatavas OU-s!
+#    Serveri-Admins ja liis.oja said GetChanges/All domeeni juurel; kui jätta
+#    puhastamata, jääb domeenile orbudeks jäänud SID-idega DCSync-õigus (ise
+#    juba leid). Kogu nende SID-id ENNE OU kustutamist ja eemalda vastavad ACE-d.
+$domainAcl   = Get-Acl "AD:\$domainDN"
+$labSids = @()
+foreach ($n in @('Serveri-Admins','liis.oja')) {
+    $o = Get-ADObject -Filter "Name -eq '$n'" -SearchBase "OU=$OUName,$domainDN" -Properties objectSid -ErrorAction SilentlyContinue
+    if ($o -and $o.objectSid) { $labSids += $o.objectSid.Value }
+}
+$removed = 0
+foreach ($ace in @($domainAcl.Access)) {
+    if ($ace.IdentityReference -is [System.Security.Principal.SecurityIdentifier] -and
+        $labSids -contains $ace.IdentityReference.Value) {
+        [void]$domainAcl.RemoveAccessRule($ace); $removed++
+    }
+}
+if ($removed -gt 0) {
+    Set-Acl "AD:\$domainDN" $domainAcl
+    Write-Host "  Eemaldatud $removed domeeni-ACE (DCSync) laboriprintsipaalidelt" -ForegroundColor Green
+} else {
+    Write-Host "  (domeenilt ei leitud labori DCSync-ACE-sid)" -ForegroundColor Gray
+}
 
 $ou = Get-ADOrganizationalUnit -Filter "Name -eq '$OUName'" -ErrorAction SilentlyContinue
 if ($ou) {
@@ -41,4 +58,5 @@ if ($ou) {
     Write-Host "  OU '$OUName' ei leitud — midagi pole kustutada." -ForegroundColor Gray
 }
 
-Write-Host "`nValmis. NB: DCSync/WriteDacl ACE-d olid objektidel, mis kustutati koos OU-ga." -ForegroundColor Cyan
+Write-Host "`nValmis. Domeeni DCSync-ACE-d eemaldatud eraldi; GenericAll/WriteDacl/ForceChangePassword ACE-d kustusid koos OU objektidega." -ForegroundColor Cyan
+Write-Host "Kõige puhtam lähtestus on siiski DC VM hetktõmmis." -ForegroundColor Gray

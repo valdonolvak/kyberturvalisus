@@ -204,13 +204,13 @@ zip bloodhound.zip *.json
 
 > **Enne alustamist:** BloodHound CE veebiliidese kasutamine (Search, Pathfinding, Cypher, serva **Abuse Info**, Tier Zero jne) on eraldi juhendis → **[BloodHound-CE-kasutusjuhend.md](./BloodHound-CE-kasutusjuhend.md)**. Loe see läbi, siis on alltoodud ülesanded hõlpsamad.
 
-Kasuta otsingut, serva-filtreid ja päringut **„Shortest Paths to Domain Admins"**. Iga leitud tee kohta täida tabel (ülesanne C7).
+Kasuta otsingut, Pathfindingut ja Cypheri valmispäringuid. Siht ei ole alati „Domain Admins" grupp — täieliku ülevõtu annab siin **DCSync** (paroolihashide, sh krbtgt, väljavõte). Iga leitud tee kohta täida tabel (ülesanne C7).
 
 | # | Ülesanne | Vihje (mida otsida) |
 |---|---|---|
-| C1 | Leia `jaan.tamm` tee Domain Adminsini | Alusta sõlmest `jaan.tamm`, „Shortest Path to Here" Domain Adminsini |
+| C1 | Leia `jaan.tamm` tee täieliku ülevõtuni | Pathfinding: algus `jaan.tamm`, siht domeen `HKHK.LOCAL` (või `Administrator`). Tee lõpeb `DCSync` servaga |
 | C2 | Millise **serva** kaudu jaan grupiõigusi võidab? | Otsi serva `GenericAll` grupile `Serveri-Admins` |
-| C3 | Miks viib `Serveri-Admins` Domain Adminsini? | Vaata `MemberOf` ahelat (pesastatud grupp) |
+| C3 | Miks annab `Serveri-Admins` täieliku kontrolli? | Vaata grupi **väljaminevat** serva `DCSync` domeenile (mitte `MemberOf` DA-sse) |
 | C4 | Leia konto, kes saab **teise kasutaja parooli lähtestada** | Serv `ForceChangePassword` |
 | C5 | Leia konto, kes saab domeenist **paroolihashid välja replitseerida** | Serv `DCSync` domeeni objektile |
 | C6 | Leia **Kerberoastitav** teenusekonto ja seleta rünne | Sõlme omadus `HasSPN = true` |
@@ -230,14 +230,46 @@ Iga istutatud väärseadistuse kohta arutage ja proovige:
 
 | Väärseadistus | BloodHoundi serv | Parandus | Avastamine logis / monitooringus |
 |---|---|---|---|
-| Teenusekonto Domain Adminsis | `MemberOf` | Teenusekonto välja privgrupist; gMSA + least privilege | AD grupimuutuste audit (4728/4732) |
-| Pesastatud grupp DA-s | `MemberOf` | Lameda grupistruktuur; tiering (0/1/2) | Perioodiline BloodHound audit (sinine tiim) |
+| Grupil `Serveri-Admins` DCSync domeenil | `DCSync` | Eemalda GetChanges/All grupilt; DCSync ainult DC-de kontodel | Event 4662 replikatsiooni-GUID-iga |
+| Teenusekonto DCSync-grupis | `MemberOf` | Teenusekonto välja privgrupist; gMSA + least privilege | AD grupimuutuste audit (4728/4732) |
 | `GenericAll` grupile | `GenericAll` | Eemalda liigne ACE; delegeeri kitsalt | Event 5136 (DACL muutus) |
 | `ForceChangePassword` | `ForceChangePassword` | Eemalda õigus; parooli-lähtestus ainult helpdeskile | Event 4724 |
 | `DCSync` õigus | `DCSync` | Eemalda GetChanges/All tavakontolt | Event 4662 replikatsiooni-GUID-iga |
 | Kerberoastitav SPN + nõrk parool | `HasSPN` | Pikk juhuslik parool / gMSA; AES-krüpt | Event 4769 (TGS, RC4 lipuga) |
 
 **Kesksõnum õppijale:** sama BloodHound, millega ründaja teid otsib, on **administraatori parim tööriist** samade teede enne sulgemiseks. Jooksuta seda regulaarselt oma AD vastu.
+
+### Ründeteede kaart (kokkuvõte)
+
+Alljärgnev diagramm näitab, kuidas istutatud väärseadistused kokku **täieliku domeeni ülevõtuni** viivad. Põhitee kulgeb `GenericAll` ja `DCSync` kaudu; `ForceChangePassword`/`WriteDacl` on täiendavad ACL-kuritarvituse harjutused.
+
+```mermaid
+flowchart LR
+    jaan["jaan.tamm<br/>tavakasutaja"]
+    svc["svc-sql<br/>HasSPN + nork parool"]
+    liis["liis.oja"]
+    SA["Serveri-Admins<br/>grupp"]
+    DOM["domeen<br/>hkhk.local"]
+    WIN["TAIELIK ULEVOTT<br/>krbtgt hash to Golden Ticket"]
+    mari["mari.kask"]
+    peeter["peeter.saar"]
+    HD["Helpdesk<br/>grupp"]
+
+    jaan -->|"GenericAll (lisa end gruppi)"| SA
+    svc -->|"Kerberoast + crack to liikmelisus"| SA
+    SA -->|DCSync| DOM
+    liis -->|DCSync| DOM
+    DOM --> WIN
+    mari -->|ForceChangePassword| peeter
+    peeter -->|WriteDacl| HD
+
+    classDef win fill:#b30000,color:#ffffff,stroke:#660000,stroke-width:2px;
+    classDef dom fill:#f0a500,color:#000000,stroke:#9a6b00,stroke-width:2px;
+    class WIN win;
+    class DOM dom;
+```
+
+Loe teed nii: **jaan.tamm** lisab end `GenericAll`-iga gruppi **Serveri-Admins**; grupil on **DCSync** domeenil → ta tõmbab krbtgt hashi → **Golden Ticket** → täielik kontroll. Sama lõppu annab **svc-sql** (Kerberoast → grupiliikmelisus) ja **liis.oja** (otse DCSync). `mari.kask → peeter.saar → Helpdesk` on eraldi ACL-ahel (õpetab `ForceChangePassword` ja `WriteDacl` kombineerimist).
 
 ---
 

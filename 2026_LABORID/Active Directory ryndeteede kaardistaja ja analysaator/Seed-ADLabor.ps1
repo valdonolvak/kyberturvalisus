@@ -128,19 +128,33 @@ $gToojaam  = New-LabGroup 'Toojaama-Admins'
 # jaan alustab Helpdeskis (tavaõigused)
 Add-ADGroupMember -Identity $gHelpdesk -Members $jaan
 
-# VÄÄRSEADISTUS 1 — pesastatud tee Domain Adminsini:
-#   Serveri-Admins on otse Domain Adminsi liige (teenusekonto svc-sql on seal sees)
-Add-ADGroupMember -Identity 'Domain Admins' -Members $gServeri
+# svc-sql on Serveri-Adminsi liige (Kerberoasti tee algab siit)
 Add-ADGroupMember -Identity $gServeri -Members $svc
-Write-Host "  [1] Serveri-Admins -> Domain Admins (pesastatud); svc-sql on Serveri-Admins liige" -ForegroundColor Yellow
+#
+# MÄRKUS: Serveri-Admins EI ole Domain Adminsi liige.
+# Varasem disain pani ta DA liikmeks, aga siis muutub grupp AdminSDHolder'i
+# kaitse alla (adminCount=1) ja SDProp lähtestab iga ~60 min selle ACL-i,
+# kustutades jaan'i GenericAll ACE -> rünne lakkab töötamast.
+# Selle asemel saab grupp DCSync-õiguse domeenil (VÄÄRSEADISTUS 1 allpool) —
+# DCSync on võrdväärne või tugevam täieliku ülevõtu tee ja domeeniobjekti
+# ACL-i AdminSDHolder EI lähtesta, nii et tee püsib.
 
 # ===========================================================================
 #  PAHATAHTLIKUD ACL-id (BloodHoundi servad)
 # ===========================================================================
 Write-Host "`n-- ACL väärseadistused --" -ForegroundColor Cyan
 
+# VÄÄRSEADISTUS 1 — DCSync grupile (asendab varasema DA-liikmelisuse):
+#   Serveri-Admins saab domeenilt GetChanges + GetChangesAll. Kes grupis on
+#   (nt lisatud jaan.tamm või Kerberoastitud svc-sql), saab replitseerida
+#   paroolihashid (sh krbtgt) -> Golden Ticket -> täielik ülevõtt.
+#   Domeeniobjekti ACL-i AdminSDHolder ei lähtesta -> tee on püsiv.
+Add-LabAce -TargetDN $domainDN -PrincipalSid $gServeri.SID.Value -Right 'ExtendedRight' -ObjectTypeGuid $GUID_DCSync_GetChanges
+Add-LabAce -TargetDN $domainDN -PrincipalSid $gServeri.SID.Value -Right 'ExtendedRight' -ObjectTypeGuid $GUID_DCSync_GetChangesAll
+Write-Host "  [1] Serveri-Admins --DCSync (GetChanges/All)--> domeen" -ForegroundColor Yellow
+
 # VÄÄRSEADISTUS 2 — GenericAll grupi üle:
-#   jaan.tamm -> GenericAll -> Serveri-Admins  (saab end gruppi lisada -> DA)
+#   jaan.tamm -> GenericAll -> Serveri-Admins (saab end gruppi lisada -> grupp DCSync -> ülevõtt)
 Add-LabAce -TargetDN $gServeri.DistinguishedName -PrincipalSid $jaan.SID.Value -Right 'GenericAll'
 Write-Host "  [2] jaan.tamm --GenericAll--> Serveri-Admins" -ForegroundColor Yellow
 
@@ -174,12 +188,12 @@ Write-Host "  [6] svc-sql: SPN seatud (HasSPN) + nõrk paroolina '$ServicePasswo
 # ===========================================================================
 Write-Host "`n=== Külv valmis. Istutatud ründeteed: ===" -ForegroundColor Cyan
 @"
-  [1] MemberOf     : Serveri-Admins -> Domain Admins (pesastatud grupp)
-  [2] GenericAll   : jaan.tamm -> Serveri-Admins -> (AddMember) -> Domain Admins
+  [1] DCSync       : Serveri-Admins -> domeen (grupil GetChanges/All; PÜSIV, SDProp ei lähtesta)
+  [2] GenericAll   : jaan.tamm -> Serveri-Admins -> (AddMember) -> grupil DCSync -> ülevõtt
   [3] ForceChangePw: mari.kask -> peeter.saar
   [4] DCSync       : liis.oja -> domeen (paroolihashide väljavõte)
   [5] WriteDacl    : peeter.saar -> Helpdesk
-  [6] Kerberoast   : svc-sql (SPN + nõrk parool, on Domain Adminsi tee peal)
+  [6] Kerberoast   : svc-sql (SPN + nõrk parool; Serveri-Adminsi liige -> DCSync tee peal)
 
   Õppija stardikonto: jaan.tamm / $LabPassword
   Teenusekonto      : svc-sql   / $ServicePassword

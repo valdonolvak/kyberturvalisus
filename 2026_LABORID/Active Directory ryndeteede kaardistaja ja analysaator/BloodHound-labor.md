@@ -72,29 +72,12 @@ Kõik ühes isoleeritud host-only / internal võrgus. Kellad DC ja klientide vah
 
 ### B1. BloodHound CE käivitus (KALI või WIN11 + Docker)
 
-> **Eeltingimus Kalis — ehtne Docker, mitte podman.**
-> Kalis on `docker` käsk sageli suunatud **podmani** peale (pakett `podman-docker`). Siis annab `docker compose up -d` vea:
-> `Cannot connect to the Docker daemon at .../podman/podman.sock`.
-> BloodHound CE compose on ehtsa Dockeriga sujuvam (podman rootless komistab postgresi köite-õiguste ja portide taha). Paigalda ehtne Docker:
->
-> ```bash
-> sudo apt remove -y podman-docker          # eemalda docker->podman shim
-> sudo apt update
-> sudo apt install -y docker.io docker-compose-v2
-> sudo systemctl enable --now docker        # käivita ja luba docker teenus
-> sudo usermod -aG docker $USER             # luba ilma sudota
-> newgrp docker                             # rakenda grupp kohe (või logi välja/sisse)
-> docker version                            # Server peab ütlema "Docker Engine", mitte "podman"
-> ```
-
 ```bash
 curl -L https://ghst.ly/getbhce -o docker-compose.yml
 docker compose up -d
 # Ava http://localhost:8080 ; esmase parooli leiad logist:
 docker compose logs bloodhound | grep -i "password"
 ```
-
-> **Kui veeb `http://localhost:8080` ei vasta:** kontrolli konteinerite olekut `docker compose ps` ja logisid `docker compose logs`.
 
 ### B2. Andmete kogumine
 

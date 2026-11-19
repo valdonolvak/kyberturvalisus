@@ -82,7 +82,18 @@ Serv näitab, **mis õigus ühel sõlmel teise üle on**. Laboris esinevad peami
 
 1. Vali **SEARCH**, trüki nime algus (nt `jaan`).
 2. Klõpsa tulemusel — sõlm tsentreeritakse graafil.
-3. **Klõps sõlmel** avab paremal **infopaneeli** (Overview): kirjeldus, sissetulevad/väljaminevad õigused, grupiliikmelisused. Siit näed kiiresti, mis kontol on ja mis sellele osutab.
+3. **Klõps sõlmel** avab paremal **infopaneeli** (Overview).
+
+**Inbound vs Outbound Object Control** — infopaneeli kaks tähtsaimat sektsiooni:
+
+| Sektsioon | Mida näitab | Kes seda vaatab |
+|---|---|---|
+| **Outbound Object Control** | õigused, mis **sellel** sõlmel on **teiste** üle (*mida tema saab teha*) | ründaja: „millele mul on õigus?" |
+| **Inbound Object Control** | õigused, mis **teistel** on **selle** sõlme üle (*kes teda kontrollib*) | kaitsja: „kes saab selle konto üle võtta?" |
+
+Nii et „SEARCH `mari.kask` → **Outbound**" tähendab: ava mari sõlm ja vaata Outbound Object Control sektsiooni → näed `ForceChangePassword` sihtmärgile `peeter.saar`. Kõrgel sihtmärgil (Domain Admins, domeen) vaata hoopis **Inbound** — näed, kes sinna ligi pääseb.
+
+> Iga õiguse (serva) ärakasutamine samm-sammult, Kali ja Windowsi käskudega, on failis **[Rundeteede-lahenduskaik.md](./Rundeteede-lahenduskaik.md)**.
 
 ---
 

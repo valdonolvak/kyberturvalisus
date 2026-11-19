@@ -151,9 +151,30 @@ docker compose logs bloodhound 2>&1 | grep -i "Initial Password"
 
 **Variant 2 — bloodhound-python Kalist:**
 
+> **Eeltingimus: Kali peab domeeni nime DC kaudu lahendama.**
+> Kali ei tunne vaikimisi AD domeeni (`labor.local`) ega leia DC-d. Tüüpiline viga:
+> `Failed to get Kerberos TGT ... [DOMEEN:88] Name or service not known` ja `Could not find a domain controller`.
+> Sea **DC IP nimeserveriks** (DC on ühtlasi DNS-server). Vali üks:
+>
+> ```bash
+> # A) DC esimeseks nimeserveriks (lisa rida resolv.conf algusesse)
+> sudo sed -i '1i nameserver <DC_IP>' /etc/resolv.conf
+>
+> # B) püsivam kirje otse DC FQDN-ile (NetworkManager ei kirjuta üle)
+> echo "<DC_IP>  dc01.labor.local labor.local dc01" | sudo tee -a /etc/hosts
+> ```
+>
+> Kontrolli, et domeen lahendub (peab tagastama DC nime):
+> ```bash
+> dig @<DC_IP> _ldap._tcp.dc._msdcs.labor.local SRV +short
+> ```
+> NB: `-d` peab olema **täpselt** DC domeen (`(Get-ADDomain).DNSRoot` DC-l), nt `perenimi.local`.
+
 ```bash
-bloodhound-python -u jaan.tamm -p 'Suvi2026!' -d labor.local -ns <DC01_IP> -c All
+bloodhound-python -u jaan.tamm -p 'Suvi2026!' -d labor.local -ns <DC_IP> -dc dc01.labor.local -c All
 ```
+
+> Kui väljund ütleb „BloodHound **LEGACY**", on tegu vana kollektoriga. Enamasti impordib CE selle siiski ära; kui import tõrgub, kasuta CE-ühilduvat kollektorit: `pipx install bloodhound-ce` (annab käsu `bloodhound-ce-python`).
 
 ### B3. Import
 

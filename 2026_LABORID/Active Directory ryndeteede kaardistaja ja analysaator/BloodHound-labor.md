@@ -106,6 +106,19 @@ Kõik ühes isoleeritud host-only / internal võrgus. Kellad DC ja klientide vah
 >
 > Podmani ennast ei pea eemaldama — docker.io ja podman võivad koos eksisteerida; ainus konflikt oli `docker` käsu nimi. Kui `which docker` näitab ikka podmani teed, logi välja/sisse või käivita `hash -r`.
 
+> **Tõrge: `Cannot connect to the Docker daemon at .../podman/podman.sock`, kuigi `which docker` on õige.**
+> Siis on shellis veel keskkonnamuutuja `DOCKER_HOST`, mis suunab Dockeri kliendi podmani soklile (jääb sageli varasemast podmani-katsest alles). Ehtne Docker kuulab `/var/run/docker.sock`. Kontrolli ja eemalda:
+>
+> ```bash
+> echo "$DOCKER_HOST"                               # kui näitab .../podman/podman.sock, on süüdlane leitud
+> unset DOCKER_HOST                                 # eemalda praegusest shellist
+> grep -n DOCKER_HOST ~/.zshrc ~/.bashrc ~/.profile 2>/dev/null   # kas on püsivalt rc-failis?
+> sed -i '/DOCKER_HOST/d' ~/.zshrc                  # kui leidus, kustuta rida (Kalis vaikimisi zsh)
+> docker context use default                        # kontekst tagasi vaikimisi soklile
+> sudo systemctl enable --now docker                # veendu, et teenus jookseb
+> docker version                                    # nüüd peab vastama ka "Server: Docker Engine"
+> ```
+
 ```bash
 curl -L https://ghst.ly/getbhce -o docker-compose.yml
 docker compose up -d

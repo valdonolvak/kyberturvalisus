@@ -123,10 +123,21 @@ Kõik ühes isoleeritud host-only / internal võrgus. Kellad DC ja klientide vah
 curl -L https://ghst.ly/getbhce -o docker-compose.yml
 docker compose up -d
 # Ava http://localhost:8080 ; esmase parooli leiad logist:
-docker compose logs bloodhound | grep -i "password"
+docker compose logs bloodhound 2>&1 | grep -i "Initial Password"
 ```
 
+**Sisselogimine:** BloodHound CE loob esmakäivitusel admin-konto. Välja **Email Address** sisesta kasutajanimi **`admin`** (hoolimata sildist „Email"), parooliks logist saadud juhuslik string. Esimesel sisselogimisel sunnib BloodHound kohe uue parooli seadma.
+
 > **Kui veeb `http://localhost:8080` ei vasta:** kontrolli konteinerite olekut `docker compose ps` ja logisid `docker compose logs`.
+
+> **Kui esmast parooli logist ei leia** (nt konteiner on juba mitu korda käivitunud — parool prinditakse ainult esimesel korral), lähtesta puhtalt. `-v` kustutab andmebaasi, aga kui andmeid pole veel imporditud, siis kadu pole:
+>
+> ```bash
+> docker compose down -v
+> docker compose up -d
+> sleep 20
+> docker compose logs bloodhound 2>&1 | grep -i "Initial Password"
+> ```
 
 ### B2. Andmete kogumine
 

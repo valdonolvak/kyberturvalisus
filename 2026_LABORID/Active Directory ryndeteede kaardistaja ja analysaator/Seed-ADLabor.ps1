@@ -25,7 +25,8 @@ param(
     # Teadlikult nõrgad laboriparoolid
     [string]$LabPassword     = 'Suvi2026!',
     [string]$ServicePassword = 'Password1',   # Kerberoastimiseks: cracki'b sekunditega
-    [string]$OUName          = 'Labor'
+    [string]$OUName          = 'Labor',
+    [switch]$Force            # jäta laborikeskkonna kinnitusküsimus vahele (nt automaatkäivitus)
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,10 +44,20 @@ $svcSecurePw= ConvertTo-SecureString $ServicePassword -AsPlainText -Force
 Write-Host "Domeen: $domainDNS ($domainDN)" -ForegroundColor Gray
 
 # --- Hoiatus / kaitse tootmise eest ---------------------------------------
-if ($domainDNS -notmatch 'labor|lab|test|kyber|training') {
-    Write-Warning "Domeeni nimi ei sisalda 'labor/lab/test/kyber'. Oled KINDEL, et see on laborikeskkond?"
-    $ans = Read-Host "Kirjuta 'JAH', et jätkata"
+# Skript tuvastab domeeni ise (Get-ADDomain) ja külvab just sinna. Et see ei
+# jookseks kogemata tootmis-AD vastu, kontrollitakse, kas domeen "näeb välja
+# nagu labor". Labor = tüüpiline sisevõrgu TLD (.local, .lab, .test, .internal,
+# .lan, .example) VÕI nimes sõna labor/kyber/training/demo. Nii läheb näiteks
+# 'perenimi.local' ja 'hkhk.local' ilma hoiatuseta läbi, aga päris-domeen
+# (.ee, .com, .edu vms) küsib kinnitust. -Force jätab kontrolli üldse vahele.
+$labLikePattern = '\.(local|lab|test|internal|lan|example)$|labor|kyber|training|demo'
+if (-not $Force -and $domainDNS -notmatch $labLikePattern) {
+    Write-Warning "Domeen '$domainDNS' ei näe välja nagu laborikeskkond (puudub .local/.lab/.test vms ja laborile viitav sõna)."
+    Write-Warning "Skript teeb AD-sse tahtlikke turvaauke — ÄRA jooksuta seda tootmis-AD vastu!"
+    $ans = Read-Host "Kirjuta 'JAH', et sellegipoolest jätkata"
     if ($ans -ne 'JAH') { throw "Katkestatud kasutaja poolt." }
+} else {
+    Write-Host "Domeen '$domainDNS' tuvastatud laborina — jätkan." -ForegroundColor Gray
 }
 
 # --- OU --------------------------------------------------------------------

@@ -1,0 +1,5 @@
+[mysqld]
+# Tahtlikult nõrk seadistus — AINULT laborile!
+# Lubab lugeda/kirjutada faile (LOAD_FILE, INTO OUTFILE) — Labor 7.
+secure_file_priv=
+local_infile=1

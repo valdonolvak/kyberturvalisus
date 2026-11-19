@@ -72,12 +72,48 @@ Kõik ühes isoleeritud host-only / internal võrgus. Kellad DC ja klientide vah
 
 ### B1. BloodHound CE käivitus (KALI või WIN11 + Docker)
 
+> **Eeltingimus Kalis — ehtne Docker, mitte podman.**
+> Kalis on `docker` käsk sageli suunatud **podmani** peale (pakett `podman-docker`). Siis annab `docker compose up -d` vea:
+> `Cannot connect to the Docker daemon at .../podman/podman.sock`.
+> BloodHound CE compose on ehtsa Dockeriga sujuvam (podman rootless komistab postgresi köite-õiguste ja portide taha).
+>
+> Vaja on **kahte asja**: mootorit (`docker.io`) ja Compose v2 pluginat. Kali allikates pole `docker-compose-v2` paketti usaldusväärselt saadaval, seega paigalda plugin ametliku binaarina.
+>
+> ```bash
+> # 1) Eemalda docker->podman shim (NB: mitte docker.io ennast!)
+> sudo apt remove -y podman-docker
+>
+> # 2) Mootor
+> sudo apt update
+> sudo apt install -y docker.io
+>
+> # 3) Compose v2 plugin ametliku binaarina (sõltumatu distro paketist)
+> sudo mkdir -p /usr/local/lib/docker/cli-plugins
+> sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m)" \
+>   -o /usr/local/lib/docker/cli-plugins/docker-compose
+> sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+>
+> # 4) Käivita teenus ja luba ilma sudota
+> sudo systemctl enable --now docker
+> sudo usermod -aG docker "$USER"
+> newgrp docker
+>
+> # 5) Kontroll — kõik kolm peavad vastama
+> which docker             # /usr/bin/docker  (mitte podman)
+> docker version           # Server: Docker Engine
+> docker compose version   # Docker Compose version v2.x
+> ```
+>
+> Podmani ennast ei pea eemaldama — docker.io ja podman võivad koos eksisteerida; ainus konflikt oli `docker` käsu nimi. Kui `which docker` näitab ikka podmani teed, logi välja/sisse või käivita `hash -r`.
+
 ```bash
 curl -L https://ghst.ly/getbhce -o docker-compose.yml
 docker compose up -d
 # Ava http://localhost:8080 ; esmase parooli leiad logist:
 docker compose logs bloodhound | grep -i "password"
 ```
+
+> **Kui veeb `http://localhost:8080` ei vasta:** kontrolli konteinerite olekut `docker compose ps` ja logisid `docker compose logs`.
 
 ### B2. Andmete kogumine
 

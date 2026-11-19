@@ -202,6 +202,8 @@ zip bloodhound.zip *.json
 
 ## 5. Osa C — Ülesanded (avasta ründeteed)
 
+> **Enne alustamist:** BloodHound CE veebiliidese kasutamine (Search, Pathfinding, Cypher, serva **Abuse Info**, Tier Zero jne) on eraldi juhendis → **[BloodHound-CE-kasutusjuhend.md](./BloodHound-CE-kasutusjuhend.md)**. Loe see läbi, siis on alltoodud ülesanded hõlpsamad.
+
 Kasuta otsingut, serva-filtreid ja päringut **„Shortest Paths to Domain Admins"**. Iga leitud tee kohta täida tabel (ülesanne C7).
 
 | # | Ülesanne | Vihje (mida otsida) |
@@ -262,6 +264,7 @@ Grupi vahetamisel taasta DC VM hetktõmmisest **või** jooksuta:
 
 ## Lisad
 
+- [BloodHound-CE-kasutusjuhend.md](./BloodHound-CE-kasutusjuhend.md) — veebiliidese kasutusjuhend (Search, Pathfinding, Cypher, Abuse Info)
 - `Seed-ADLabor.ps1` — labori külvskript (6 väärseadistust)
 - `Clear-ADLabor.ps1` — puhastusskript
 - Soovituslik taust: GOAD (Game of Active Directory) — avatud lähtekoodiga suurem harjutuskeskkond sama põhimõttega.

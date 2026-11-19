@@ -127,7 +127,7 @@ git clone https://github.com/cube0x0/CVE-2021-1675 ~/pn-lab/CVE-2021-1675
 ```
 *Selgitus rea kaupa:* `python3 -m venv` loob isoleeritud keskkonna; `source .../activate` lülitab selle sisse (ainult aktiivses venv'is resolvuvad `rpcdump.py`, `smbserver.py` ja PoC õige Impacketi forki peale). `pip install ~/pn-lab/impacket` paigaldab cube0x0 versiooni (muudetud `MS-RPRN`/`MS-PAR` tugi) venv'i. Viimane käsk toob PoC-skripti `CVE-2021-1675.py`.
 
-> **Reprodutseeritavus:** cube0x0 fork on 2021. aastast. Et labor töötaks ka aastate pärast (ja uuemal Pythonil), naeluta versioon kinni — nt `git -C ~/pn-lab/impacket checkout <TÖÖTAV_KOMMIT>` enne `pip install`-i. Nii ei lõhu forki või selle sõltuvuste hilisemad muudatused laborit.
+> **Reprodutseeritavus:** cube0x0 fork on 2021. aastast. Et labor töötaks ka aastate pärast, võib forki versiooni kinni naelutada: vali cube0x0 Impacketi repo ajaloost üks kindel commit ja käivita enne `pip install`-i `git -C ~/pn-lab/impacket checkout <hash>`, asendades `<hash>` päris väärtusega. Vaikimisi (ilma selleta) võtab labor forki viimase seisu.
 
 > **Igas uues terminalis** (nt eraldi aknad SMB-serverile ja ründele) käivita enne tööd uuesti `source ~/pn-lab/bin/activate`.
 

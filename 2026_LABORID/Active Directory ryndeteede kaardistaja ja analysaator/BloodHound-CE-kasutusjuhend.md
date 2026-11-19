@@ -143,12 +143,14 @@ net rpc group addmem "TargetGroup" "TargetUser" -U "DOMAIN"/"ControlledUser"%"Pa
 **NB:** need `net rpc` / `pth-net` käsud on **Kali/Linux** tööriistad (Samba `net`). Windowsis neid pole — vaata allpool Windowsi vastet.
 
 #### Variant 1 — Kalist (nagu aknas näidatud, täidetud)
+
+> **NB! Kasuta ülakomasid (`'...'`), mitte jutumärke** — labori paroolis on `!`, ja bash käivitab `!` jutumärkides ajaloo-laienduse, mis ajab rea sassi (jääd `dquote>` ootejärge). Ülakomade sees on `!` ja `%` literaalsed. (Kui jäid juba `dquote>` lõksu, vajuta **Ctrl+C** ja alusta uuesti.)
+
 ```bash
-net rpc group addmem "Serveri-Admins" "jaan.tamm" \
-  -U "HKHK"/"jaan.tamm"%"Suvi2026!" -S "10.0.30.10"
+net rpc group addmem 'Serveri-Admins' 'jaan.tamm' -U 'HKHK/jaan.tamm%Suvi2026!' -S 10.0.30.10
 
 # kontroll:
-net rpc group members "Serveri-Admins" -U "HKHK"/"jaan.tamm"%"Suvi2026!" -S "10.0.30.10"
+net rpc group members 'Serveri-Admins' -U 'HKHK/jaan.tamm%Suvi2026!' -S 10.0.30.10
 ```
 
 #### Variant 2 — domeeniga liitunud Win11-lt, jaan.tamm'ina

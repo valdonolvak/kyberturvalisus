@@ -1,0 +1,51 @@
+# =====================================================================
+#  docker-compose.yml — SQL-süstimise labor konteinerites
+#  Kaks teenust: web (PHP+Apache) ja db (MariaDB).
+#  AINULT isoleeritud laborikeskkonnas!
+#
+#  Käivita selles kaustas:   docker compose up --build -d
+#  Peata ja kustuta:          docker compose down -v
+#  Veebileht:                 http://<hosti-ip>:8080/index.php
+# =====================================================================
+
+services:
+  db:
+    image: mariadb:10.6
+    container_name: labor_db
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      # Andmebaasi loomine ja testandmed (jookseb tähestiku järjekorras)
+      - ../andmebaas.sql:/docker-entrypoint-initdb.d/01-andmebaas.sql:ro
+      - ./db/02-oigused.sql:/docker-entrypoint-initdb.d/02-oigused.sql:ro
+      # Tahtlikult nõrk seadistus (failioperatsioonid lubatud)
+      - ./db/labor.cnf:/etc/mysql/conf.d/labor.cnf:ro
+      # Jagatud kaust webshelli (INTO OUTFILE) demoks — Labor 7
+      - upload:/var/www/html/upload
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/web/Dockerfile
+    container_name: labor_web
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_USER: veebipood
+      DB_PASS: veebipood
+      DB_NAME: pood
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Sama jagatud kaust nagu db-l — nii jõuab INTO OUTFILE fail veebi
+      - upload:/var/www/html/upload
+
+volumes:
+  upload:

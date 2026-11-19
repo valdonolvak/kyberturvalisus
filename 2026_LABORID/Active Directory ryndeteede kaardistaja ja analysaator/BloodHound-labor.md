@@ -178,7 +178,25 @@ bloodhound-python -u jaan.tamm -p 'Suvi2026!' -d labor.local -ns <DC_IP> -dc dc0
 
 ### B3. Import
 
-Lohista tekkinud `.zip` BloodHound CE veebiliidesesse (**Administration → File Ingest**) ja oota töötlemine lõpuni.
+Ava BloodHound CE veebis **Administration → File Ingest** ja lohista sinna kogutud andmed. Oota töötlemine lõpuni.
+
+**Kust andmed tulevad — sõltub kollektorist:**
+
+- **SharpHound** teeb kohe ühe `.zip`-i (`--zipfilename labor` → `labor_*.zip`). Lohista see zip.
+- **bloodhound-python** EI tee vaikimisi zipi — ta kirjutab **eraldi JSON-failid** sinna kausta, kus käsu käivitasid (nt `~/BloodHound`). Vali üks:
+
+```bash
+cd ~/BloodHound
+ls -lt *.json                       # <ajatempel>_users.json, _groups.json, _computers.json, _domains.json, _gpos.json, _ous.json, _containers.json
+
+# A) paki üheks zipiks ja lohista see
+sudo apt install -y zip 2>/dev/null
+zip bloodhound.zip *.json
+
+# B) VÕI lohista JSON-failid otse — CE File Ingest võtab ka üksikud .json-id
+```
+
+> Järgmisel korral saad zipi ka automaatselt: `bloodhound-python ... -c All --zip`.
 
 ---
 

@@ -171,6 +171,35 @@ whoami /groups | findstr /i "Domain Admins"
 
 Lokaalset admini Win11-l pole vaja — õigus on AD-s ja seda jõustab DC.
 
+### 8.2 Tõrge: `ACCESS_DENIED` / `insufficientAccessRights`, kuigi BloodHound näitab `GenericAll`
+
+Üks sagedasemaid alguse komistuskohti. Kui lisamine ebaõnnestub:
+- `net rpc` → `NT_STATUS_ACCESS_DENIED`
+- bloodyAD → `insufficientAccessRights ... ERROR_DS_INSUFF_ACCESS_RIGHTS`
+
+ja seda **mõlema tööriistaga korraga**, siis asi pole protokollis — kasutajal **ei olegi (enam)** seda õigust, kuigi graaf näitab serva.
+
+**Põhjus — AdminSDHolder / SDProp.** Kui sihtgrupp (nt `Serveri-Admins`) on tehtud **Domain Adminsi liikmeks**, kaitseb AD seda mehhanismiga **AdminSDHolder**: iga ~60 min **lähtestab SDProp** kaitstud objektide ACL-i turvamallile ja lülitab pärimise välja. See kustutab külvatud `GenericAll` ACE. BloodHound võis serva koguda varem, enne kui SDProp jõudis käia.
+
+**Kontrolli DC-l** (`adminCount = 1` kinnitab, et objekt on kaitstud):
+```powershell
+Get-ADGroup Serveri-Admins -Properties adminCount | Select-Object Name, adminCount
+```
+
+**Kiire parandus demo jaoks** (DC-l, admin õigustes) — taasta pärimine, anna GenericAll uuesti, nulli adminCount:
+```powershell
+$g = Get-ADGroup 'Serveri-Admins'
+$acl = Get-Acl "AD:\$($g.DistinguishedName)"
+$acl.SetAccessRuleProtection($false,$true)
+$sid = (Get-ADUser 'jaan.tamm').SID
+$acl.AddAccessRule( (New-Object System.DirectoryServices.ActiveDirectoryAccessRule($sid,'GenericAll','Allow')) )
+Set-Acl "AD:\$($g.DistinguishedName)" $acl
+Set-ADObject $g -Clear adminCount
+```
+> See kehtib **kuni järgmise SDProp tsüklini** (≤60 min), siis kustub taas. Püsivaks laboriks ei tohi GenericAll'i sihtgrupp olla Domain Adminsi liige — vt labori teede disaini põhitöölehel.
+
+**Õppepunkt:** just seepärast väldivad päris ründajad Domain Adminsi otsest sihtimist ACL-idega ja eelistavad teid, mida SDProp ei puutu — nt **DCSync domeeniobjektil** (domeeni juure ACL-i AdminSDHolder ei lähtesta) või lokaalse admini õigused masinatel.
+
 ---
 
 ## 9. Cypher — valmis ja oma päringud

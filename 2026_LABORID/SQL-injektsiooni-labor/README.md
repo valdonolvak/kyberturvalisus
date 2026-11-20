@@ -34,6 +34,7 @@ cd docker && docker compose up --build -d
 
 | Fail | Sisu |
 |------|------|
+| `OPILASE_JUHEND.md` | **Õpilasele** — sammsammuline kasutusjuhend põhjalike seletustega |
 | `PAIGALDUS.md` | Paigaldusjuhend + 8 rünnakunäidet + kaitsemeetmed |
 | `LABORITOOD.md` | Versioonijuhend + 8 sammsammulist laboriülesannet |
 | `andmebaas.sql` | Andmebaasi + testandmete loomine |

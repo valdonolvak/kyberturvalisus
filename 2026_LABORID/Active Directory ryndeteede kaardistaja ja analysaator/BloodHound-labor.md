@@ -4,6 +4,8 @@
 > **Kestus:** ~4 akadeemilist tundi (1 teooriaplokk + labor)
 > **Vorm:** praktiline labor isoleeritud virtuaalkeskkonnas
 
+> 🎓 **Õpilasele:** labori iseseisvaks tegemiseks järgi samm-sammulist juhendit **[Opilase-juhend.md](./Opilase-juhend.md)** — see ütleb täpselt, mida teha, ja seletab *miks*. See tööleht siin on labori ülddokument (õpetajale ja ülevaateks).
+
 ---
 
 ## ⚠️ Eetika ja piirangud
@@ -300,6 +302,7 @@ Grupi vahetamisel taasta DC VM hetktõmmisest **või** jooksuta:
 
 ## Lisad
 
+- [Opilase-juhend.md](./Opilase-juhend.md) — **õpilase samm-sammuline tööjuhend** (mida teha + miks; labori iseseisvaks tegemiseks)
 - [BloodHound-CE-kasutusjuhend.md](./BloodHound-CE-kasutusjuhend.md) — veebiliidese kasutusjuhend (Search, Pathfinding, Cypher, Abuse Info)
 - [Rundeteede-lahenduskaik.md](./Rundeteede-lahenduskaik.md) — iga tee samm-sammuline lahenduskäik (Inbound/Outbound, ärakasutamine, kaitse)
 - `Seed-ADLabor.ps1` — labori külvskript (6 väärseadistust)

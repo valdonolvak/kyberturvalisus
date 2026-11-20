@@ -21,7 +21,7 @@ Kujuta ette, et oled saanud kätte **ühe tavalise kasutaja konto** (nagu päris
 **Mis sul on olemas:**
 - **Kali Linux** ründejaam
 - **Windows 11** domeeniga liitunud tööjaam
-- **Laboridomeen** `hkhk.local`, domeenikontroller `SERVER.hkhk.local` (IP `10.0.30.10`)
+- **Laboridomeen** `hkhk.local`, domeenikontroller `SERVER.hkhk.local` (IP `10.0.30.10`) NB! Vajadusel lisa ise AD ja DNS teenused Windows2019 CVE serverile ning domeeninimeks pane siis hkhk.local ja vaata, et AD serveri IP oleks 10.0.XXX.10, kus siis XXX on sinu VMi vmbr number.
 - **Üks konto:** `jaan.tamm` / `Suvi2026!` — rohkem sulle ei anta, ülejäänu pead ise avastama.
 
 > **Paroolimärkus:** laboriparoolis on `!`. Kali bash'is kasuta paroolide ümber **ülakomasid** `'...'` (nt `'Suvi2026!'`), mitte jutumärke — muidu jääd `dquote>` ootejärge.

@@ -25,8 +25,23 @@ Serva peale klõpsates avaneb **Abuse Info**, kus on konkreetsed käsud. Need k�
 **Keskkond:**
 - Domeen: `hkhk.local` · NetBIOS lühinimi: `HKHK`
 - Domeenikontroller: `SERVER.hkhk.local` · IP `10.0.30.10`
-- Kasutajad (kõigil parool `Suvi2026!`): `jaan.tamm`, `mari.kask`, `peeter.saar`, `liis.oja`
-- Teenusekonto: `svc-sql` · parool `Password1` (teadlikult nõrk)
+
+**Kasutajate ja gruppide legend** — kes mis tasemel ja mis õigus tal on:
+
+| Konto | Tase / roll | Parool | Õigus (Outbound) | Roll ründeahelas |
+|---|---|---|---|---|
+| `jaan.tamm` | tavakasutaja — **ründaja stardikonto** | `Suvi2026!` | `GenericAll` → `Serveri-Admins` | algpunkt: lisab end gruppi |
+| `mari.kask` | tavakasutaja | `Suvi2026!` | `ForceChangePassword` → `peeter.saar` | võtab üle peetri konto |
+| `peeter.saar` | tavakasutaja | `Suvi2026!` | `WriteDacl` → `Helpdesk` | muudab Helpdeski ACL-i |
+| `liis.oja` | tavakasutaja | `Suvi2026!` | `DCSync` → domeen | replitseerib kõik hashid |
+| `svc-sql` | **teenusekonto**, `HasSPN` | `Password1` (nõrk) | — (Serveri-Adminsi liige) | Kerberoastitav → DCSync tee |
+
+| Grupp | Tase | Õigus (Outbound) | Liikmed |
+|---|---|---|---|
+| `Serveri-Admins` | **privilegeeritud** (de facto Tier 0) | `DCSync` → domeen | `svc-sql` (+ `jaan.tamm` pärast rünnet) |
+| `Helpdesk` | tavaline | — | peeter.saar'i WriteDacl sihtmärk |
+
+**Sihtmärgid** (Tier 0, mida ei muudeta): `Domain Admins`, `Administrator`, domeen `hkhk.local`, DC (`SERVER`).
 
 > **Paroolis on `!`** → bash'is kasuta **ülakomasid** `'...'`, mitte jutumärke, muidu jääd `dquote>` lõksu.
 

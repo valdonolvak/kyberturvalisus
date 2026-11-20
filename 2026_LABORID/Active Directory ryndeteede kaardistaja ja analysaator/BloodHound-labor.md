@@ -64,6 +64,8 @@ Kõik ühes isoleeritud host-only / internal võrgus. Kellad DC ja klientide vah
 4. Tee DC01-st **VM hetktõmmis** — nii saab labori järgmise grupi jaoks sekunditega lähtestada.
 5. Anna õppijale ainult stardikonto: **`jaan.tamm` / `Suvi2026!`**. Ülejäänu peab ta ise avastama.
 
+> **Õpetaja legend** — kes mis tasemel ja mis õigus igal kontol/grupil on: `Seed-ADLabor.ps1` päises (kommentaariplokk) ja tabelina failis [Rundeteede-lahenduskaik.md](./Rundeteede-lahenduskaik.md) (jagu 1). Õppijale seda ette ei anta — see on tema avastamisülesanne.
+
 ---
 
 ## 4. Osa B — BloodHound CE paigaldus ja andmete kogumine (õppija)

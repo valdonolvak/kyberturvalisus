@@ -18,6 +18,33 @@
 
     Jooksuta domeenikontrolleril või domeeniga liidetud haldusjaamas,
     kus on RSAT AD PowerShell moodul, Domain Admins õigustes.
+
+    ------------------------------------------------------------------
+    LABORI LEGEND — kes mis tasemel ja mis õigus (Outbound):
+
+    KASUTAJAD (kõik tavakasutajad, parool 'Suvi2026!'):
+      jaan.tamm    tavakasutaja, RÜNDAJA STARDIKONTO
+                   -> GenericAll grupile Serveri-Admins
+      mari.kask    tavakasutaja
+                   -> ForceChangePassword kasutajale peeter.saar
+      peeter.saar  tavakasutaja
+                   -> WriteDacl grupile Helpdesk
+      liis.oja     tavakasutaja
+                   -> DCSync domeenil (GetChanges + GetChangesAll)
+      svc-sql      TEENUSEKONTO, nõrk parool 'Password1', HasSPN
+                   -> Kerberoastitav; on Serveri-Adminsi liige
+
+    GRUPID:
+      Serveri-Admins  PRIVILEGEERITUD (de facto Tier 0)
+                      -> DCSync domeenil; liige: svc-sql
+                         (jaan lisab end siia GenericAll'iga)
+      Helpdesk        tavaline grupp (peeter.saar'i WriteDacl sihtmärk)
+
+    SIHTMÄRGID (Tier 0, mida ei muudeta): Domain Admins, Administrator,
+      domeen hkhk.local, DC (SERVER).
+
+    Täielik samm-sammuline lahenduskäik: Rundeteede-lahenduskaik.md
+    ------------------------------------------------------------------
 #>
 
 [CmdletBinding()]
